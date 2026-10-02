@@ -1,0 +1,10 @@
+D-TAIL STUDIO FINAL QA
+- Splash screen: implemented, animated, brand logo, fade transition.
+- iPad portrait/landscape breakpoints: implemented.
+- Safe-area insets: implemented.
+- iPad Safari input zoom prevention: implemented (16px controls).
+- Touch target sizing: implemented.
+- PWA manifest: implemented.
+- Service worker cache: implemented.
+- Brand assets: logo + 192/512 icons + Apple touch icon.
+- Existing work, payment, close/reopen, customer, search, backup flows preserved.
