@@ -57,6 +57,49 @@ body{overflow-x:hidden}button,input,select,textarea{font:inherit}button{cursor:p
 @media(pointer:coarse){button{touch-action:manipulation}.input,.select,.textarea{font-size:16px}}
 @media print{body{background:#fff;color:#111}.sidebar,.topbar,.mobile-nav,.toast{display:none!important}.content{padding:0}.view{display:none!important}.printsheet{display:block}}
 </style>
+
+<style id="ultimate-ui-fix">
+/* D-TAIL ULTIMATE UI FIX */
+.ai{min-width:0;width:100%;overflow:hidden}
+.ai-body{min-width:0}
+.ai-actions{min-width:0}
+.aibox{display:grid;grid-template-columns:minmax(0,1fr) 44px;width:100%;min-width:0}
+.aibox .input{min-width:0;width:100%}
+.ai-connection{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;width:100%;min-width:0}
+.ai-connection .input{min-width:0}
+#view-ai>.grid.two{grid-template-columns:minmax(0,1fr);max-width:1100px}
+#view-ai .ai{min-height:420px}
+#view-ai .ai-body{max-width:100%}
+#aiFullAnswer,#aiDashAnswer{overflow-wrap:anywhere;word-break:break-word}
+#aiFullInput,#aiDashInput{min-width:0}
+#aiEndpoint{min-width:0}
+@media(max-width:850px){
+  .ai-connection{grid-template-columns:1fr}
+  #view-dashboard .grid.two{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .aibox{grid-template-columns:minmax(0,1fr) 42px}
+  .ai-body{padding:14px}
+}
+
+/* Editable inventory */
+.inventory-editor{overflow:auto;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.015)}
+.inventory-editor table{min-width:760px}
+.inventory-editor input,.inventory-editor select{
+  background:#080b10;border:1px solid rgba(255,255,255,.09);color:#f2f4f7;
+  border-radius:9px;padding:8px 9px;width:100%;font-size:11px;outline:none
+}
+.inventory-editor input:focus,.inventory-editor select:focus{border-color:rgba(255,255,255,.25)}
+.inventory-editor .qty-input{font-family:Manrope;font-weight:800;text-align:right}
+.stock-actions{display:flex;gap:7px;align-items:center}
+.stock-actions button{white-space:nowrap}
+.stock-status{white-space:nowrap}
+.stock-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.stock-dot.ok{background:var(--green);box-shadow:0 0 9px rgba(99,217,155,.35)}
+.stock-dot.low{background:var(--yellow);box-shadow:0 0 9px rgba(230,181,91,.35)}
+.stock-dot.critical{background:var(--red);box-shadow:0 0 11px rgba(239,102,102,.5);animation:pulse 1.3s infinite}
+.inventory-help{font-size:10px;color:var(--muted);line-height:1.5;margin:0 0 12px}
+</style>
 </head>
 <body>
 <div id="splash"><div class="splash-inner"><img class="splash-logo" src="./assets/logo.png"><div class="splash-name">D-TAIL STUDIO</div><div class="splash-line"><i></i></div><button class="splash-enter" id="splashEnter">BELÉPÉS</button></div></div>
@@ -118,9 +161,42 @@ body{overflow-x:hidden}button,input,select,textarea{font:inherit}button{cursor:p
 </section>
 
 <section class="view" id="view-inventory">
-  <div class="hero"><div><h1>Készlet</h1><p>Valós készletszint, minimumok és rendelési riasztások.</p></div><button class="primary" onclick="openStock()">+ Tétel</button></div>
-  <div class="grid stats"><div class="card stat"><div class="label">Összes tétel</div><div class="value" id="invCount">0</div><div class="delta">nyilvántartva</div></div><div class="card stat"><div class="label">Rendelés szükséges</div><div class="value" id="invCritical">0</div><div class="delta">kritikus</div></div><div class="card stat"><div class="label">Hamarosan rendelni</div><div class="value" id="invLow">0</div><div class="delta">figyelmeztetés</div></div><div class="card stat"><div class="label">Készletérték</div><div class="value" id="invValue">0 Ft</div><div class="delta">megadott egységár alapján</div></div></div>
-  <div class="card section" style="margin-top:14px"><div id="inventoryGrid" class="grid stockgrid"></div></div>
+  <div class="hero">
+    <div><h1>Készlet</h1><p>Írd be közvetlenül, miből mennyi van. A rendszer automatikusan jelzi a minimumszintet.</p></div>
+    <button class="primary" onclick="addInventoryRow()">+ Új termék</button>
+  </div>
+
+  <div class="grid stats">
+    <div class="card stat"><div class="label">Összes tétel</div><div class="value" id="invCount">0</div><div class="delta">nyilvántartva</div></div>
+    <div class="card stat"><div class="label">Rendelés szükséges</div><div class="value" id="invCritical">0</div><div class="delta">piros</div></div>
+    <div class="card stat"><div class="label">Hamarosan rendelni</div><div class="value" id="invLow">0</div><div class="delta">sárga</div></div>
+    <div class="card stat"><div class="label">Készletérték</div><div class="value" id="invValue">0 Ft</div><div class="delta">megadott egységár alapján</div></div>
+  </div>
+
+  <div class="card section" style="margin-top:14px">
+    <div class="section-head">
+      <div><h3>Készletlista</h3><span>közvetlenül szerkeszthető</span></div>
+      <div class="stock-actions">
+        <button class="secondary" onclick="addInventoryRow()">+ Termék</button>
+        <button class="primary" onclick="saveInventoryInline()">Mentés</button>
+      </div>
+    </div>
+    <p class="inventory-help">
+      Példa: <b>ADBL APC</b> · mennyiség <b>3</b> · egység <b>liter</b> · minimum <b>1</b>.
+      Ha a mennyiség eléri vagy aláesik a minimumszintnek, automatikusan sárga/piros állapot jelenik meg.
+    </p>
+    <div class="inventory-editor">
+      <table class="table">
+        <thead><tr><th>Termék</th><th>Mennyiség</th><th>Egység</th><th>Minimum</th><th>Egységár</th><th>Állapot</th><th></th></tr></thead>
+        <tbody id="inventoryEditor"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card section" style="margin-top:14px">
+    <div class="section-head"><h3>Vizuális készletfigyelő</h3><span>automatikus</span></div>
+    <div id="inventoryVisual" class="grid stockgrid"></div>
+  </div>
 </section>
 
 <section class="view" id="view-analytics">
@@ -220,11 +296,104 @@ function level(n){return n>=20?'GOLD':n>=10?'SILVER':n>=5?'BRONZE':'NEW'}
 function renderCustomers(){let q=($('customerSearch')?.value||'').toLowerCase();let a=buildCustomers().filter(c=>JSON.stringify(c).toLowerCase().includes(q));$('customerTable').innerHTML=a.map(c=>{let closedJobs=(c.jobs||[]).filter(closed),sp=closedJobs.reduce((x,j)=>x+j.total,0),car=c.cars?.[0];return `<tr><td><b>${esc(c.name)}</b><br><span style="color:var(--muted)">${esc(c.phone||'')}</span></td><td>${esc(car?.car||'—')}</td><td>${esc(car?.plate||'—')}</td><td>${closedJobs.length}</td><td>${money(sp)}</td><td><span class="badge neutral">${level(closedJobs.length)}</span></td></tr>`}).join('')||`<tr><td colspan="6" style="color:var(--muted)">Nincs ügyfél.</td></tr>`}
 $('customerSearch').addEventListener('input',renderCustomers);function openCustomer(){$('cuName').value='';$('cuPhone').value='';$('cuEmail').value='';$('cuNote').value='';$('customerModal').classList.add('show')}function saveCustomer(){let a=customers();a.push({id:uid('CU'),name:$('cuName').value.trim()||'Ismeretlen',phone:$('cuPhone').value.trim(),email:$('cuEmail').value.trim(),note:$('cuNote').value.trim(),cars:[]});write(K.customers,a);closeModal('customerModal');renderAll();toast('Ügyfél mentve')}
 function renderCalendar(){let today=jobs().filter(currentDay).sort((a,b)=>dOf(a)-dOf(b));$('calendarDate').textContent=new Date().toLocaleDateString('hu-HU',{weekday:'long',month:'long',day:'numeric'});$('calendarToday').innerHTML=today.map(j=>`<div class="jobrow"><div class="jobmain"><b>${dOf(j).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'})} · ${esc(j.customerName)}</b><p>${esc(j.car)} · ${esc(j.serviceName)}</p></div><div class="money">${money(j.total)}</div></div>`).join('')||'<div style="font-size:10px;color:var(--muted)">Nincs mai időpont.</div>';let next=jobs().filter(j=>!closed(j)&&dOf(j)&&dOf(j)>new Date()).sort((a,b)=>dOf(a)-dOf(b)).slice(0,8);$('upcoming').innerHTML=next.map(j=>`<div class="jobrow"><div class="jobmain"><b>${dOf(j).toLocaleDateString('hu-HU')} · ${dOf(j).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'})}</b><p>${esc(j.customerName)} · ${esc(j.car)}</p></div></div>`).join('')||'<div style="font-size:10px;color:var(--muted)">Nincs következő időpont.</div>'}
-function stockState(x){let q=Number(x.qty)||0,min=Number(x.min)||0;return q<=Math.min(10,min)?'critical':q<=min?'low':'ok'}
-function stockLabel(x){let s=stockState(x);return s==='critical'?'RENDELÉS SZÜKSÉGES':s==='low'?'HAMAROSAN RENDELNI':'RENDBEN'}
-function stockCard(x){let q=Math.max(0,Math.min(100,Number(x.qty)||0));let s=stockState(x);return `<div class="card stock ${s}"><div class="stocktop"><b>${esc(x.name)}</b><small>${q}${x.unit==='%'?'%':' '+esc(x.unit)}</small></div><div class="bar"><div class="fill" style="width:${q}%"></div></div><div class="stocktop"><span class="badge ${s==='critical'?'danger':s==='low'?'warn':'ok'}">${stockLabel(x)}</span><button class="secondary" style="padding:6px 8px;font-size:9px" onclick="editStock('${x.id}')">Szerkesztés</button></div></div>`}
-function renderInventory(){let s=stock();$('inventoryGrid').innerHTML=s.map(stockCard).join('');$('dashStock').innerHTML=s.slice().sort((a,b)=>({critical:0,low:1,ok:2}[stockState(a)]-({critical:0,low:1,ok:2}[stockState(b)]))).slice(0,6).map(stockCard).join('');$('invCount').textContent=s.length;$('invCritical').textContent=s.filter(x=>stockState(x)==='critical').length;$('invLow').textContent=s.filter(x=>stockState(x)==='low').length;$('invValue').textContent=money(s.reduce((a,x)=>a+(Number(x.qty)/100||0)*(Number(x.price)||0),0))}
-let stockEdit=null;function openStock(){stockEdit=null;['stockName','stockQty','stockMin','stockPrice'].forEach(x=>$(x).value='');$('stockUnit').value='%';$('stockModal').classList.add('show')}function editStock(id){let x=stock().find(x=>x.id===id);if(!x)return;stockEdit=id;$('stockName').value=x.name;$('stockQty').value=x.qty;$('stockMin').value=x.min;$('stockPrice').value=x.price||0;$('stockUnit').value=x.unit;$('stockModal').classList.add('show')}function saveStock(){let a=stock(),o={id:stockEdit||uid('ST'),name:$('stockName').value.trim()||'Új tétel',qty:Number($('stockQty').value)||0,min:Number($('stockMin').value)||0,price:Number($('stockPrice').value)||0,unit:$('stockUnit').value};if(stockEdit){let i=a.findIndex(x=>x.id===stockEdit);a[i]=o}else a.push(o);write(K.stock,a);closeModal('stockModal');renderAll();toast('Készlet mentve')}
+function stockState(x){
+  let q=Number(x.qty)||0,min=Number(x.min)||0;
+  if(q<=Math.min(10,min))return'critical';
+  if(q<=min)return'low';
+  return'ok'
+}
+function stockLabel(x){
+  let s=stockState(x);
+  return s==='critical'?'RENDELÉS SZÜKSÉGES':s==='low'?'HAMAROSAN RENDELNI':'RENDBEN'
+}
+function stockCard(x){
+  let q=Number(x.qty)||0;
+  let pct=Number(x.unit)==='%'?Math.max(0,Math.min(100,q)):Math.max(0,Math.min(100,Number(x.min)?q/Math.max(q,Number(x.min)*3)*100:100));
+  let s=stockState(x);
+  return `<div class="card stock ${s}">
+    <div class="stocktop"><b>${esc(x.name)}</b><small>${q}${x.unit==='%'?'%':' '+esc(x.unit)}</small></div>
+    <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+    <div class="stocktop"><span class="badge ${s==='critical'?'danger':s==='low'?'warn':'ok'}">${stockLabel(x)}</span><small>min. ${x.min} ${esc(x.unit)}</small></div>
+  </div>`
+}
+function inventoryRow(x){
+  let s=stockState(x);
+  return `<tr data-stock-id="${esc(x.id)}">
+    <td><input class="stock-name" value="${esc(x.name)}" placeholder="Termék neve"></td>
+    <td style="width:110px"><input class="qty-input stock-qty" type="number" step="0.01" value="${Number(x.qty)||0}"></td>
+    <td style="width:110px"><select class="stock-unit">
+      ${['liter','ml','db','kg','%'].map(u=>`<option ${x.unit===u?'selected':''}>${u}</option>`).join('')}
+    </select></td>
+    <td style="width:110px"><input class="stock-min" type="number" step="0.01" value="${Number(x.min)||0}"></td>
+    <td style="width:130px"><input class="stock-price" type="number" step="1" value="${Number(x.price)||0}"></td>
+    <td class="stock-status"><span class="stock-dot ${s}"></span><b>${stockLabel(x)}</b></td>
+    <td style="width:80px"><button class="secondary" style="padding:7px 9px;font-size:9px" onclick="removeInventoryRow('${x.id}')">Törlés</button></td>
+  </tr>`
+}
+function renderInventoryEditor(){
+  let s=stock();
+  $('inventoryEditor').innerHTML=s.map(inventoryRow).join('') || `<tr><td colspan="7" style="color:var(--muted)">Nincs készlettétel. Nyomd meg a + Termék gombot.</td></tr>`;
+  $('inventoryEditor').querySelectorAll('input,select').forEach(el=>{
+    el.addEventListener('input',()=>updateInventoryRowState(el.closest('tr')));
+    el.addEventListener('change',()=>updateInventoryRowState(el.closest('tr')));
+  });
+}
+function updateInventoryRowState(tr){
+  if(!tr)return;
+  let x={
+    qty:Number(tr.querySelector('.stock-qty')?.value)||0,
+    min:Number(tr.querySelector('.stock-min')?.value)||0,
+    unit:tr.querySelector('.stock-unit')?.value||'db'
+  };
+  let state=stockState(x), status=tr.querySelector('.stock-status');
+  if(status)status.innerHTML=`<span class="stock-dot ${state}"></span><b>${stockLabel(x)}</b>`;
+}
+function saveInventoryInline(){
+  let old=stock(), next=[];
+  document.querySelectorAll('#inventoryEditor tr[data-stock-id]').forEach(tr=>{
+    let id=tr.dataset.stockId;
+    next.push({
+      id,
+      name:tr.querySelector('.stock-name')?.value.trim()||'Új termék',
+      qty:Number(tr.querySelector('.stock-qty')?.value)||0,
+      unit:tr.querySelector('.stock-unit')?.value||'db',
+      min:Number(tr.querySelector('.stock-min')?.value)||0,
+      price:Number(tr.querySelector('.stock-price')?.value)||0
+    });
+  });
+  write(K.stock,next);
+  renderAll();
+  toast('Készlet mentve');
+}
+function addInventoryRow(){
+  let a=stock();
+  a.push({id:uid('ST'),name:'Új termék',qty:0,unit:'liter',min:1,price:0});
+  write(K.stock,a);
+  renderInventory();
+  setTimeout(()=>{
+    let rows=document.querySelectorAll('#inventoryEditor tr[data-stock-id]');
+    rows[rows.length-1]?.querySelector('.stock-name')?.focus();
+  },50);
+  toast('Új készlettétel hozzáadva');
+}
+function removeInventoryRow(id){
+  let a=stock().filter(x=>x.id!==id);
+  write(K.stock,a);renderAll();toast('Készlettétel törölve');
+}
+function renderInventory(){
+  renderInventoryEditor();
+  let s=stock();
+  $('inventoryVisual').innerHTML=s.slice().sort((a,b)=>({critical:0,low:1,ok:2}[stockState(a)]-({critical:0,low:1,ok:2}[stockState(b)])).slice(0,6).map(stockCard).join('');
+  $('dashStock').innerHTML=s.slice().sort((a,b)=>({critical:0,low:1,ok:2}[stockState(a)]-({critical:0,low:1,ok:2}[stockState(b)])).slice(0,6).map(stockCard).join('');
+  $('invCount').textContent=s.length;
+  $('invCritical').textContent=s.filter(x=>stockState(x)==='critical').length;
+  $('invLow').textContent=s.filter(x=>stockState(x)==='low').length;
+  $('invValue').textContent=money(s.reduce((a,x)=>a+(Number(x.qty)||0)*(Number(x.price)||0),0));
+}
+let stockEdit=null;
+function openStock(){addInventoryRow();showView('inventory')}
+function editStock(id){showView('inventory');setTimeout(()=>document.querySelector(`#inventoryEditor tr[data-stock-id="${id}"] .stock-name`)?.focus(),50)}
+function saveStock(){saveInventoryInline()}
 function monthly(){return jobs().filter(currentMonth).filter(closed)}function renderAnalytics(){let a=monthly(),rev=a.reduce((x,j)=>x+j.total,0),cost=a.reduce((x,j)=>x+(j.cost||0),0);$('aRevenue').textContent=money(rev);$('aCost').textContent=money(cost);$('aMargin').textContent=money(rev-cost);$('aAvg').textContent=money(a.length?rev/a.length:0);let svc={};a.forEach(j=>svc[j.serviceName]=(svc[j.serviceName]||0)+j.total);$('serviceMix').innerHTML=Object.entries(svc).sort((x,y)=>y[1]-x[1]).map(([n,v])=>`<div class="jobrow"><div class="jobmain"><b>${esc(n)}</b><p>${a.filter(j=>j.serviceName===n).length} munka</p></div><div class="money">${money(v)}</div></div>`).join('')||'<span style="font-size:10px;color:var(--muted)">Nincs adat.</span>';let pay={};a.forEach(j=>pay[j.paymentMethod||'Nincs rögzítve']=(pay[j.paymentMethod||'Nincs rögzítve']||0)+j.total);$('paymentMix').innerHTML=Object.entries(pay).map(([n,v])=>`<div class="jobrow"><div class="jobmain"><b>${esc(n)}</b></div><div class="money">${money(v)}</div></div>`).join('');$('financeTable').innerHTML=a.map(j=>`<tr><td>${dOf(j)?.toLocaleDateString('hu-HU')}</td><td>${esc(j.customerName)}</td><td>${esc(j.serviceName)}</td><td>${money(j.total)}</td><td>${money(j.cost||0)}</td><td>${money(j.total-(j.cost||0))}</td></tr>`).join('')}
 function alerts(){let a=[];let s=stock();s.filter(x=>stockState(x)==='critical').forEach(x=>a.push(['🔴','Készletkritikus: '+x.name,'Rendelés szükséges.']));s.filter(x=>stockState(x)==='low').forEach(x=>a.push(['🟡','Hamarosan rendelni: '+x.name,'A készlet a minimum közelében van.']));let open=jobs().filter(j=>!closed(j));if(open.length>=3)a.push(['🟠','Sok nyitott munkalap','Jelenleg '+open.length+' nyitott munka van.']);let upcoming=jobs().filter(j=>!closed(j)&&dOf(j)&&dOf(j)>new Date()&&dOf(j)<new Date(Date.now()+86400000));if(upcoming.length)a.push(['🔵','Mai / holnapi időpont',''+upcoming.length+' közelgő munka.']);return a}
 function renderAlerts(){let a=alerts();$('dashAlerts').innerHTML=a.map(x=>`<div class="alert"><div class="aicon">${x[0]}</div><div><b>${esc(x[1])}</b><p>${esc(x[2])}</p></div></div>`).join('')||'<div class="alert"><div class="aicon">✓</div><div><b>Minden rendben</b><p>Nincs kritikus riasztás.</p></div></div>';$('aiAlerts').innerHTML=$('dashAlerts').innerHTML}
