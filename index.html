@@ -320,7 +320,7 @@ input,textarea,select{
 </style>
 </head>
 <body>
-<audio id="startupAudio" preload="auto" src="./assets/startup.wav"></audio>
+<audio id="startupAudio" preload="auto" playsinline webkit-playsinline src="./assets/startup.wav?v=2"></audio>
 
 <div id="splashScreen" class="splash-screen" aria-label="D-Tail Studio betöltése">
   <div class="splash-glow"></div>
@@ -860,64 +860,82 @@ function importBackup(event){
 
 
 let startupSoundPlayed=false;
-async function playStartupEffect(){
-  if(startupSoundPlayed)return;
-  startupSoundPlayed=true;
+
+function playStartupEffectFromGesture(){
+  if(startupSoundPlayed) return;
   const audio=document.getElementById("startupAudio");
-  try{
-    if(audio){
-      audio.volume=0.92;
-      audio.currentTime=0;
-      const p=audio.play();
-      if(p&&typeof p.then==="function") await p;
-      return;
-    }
-  }catch(e){}
-  try{
-    const Ctx=window.AudioContext||window.webkitAudioContext;
-    if(!Ctx)return;
-    const ctx=new Ctx();
-    if(ctx.state==="suspended") await ctx.resume();
-    const now=ctx.currentTime;
-    const master=ctx.createGain();
-    master.gain.setValueAtTime(0.0001,now);
-    master.gain.exponentialRampToValueAtTime(0.65,now+0.04);
-    master.gain.exponentialRampToValueAtTime(0.0001,now+0.95);
-    master.connect(ctx.destination);
-    const osc=ctx.createOscillator(), g=ctx.createGain();
-    osc.type="sine"; osc.frequency.setValueAtTime(95,now); osc.frequency.exponentialRampToValueAtTime(48,now+0.7);
-    g.gain.setValueAtTime(0.7,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.75);
-    osc.connect(g).connect(master); osc.start(now); osc.stop(now+0.78);
-    const sw=ctx.createOscillator(), sg=ctx.createGain();
-    sw.type="triangle"; sw.frequency.setValueAtTime(380,now+0.03); sw.frequency.exponentialRampToValueAtTime(1800,now+0.48);
-    sg.gain.setValueAtTime(0.001,now+0.03); sg.gain.exponentialRampToValueAtTime(0.28,now+0.12); sg.gain.exponentialRampToValueAtTime(0.001,now+0.58);
-    sw.connect(sg).connect(master); sw.start(now+0.03); sw.stop(now+0.6);
-    const ch=ctx.createOscillator(), cg=ctx.createGain();
-    ch.type="sine"; ch.frequency.setValueAtTime(760,now+0.34); ch.frequency.exponentialRampToValueAtTime(1080,now+0.62);
-    cg.gain.setValueAtTime(0.001,now+0.34); cg.gain.exponentialRampToValueAtTime(0.18,now+0.42); cg.gain.exponentialRampToValueAtTime(0.001,now+0.9);
-    ch.connect(cg).connect(master); ch.start(now+0.34); ch.stop(now+0.92);
-    setTimeout(()=>ctx.close().catch(()=>{}),1200);
-  }catch(e){}
+  if(!audio) return;
+
+  startupSoundPlayed=true;
+  audio.volume=1.0;
+  audio.muted=false;
+  audio.currentTime=0;
+
+  // IMPORTANT: this call happens directly inside the iPad touch/pointer gesture.
+  const p=audio.play();
+  if(p && typeof p.catch==="function"){
+    p.catch(()=>{
+      // If Safari still rejects the media element, try a Web Audio fallback
+      // while the same user gesture is still active.
+      try{
+        const Ctx=window.AudioContext||window.webkitAudioContext;
+        if(!Ctx) return;
+        const ctx=new Ctx();
+        const now=ctx.currentTime;
+        const master=ctx.createGain();
+        master.gain.setValueAtTime(0.0001,now);
+        master.gain.exponentialRampToValueAtTime(0.8,now+0.03);
+        master.gain.exponentialRampToValueAtTime(0.0001,now+0.95);
+        master.connect(ctx.destination);
+
+        const osc=ctx.createOscillator(), g=ctx.createGain();
+        osc.type="sine";
+        osc.frequency.setValueAtTime(95,now);
+        osc.frequency.exponentialRampToValueAtTime(48,now+0.7);
+        g.gain.setValueAtTime(0.75,now);
+        g.gain.exponentialRampToValueAtTime(0.001,now+0.75);
+        osc.connect(g).connect(master);
+        osc.start(now); osc.stop(now+0.78);
+
+        setTimeout(()=>ctx.close().catch(()=>{}),1200);
+      }catch(e){}
+    });
+  }
 }
 
 function dismissSplash(){
   const splash=document.getElementById("splashScreen");
   if(!splash)return;
-  const enter=document.getElementById("splashEnter");
-  const touchDevice=window.matchMedia&&window.matchMedia("(pointer:coarse)").matches;
+
+  const touchDevice=window.matchMedia &&
+    window.matchMedia("(pointer:coarse)").matches;
+
   let dismissed=false;
+
   const finish=()=>{
     if(dismissed)return;
     dismissed=true;
-    playStartupEffect();
     splash.classList.add("hide");
     setTimeout(()=>splash.remove(),1400);
   };
+
   if(touchDevice){
-    enter.hidden=false;
-    splash.addEventListener("pointerdown",finish,{once:true});
+    const enter=document.getElementById("splashEnter");
+    if(enter) enter.hidden=false;
+
+    // Direct pointer gesture: Safari/iPadOS allows audio here.
+    splash.addEventListener("pointerdown",()=>{
+      playStartupEffectFromGesture();
+      finish();
+    },{once:true,passive:true});
+
+    // Fallback for older iOS Safari.
+    splash.addEventListener("touchstart",()=>{
+      playStartupEffectFromGesture();
+      finish();
+    },{once:true,passive:true});
   }else{
-    playStartupEffect();
+    playStartupEffectFromGesture();
     setTimeout(finish,650);
   }
 }

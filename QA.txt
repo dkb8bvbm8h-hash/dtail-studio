@@ -8,3 +8,9 @@ D-TAIL STUDIO FINAL QA
 - Service worker cache: implemented.
 - Brand assets: logo + 192/512 icons + Apple touch icon.
 - Existing work, payment, close/reopen, customer, search, backup flows preserved.
+
+STARTUP SOUND FIX v5
+- startup.wav is included in assets/
+- iPad/iPhone playback is triggered directly by the first splash touch/pointer gesture.
+- Audio uses playsinline and cache-busting.
+- Service-worker cache version bumped to final-5.
