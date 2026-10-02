@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080a0e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/icon-192.png">
+<title>D-Tail Studio</title>
+<style>
+:root{
+  --bg:#080a0e; --surface:#0d1117; --surface-2:#11161e; --surface-3:#161c25; --surface-4:#1b222d;
+  --line:#222b36; --line-2:#2b3542; --text:#f5f7fa; --muted:#8a96a6; --muted-2:#657184;
+  --cyan:#27e5df; --cyan-dim:rgba(39,229,223,.11); --cyan-line:rgba(39,229,223,.36);
+  --green:#55e7a2; --amber:#ffcb6b; --red:#ff6e7b;
+  --shadow:0 24px 70px rgba(0,0,0,.36); --radius:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,sans-serif}
+body{overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{border:0}
+button:disabled{opacity:.45;cursor:not-allowed!important;transform:none!important}
+.app{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:256px;background:linear-gradient(180deg,#0c0f14 0%,#080a0e 100%);border-right:1px solid var(--line);padding:24px 16px;z-index:40}
+.brand{display:flex;align-items:center;gap:12px;padding:2px 8px 26px}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#172229,#0b1217);border:1px solid #2b3b43;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(39,229,223,.08)}
+.brand-mark svg{width:27px;height:27px}
+.brand-name{font-size:19px;font-weight:850;letter-spacing:-.045em}
+.brand-sub{font-size:9px;letter-spacing:.19em;color:#6d7989;margin-top:3px}
+.nav-label{padding:0 12px 8px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#5d6877;font-weight:800}
+.nav-btn{width:100%;display:flex;align-items:center;gap:12px;background:transparent;color:#93a0b0;border-radius:14px;padding:12px;margin:0 0 5px;cursor:pointer;text-align:left;transition:.18s}
+.nav-btn:hover{background:#11161d;color:#eff4f8}
+.nav-btn.active{background:linear-gradient(90deg,var(--cyan-dim),rgba(39,229,223,.025));color:#fff;box-shadow:inset 3px 0 0 var(--cyan)}
+.nav-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.sidebar-foot{position:absolute;left:16px;right:16px;bottom:18px;padding:13px 14px;border-radius:16px;border:1px solid var(--line);background:#0d1218}
+.sidebar-foot strong{display:block;font-size:11px}.sidebar-foot span{display:block;margin-top:4px;font-size:10px;color:var(--muted-2)}
+.main{margin-left:256px;min-height:100vh}
+.topbar{height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid rgba(34,43,54,.78);background:rgba(8,10,14,.78);backdrop-filter:blur(22px);position:sticky;top:0;z-index:25}
+.page-title h1{margin:0;font-size:22px;letter-spacing:-.035em}.page-title p{margin:4px 0 0;font-size:11px;color:var(--muted)}
+.top-actions{display:flex;gap:9px;align-items:center}
+.primary,.secondary,.icon-btn{border-radius:13px;padding:11px 14px;cursor:pointer}
+.primary{color:#031011;background:linear-gradient(135deg,#2af1eb,#10c0bd);font-weight:850;box-shadow:0 12px 32px rgba(39,229,223,.14);transition:.18s}
+.primary:hover{transform:translateY(-1px)}
+.secondary{background:#121820;color:#e8edf2;border:1px solid var(--line)}
+.icon-btn{background:#111820;color:#a9b4c1;border:1px solid var(--line);display:grid;place-items:center;padding:10px}
+.icon-btn svg{width:17px;height:17px}
+.container{max-width:1550px;margin:0 auto;padding:28px 30px 44px}
+.view{display:none;animation:appear .2s ease}.view.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card{background:linear-gradient(180deg,#11161e,#0d1117);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.kpi{padding:20px 21px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;width:150px;height:150px;right:-70px;top:-70px;border-radius:50%;background:radial-gradient(circle,rgba(39,229,223,.12),transparent 68%)}
+.kpi-label{font-size:9px;font-weight:850;color:#7c8899;letter-spacing:.11em;text-transform:uppercase}.kpi-value{margin-top:9px;font-size:29px;font-weight:900;letter-spacing:-.055em}.kpi-foot{margin-top:6px;font-size:10px;color:#647184}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin:26px 0 12px}.section-head h2{font-size:16px;margin:0;letter-spacing:-.025em}.section-head span{font-size:10px;color:var(--muted)}
+.grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.panel{padding:21px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.panel-head strong{font-size:14px}.panel-head span{font-size:10px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#0c1117;border:1px solid #1c2530;border-radius:15px;padding:12px 13px}
+.row.clickable{cursor:pointer}.row.clickable:hover{border-color:#34404e;background:#0f151c}
+.identity{display:flex;gap:11px;align-items:center;min-width:0}.avatar{width:38px;height:38px;border-radius:12px;background:#18212b;border:1px solid #293541;display:grid;place-items:center;font-weight:850;color:#d6dfe7;flex:0 0 auto}.row-title{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.row-right{text-align:right;flex:0 0 auto}.amount{font-size:12px;font-weight:850}.muted{color:var(--muted)}
+.chip{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:850;letter-spacing:.03em;margin-top:4px}.chip.green{color:var(--green);background:rgba(85,231,162,.08)}.chip.amber{color:var(--amber);background:rgba(255,203,107,.10)}.chip.cyan{color:var(--cyan);background:var(--cyan-dim)}.chip.gray{color:#acb7c4;background:rgba(172,183,196,.08)}
+.empty{padding:34px 16px;text-align:center;border:1px dashed #2a3440;border-radius:16px;color:#6d7989;font-size:12px;line-height:1.6}
+.quick-grid{display:grid;grid-template-columns:1fr;gap:9px}
+.quick-card{display:flex;align-items:center;gap:12px;padding:14px;background:#0c1117;border:1px solid #202a35;border-radius:15px;cursor:pointer;text-align:left;color:#eef2f5}
+.quick-card:hover{border-color:#34404d}.quick-icon{width:39px;height:39px;border-radius:12px;background:#121b22;border:1px solid #283840;display:grid;place-items:center;color:var(--cyan);font-weight:900}.quick-card strong{font-size:12px}.quick-card span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.form-layout{display:grid;grid-template-columns:1.38fr .8fr;gap:17px;align-items:start}
+.form-stack{display:flex;flex-direction:column;gap:15px}
+.form-card{padding:20px}
+.step{display:flex;align-items:center;gap:10px;margin-bottom:17px}.step-no{width:25px;height:25px;border-radius:9px;background:var(--cyan-dim);color:var(--cyan);display:grid;place-items:center;font-size:10px;font-weight:900;border:1px solid var(--cyan-line)}.step strong{font-size:13px}.step span{font-size:10px;color:var(--muted);margin-left:auto}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{margin-bottom:11px}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#7b8796;font-weight:850;margin:0 0 7px 2px}
+.field input,.field select,.field textarea{width:100%;background:#090e13;border:1px solid #222c37;border-radius:13px;padding:12px 12px;color:#edf2f6;outline:none;transition:.16s}
+.field textarea{min-height:90px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(39,229,223,.75);box-shadow:0 0 0 3px rgba(39,229,223,.07)}
+.service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.service-card{position:relative;padding:17px;border:1px solid #27323e;border-radius:18px;background:linear-gradient(180deg,#151c24,#10151c);cursor:pointer;transition:.17s}
+.service-card:hover{transform:translateY(-2px);border-color:#3a4654}.service-card.selected{border-color:var(--cyan);box-shadow:0 0 0 1px rgba(39,229,223,.23),0 16px 40px rgba(39,229,223,.07)}
+.service-title{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.service-title strong{font-size:13px}.service-title span{font-size:13px;color:var(--cyan);font-weight:900;white-space:nowrap}.service-desc{font-size:10px;line-height:1.55;color:#7c8897;margin-top:8px;padding-right:20px}
+.select-badge{position:absolute;right:12px;bottom:12px;width:25px;height:25px;border-radius:9px;background:#0b1117;border:1px solid #2b3845;color:#677586;display:grid;place-items:center;font-weight:900}.selected .select-badge{background:var(--cyan);color:#051011;border-color:var(--cyan)}
+.extra-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.extra{position:relative;min-height:86px;padding:13px;border-radius:15px;border:1px solid #202a35;background:#0d1218;cursor:pointer}.extra.selected{background:rgba(39,229,223,.055);border-color:rgba(39,229,223,.7)}.extra-name{font-size:10px;font-weight:800;padding-right:18px;line-height:1.35}.extra-price{margin-top:8px;font-size:10px;color:var(--cyan);font-weight:850}.extra-check{position:absolute;right:9px;top:9px;width:19px;height:19px;border:1px solid #32404c;border-radius:7px;display:grid;place-items:center;font-size:11px;color:transparent}.extra.selected .extra-check{background:var(--cyan);border-color:var(--cyan);color:#061010}
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{display:flex;align-items:center;gap:8px;padding:11px 12px;background:#0a0f14;border:1px solid #202a34;border-radius:12px;font-size:10px;color:#bac4ce}.check input{accent-color:var(--cyan)}
+.cart{position:sticky;top:96px}.cart-card{padding:20px}.cart-header{display:flex;justify-content:space-between;align-items:center}.cart-header h3{margin:0;font-size:14px}.cart-count{font-size:9px;font-weight:850;color:var(--cyan);padding:5px 8px;border-radius:999px;background:var(--cyan-dim);border:1px solid rgba(39,229,223,.22)}
+.cart-items{display:flex;flex-direction:column;gap:8px;margin:15px 0;max-height:320px;overflow:auto}.cart-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:13px;background:#0a0f14;border:1px solid #1c2530}.cart-item strong{font-size:11px}.cart-item small{display:block;color:#687688;font-size:9px;margin-top:3px}.remove{background:transparent;color:#6f7d8b;font-size:18px;cursor:pointer;padding:0 2px}.totals{border-top:1px solid #202a34;padding-top:13px}.total-line{display:flex;justify-content:space-between;align-items:center;margin:7px 0;color:#8290a0;font-size:10px}.total-line strong{color:#edf1f4;font-size:11px}.grand{font-size:27px!important;letter-spacing:-.06em;color:#fff!important}.save-btn{width:100%;margin-top:12px;padding:13px}.hint{font-size:9px;color:#657184;line-height:1.45;margin-top:8px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.search{flex:1;min-width:230px}.search input{width:100%;padding:12px 13px;border-radius:13px;background:#0c1117;border:1px solid #232d38;color:#fff;outline:none}.filter-btn{padding:10px 12px;border-radius:12px;background:#111820;border:1px solid var(--line);color:#aeb9c6;cursor:pointer;font-size:10px}.filter-btn.active{color:var(--cyan);border-color:rgba(39,229,223,.35);background:var(--cyan-dim)}
+.jobs-wrap{display:grid;grid-template-columns:1fr;gap:9px}.job-card{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:16px;align-items:center;padding:14px 15px;background:#0d1218;border:1px solid #1f2934;border-radius:16px;cursor:pointer}.job-card:hover{border-color:#34414f}.job-id{font-size:9px;color:#687587;margin-top:3px}.job-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.job-service{font-size:10px;font-weight:800}.job-date{font-size:9px;color:#6d7988}.job-total{text-align:right;font-size:12px;font-weight:900}.job-actions{display:flex;gap:6px}.tiny{padding:8px 10px;border-radius:10px;background:#111820;border:1px solid #27313d;color:#b4bfca;cursor:pointer;font-size:9px}.tiny:hover{border-color:#3a4652}
+.customer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.customer-card{padding:17px;background:#0d1218;border:1px solid #202a35;border-radius:17px;cursor:pointer}.customer-card:hover{border-color:#34404e}.customer-top{display:flex;gap:11px;align-items:center}.customer-card strong{font-size:12px}.customer-card p{margin:3px 0 0;font-size:10px;color:#6f7c8c}.customer-stat{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid #1d2731;font-size:10px;color:#6f7c8c}.customer-stat b{color:#e9eef2}
+.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.price-card{padding:17px 18px;display:flex;justify-content:space-between;align-items:center;background:#0d1218;border:1px solid #202a35;border-radius:16px}.price-card strong{font-size:11px}.price-card span{color:var(--cyan);font-size:12px;font-weight:900}.note-box{margin-top:15px;padding:16px;border-radius:16px;background:#0d1218;border:1px solid #202a35;color:#707d8d;font-size:10px;line-height:1.6}
+.modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.68);backdrop-filter:blur(10px);z-index:100}.modal-backdrop.show{display:flex}
+.modal{width:min(760px,96vw);max-height:92vh;overflow:auto;background:#0d1218;border:1px solid #2a3541;border-radius:24px;box-shadow:0 35px 110px rgba(0,0,0,.55);padding:22px}
+.modal-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.modal-head h3{margin:0;font-size:18px;letter-spacing:-.03em}.modal-head p{margin:5px 0 0;font-size:10px;color:#6f7c8d}.close{width:36px;height:36px;border-radius:11px;background:#141b23;border:1px solid #28333f;color:#9facba;cursor:pointer;display:grid;place-items:center}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:17px}.detail-card{padding:14px;background:#090e13;border:1px solid #1f2933;border-radius:14px}.detail-card h4{margin:0 0 9px;font-size:9px;color:#748093;text-transform:uppercase;letter-spacing:.1em}.detail-main{font-size:12px;font-weight:800}.detail-sub{margin-top:4px;color:#718093;font-size:10px;line-height:1.5}
+.detail-items{margin-top:11px;display:flex;flex-direction:column;gap:7px}.detail-item{display:flex;justify-content:space-between;padding:10px 11px;border-radius:11px;background:#0d1218;border:1px solid #1c2630;font-size:10px}.detail-item span:last-child{color:#dfe6eb;font-weight:800}
+.modal-section{margin-top:16px}.modal-section-title{font-size:10px;font-weight:850;color:#7d8998;text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
+.modal-actions{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-top:18px;padding-top:15px;border-top:1px solid #202a35}.action-left,.action-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.payment-select{padding:9px 10px;background:#0a0f14;border:1px solid #25303b;border-radius:11px;color:#dfe5ea;font-size:10px}
+.toast{position:fixed;right:22px;bottom:22px;background:#111920;border:1px solid #2a4548;color:#edffff;padding:12px 14px;border-radius:14px;box-shadow:var(--shadow);opacity:0;transform:translateY(9px);pointer-events:none;transition:.23s;z-index:130;font-size:10px}.toast.show{opacity:1;transform:none}
+.mobile-nav{display:none}
+@media(max-width:1120px){
+ .sidebar{width:88px;padding:19px 11px}.brand{justify-content:center}.brand-text,.nav-label,.sidebar-foot{display:none}.nav-btn{justify-content:center;padding:13px}.main{margin-left:88px}.kpis{grid-template-columns:repeat(2,1fr)}.grid-2,.form-layout{grid-template-columns:1fr}.cart{position:static}
+}
+@media(max-width:760px){
+ .sidebar{display:none}.main{margin-left:0}.topbar{padding:0 16px;height:68px}.top-actions .secondary{display:none}.container{padding:17px 14px 90px}.page-title h1{font-size:18px}.page-title p{display:none}
+ .kpis{grid-template-columns:1fr 1fr;gap:9px}.kpi{padding:15px}.kpi-value{font-size:22px}.kpi-label{font-size:8px}.kpi-foot{font-size:8px}
+ .field-grid,.service-grid,.detail-grid,.prices{grid-template-columns:1fr}.extra-grid{grid-template-columns:1fr 1fr}.customer-grid{grid-template-columns:1fr 1fr}.job-card{grid-template-columns:1fr auto}.job-actions{grid-column:1/-1}.job-total{align-self:start}
+ .mobile-nav{display:flex;position:fixed;left:9px;right:9px;bottom:9px;background:rgba(13,18,24,.93);backdrop-filter:blur(18px);border:1px solid #28333e;border-radius:18px;padding:6px;z-index:50;gap:3px}.mobile-nav .nav-btn{margin:0;padding:9px 5px;justify-content:center;flex-direction:column;gap:3px;font-size:8px;text-align:center}.mobile-nav .nav-btn svg{width:16px;height:16px}
+ .toolbar{align-items:stretch}.search{min-width:100%}.filter-btn{flex:1}
+ .modal{padding:17px;border-radius:20px}.modal-actions{align-items:stretch;flex-direction:column}.action-left,.action-right{width:100%}.action-left>* ,.action-right>*{flex:1}.payment-select{width:100%}
+}
+
+.brand-mark{overflow:hidden;padding:3px}
+.brand-mark img{width:100%;height:100%;object-fit:contain;display:block}
+.logo-large{width:min(360px,75vw);height:auto;display:block;margin:0 auto 10px}
+.hero-empty{padding:34px 20px;text-align:center}
+.hero-empty p{max-width:520px;margin:0 auto 18px;color:#748092;font-size:11px;line-height:1.6}
+.data-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.data-action{padding:14px;border-radius:15px;background:#0a0f14;border:1px solid #202a35;color:#eef3f7;cursor:pointer;text-align:left}
+.data-action:hover{border-color:#3a4755}
+.data-action strong{display:block;font-size:11px}.data-action span{display:block;margin-top:4px;font-size:9px;color:#6e7b8d}
+.payment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}
+.payment-btn{padding:12px 8px;border-radius:12px;background:#0a0f14;border:1px solid #25303b;color:#cbd4dc;cursor:pointer;font-size:10px;font-weight:800}
+.payment-btn:hover{border-color:#3a4754}
+.payment-btn.selected{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+@media(max-width:760px){.data-actions{grid-template-columns:1fr}.payment-grid{grid-template-columns:1fr}}
+
+
+/* D-TAIL STUDIO — iPad / Splash polish */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+html{
+  background:#080a0e;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+}
+body{
+  min-height:100dvh;
+  padding-bottom:var(--safe-bottom);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,.nav-btn,.service-card,.extra,.row.clickable,.job-card,.customer-card,.quick-card{
+  -webkit-user-select:none;
+  user-select:none;
+  touch-action:manipulation;
+}
+input,textarea,select{
+  font-size:16px !important; /* prevents iPad Safari auto-zoom */
+}
+.splash-screen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(39,229,223,.055), transparent 30%),
+    radial-gradient(circle at 50% 55%, rgba(255,255,255,.025), transparent 48%),
+    #05070a;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1), visibility .65s;
+}
+.splash-screen.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.splash-glow{
+  position:absolute;
+  width:min(72vw,720px);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(39,229,223,.075) 0%,rgba(39,229,223,.018) 33%,transparent 69%);
+  filter:blur(8px);
+  animation:splashPulse 2.2s ease-in-out infinite;
+}
+.splash-content{
+  position:relative;
+  z-index:2;
+  width:min(540px,82vw);
+  text-align:center;
+  animation:splashIn 1s cubic-bezier(.22,1,.36,1) both;
+}
+.splash-logo{
+  width:min(430px,76vw);
+  max-height:260px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto;
+  filter:drop-shadow(0 0 24px rgba(39,229,223,.16));
+  animation:logoFloat 2.8s ease-in-out infinite;
+}
+.splash-name{
+  margin-top:8px;
+  color:#f7fafb;
+  font-size:clamp(18px,3vw,25px);
+  font-weight:900;
+  letter-spacing:.19em;
+}
+.splash-name span{
+  color:#aeb8c2;
+  font-weight:500;
+  letter-spacing:.34em;
+  margin-left:.2em;
+}
+.splash-line{
+  width:min(240px,52vw);
+  height:2px;
+  margin:20px auto 12px;
+  overflow:hidden;
+  background:#1c252e;
+  border-radius:99px;
+}
+.splash-line span{
+  display:block;
+  width:35%;
+  height:100%;
+  background:linear-gradient(90deg,transparent,#27e5df,transparent);
+  animation:splashLoad 1.35s ease-in-out infinite;
+}
+.splash-status{
+  color:#657382;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.34em;
+}
+@keyframes splashIn{
+  from{opacity:0;transform:translateY(15px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+@keyframes logoFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+@keyframes splashPulse{
+  0%,100%{opacity:.65;transform:scale(.94)}
+  50%{opacity:1;transform:scale(1.04)}
+}
+@keyframes splashLoad{
+  0%{transform:translateX(-170%)}
+  100%{transform:translateX(500%)}
+}
+
+/* Tablet / iPad landscape */
+@media (min-width:761px) and (max-width:1180px){
+  .sidebar{width:94px;padding-top:calc(19px + var(--safe-top))}
+  .main{margin-left:94px}
+  .topbar{padding-left:26px;padding-right:26px}
+  .container{max-width:1400px;padding-left:26px;padding-right:26px}
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .form-layout{grid-template-columns:minmax(0,1fr) 360px}
+  .service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .customer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* iPad portrait: comfortable touch targets */
+@media (min-width:761px) and (max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .topbar{padding-top:var(--safe-top);height:calc(78px + var(--safe-top))}
+  .container{padding:22px 22px calc(34px + var(--safe-bottom))}
+  .mobile-nav{
+    display:flex;
+    position:fixed;
+    left:16px;right:16px;
+    bottom:calc(12px + var(--safe-bottom));
+    background:rgba(13,18,24,.94);
+    backdrop-filter:blur(22px);
+    border:1px solid #28333e;
+    border-radius:20px;
+    padding:7px;
+    z-index:50;
+    gap:4px;
+    box-shadow:0 20px 55px rgba(0,0,0,.45);
+  }
+  .mobile-nav .nav-btn{
+    flex:1;margin:0;padding:10px 7px;
+    justify-content:center;flex-direction:column;gap:4px;
+    font-size:9px;text-align:center;
+  }
+  .mobile-nav .nav-btn svg{width:18px;height:18px}
+  .form-layout{grid-template-columns:1fr}
+  .cart{position:static}
+  .cart-card{position:sticky;bottom:78px;z-index:10}
+}
+
+/* Touch-sized controls on iPad */
+@media (min-width:761px){
+  .nav-btn{min-height:46px}
+  .primary,.secondary,.icon-btn,.filter-btn,.tiny{min-height:42px}
+  .service-card{min-height:155px}
+  .extra{min-height:100px}
+  .check{min-height:46px}
+  .close{min-width:42px;min-height:42px}
+}
+
+/* iPhone remains compact */
+@media(max-width:760px){
+  .splash-logo{width:min(360px,78vw)}
+  .splash-name{font-size:17px}
+  .topbar{padding-top:var(--safe-top);height:calc(68px + var(--safe-top))}
+  .container{padding-bottom:calc(90px + var(--safe-bottom))}
+}
+
+</style>
+</head>
+<body>
+
+<div id="splashScreen" class="splash-screen" aria-label="D-Tail Studio betöltése">
+  <div class="splash-glow"></div>
+  <div class="splash-content">
+    <img src="assets/logo.png" class="splash-logo" alt="D-Tail Studio">
+    <div class="splash-name">D-TAIL <span>STUDIO</span></div>
+    <div class="splash-line"><span></span></div>
+    <div class="splash-status">BETÖLTÉS</div>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark"><img src="assets/logo.png" alt="D-Tail Studio"></div>
+    <div class="brand-text"><div class="brand-name">D-TAIL</div><div class="brand-sub">STUDIO</div></div>
+  </div>
+  <div class="nav-label">Workspace</div>
+  <button class="nav-btn active" data-view="dashboard" onclick="navigate('dashboard')"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>Áttekintés</button>
+  <button class="nav-btn" data-view="new" onclick="navigate('new')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Új munkalap</button>
+  <button class="nav-btn" data-view="jobs" onclick="navigate('jobs')"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Munkák</button>
+  <button class="nav-btn" data-view="customers" onclick="navigate('customers')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"/></svg>Ügyfelek</button>
+  <button class="nav-btn" data-view="prices" onclick="navigate('prices')"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Árlista</button>
+  <div class="sidebar-foot"><strong>© D-Tail Studio</strong><span>A részletek számítanak.</span></div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div class="page-title"><h1 id="pageTitle">Áttekintés</h1><p id="pageSub">A részletek számítanak.</p></div>
+  <div class="top-actions"><button class="icon-btn" title="Adatok" onclick="openDataModal()"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg></button><button class="secondary" onclick="navigate('jobs')">Munkák</button><button class="primary" onclick="navigate('new')">+ Új munkalap</button></div>
+</header>
+
+<div class="container">
+<section class="view active" id="view-dashboard">
+  <div class="kpis">
+    <div class="card kpi"><div class="kpi-label">E havi bevétel</div><div class="kpi-value" id="kRevenue">0 Ft</div><div class="kpi-foot">lezárt munkákból</div></div>
+    <div class="card kpi"><div class="kpi-label">Lezárt munkák</div><div class="kpi-value" id="kClosed">0</div><div class="kpi-foot">összes lezárt munka</div></div>
+    <div class="card kpi"><div class="kpi-label">Átlagos kosár</div><div class="kpi-value" id="kAvg">0 Ft</div><div class="kpi-foot">lezárt munkák átlaga</div></div>
+    <div class="card kpi"><div class="kpi-label">Nyitott érték</div><div class="kpi-value" id="kOpen">0 Ft</div><div class="kpi-foot">még nem lezárt munkák</div></div>
+  </div>
+  <div class="section-head"><h2>Legutóbbi munkák</h2><span id="dashDate"></span></div>
+  <div class="grid-2">
+    <div class="card panel">
+      <div class="panel-head"><strong>Aktív munkák</strong><span id="activeCount">0</span></div>
+      <div class="list" id="activeList"></div>
+    </div>
+    <div class="card panel">
+      <div class="panel-head"><strong>Gyorsindítás</strong><span>2 koppintás</span></div>
+      <div class="quick-grid">
+        <button class="quick-card" onclick="startService('Fresh Interior')"><div class="quick-icon">F</div><div><strong>Fresh Interior</strong><span>19 990 Ft · gyors indulás</span></div></button>
+        <button class="quick-card" onclick="startService('Deep Interior')"><div class="quick-icon">D</div><div><strong>Deep Interior</strong><span>39 990 Ft-tól · mélytisztítás</span></div></button>
+        <button class="quick-card" onclick="navigate('jobs')"><div class="quick-icon">↗</div><div><strong>Lezárt munkák</strong><span>Korábbi munkalapok megnyitása</span></div></button>
+      </div>
+    </div>
+  </div>
+  <div class="section-head"><h2>Legutóbbi lezártak</h2><span>Kattints a részletekhez</span></div>
+  <div class="card panel"><div class="list" id="closedPreview"></div></div>
+</section>
+
+<section class="view" id="view-new">
+  <div class="form-layout">
+    <div class="form-stack">
+      <div class="card form-card">
+        <div class="step"><div class="step-no">01</div><strong>Ügyfél & autó</strong><span>alapadatok</span></div>
+        <div class="field-grid">
+          <div class="field"><label>Ügyfél neve</label><input id="fName" placeholder="Pl. Kovács Péter"></div>
+          <div class="field"><label>Telefonszám</label><input id="fPhone" placeholder="+36 30 ..."></div>
+          <div class="field"><label>E-mail</label><input id="fEmail" placeholder="email@cím.hu"></div>
+          <div class="field"><label>Rendszám</label><input id="fPlate" placeholder="ABC-123"></div>
+          <div class="field"><label>Márka</label><input id="fMake" placeholder="Audi"></div>
+          <div class="field"><label>Modell</label><input id="fModel" placeholder="A6 C7"></div>
+          <div class="field"><label>Évjárat</label><input id="fYear" type="number" placeholder="2016"></div>
+          <div class="field"><label>Kilométeróra</label><input id="fKm" type="number" placeholder="142000"></div>
+        </div>
+      </div>
+
+      <div class="card form-card">
+        <div class="step"><div class="step-no">02</div><strong>Szolgáltatás</strong><span>egy alapcsomag</span></div>
+        <div class="service-grid">
+          <div class="service-card" data-name="Fresh Interior" data-price="19990" onclick="chooseService(this)">
+            <div class="service-title"><strong>Fresh Interior</strong><span>19 990 Ft</span></div>
+            <div class="service-desc">Teljes belső frissítés: porszívózás, műanyagok, ajtókárpitok, üvegek, küszöbök, rekeszek és alap illatosítás.</div>
+            <div class="select-badge">+</div>
+          </div>
+          <div class="service-card" data-name="Deep Interior" data-price="39990" onclick="chooseService(this)">
+            <div class="service-title"><strong>Deep Interior</strong><span>39 990 Ft-tól</span></div>
+            <div class="service-desc">Mélytisztítás: Tornador, extrakció, foltkezelés, részletes műanyag- és bőrápolás, övek, tetőkárpit és csomagtér.</div>
+            <div class="select-badge">+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card form-card">
+        <div class="step"><div class="step-no">03</div><strong>Extrák</strong><span>csak tényleges pluszmunka</span></div>
+        <div class="extra-grid" id="extraGrid"></div>
+      </div>
+
+      <div class="card form-card">
+        <div class="step"><div class="step-no">04</div><strong>Állapot & átadás</strong><span>munkalap</span></div>
+        <div class="field"><label>Megjegyzés</label><textarea id="fNotes" placeholder="Pl. erős dohányszag, jobb hátsó ülésen folt, különösen szennyezett ajtókéregek..."></textarea></div>
+        <div class="checks">
+          <label class="check"><input id="cBefore" type="checkbox"> BEFORE fotók</label>
+          <label class="check"><input id="cDamage" type="checkbox"> Sérülések rögzítve</label>
+          <label class="check"><input id="cAfter" type="checkbox"> AFTER fotók</label>
+          <label class="check"><input id="cHandover" type="checkbox"> Ügyfél átvette</label>
+        </div>
+      </div>
+    </div>
+
+    <aside class="cart">
+      <div class="card cart-card">
+        <div class="cart-header"><h3>Rendelés</h3><span class="cart-count" id="cartCount">0 tétel</span></div>
+        <div class="cart-items" id="cartItems"><div class="empty">Válassz egy alapcsomagot.<br>A kiválasztott tételeket itt látod.</div></div>
+        <div class="totals">
+          <div class="total-line"><span>Alapszolgáltatás</span><strong id="cartBase">0 Ft</strong></div>
+          <div class="total-line"><span>Extrák</span><strong id="cartExtras">0 Ft</strong></div>
+          <div class="field" style="margin-top:12px"><label>Kedvezmény</label><input id="fDiscount" type="number" min="0" value="0" oninput="renderCart()"></div>
+          <div class="total-line" style="margin-top:12px;padding-top:12px;border-top:1px solid #202a34"><span>Végösszeg</span><strong class="grand" id="cartTotal">0 Ft</strong></div>
+        </div>
+        <button class="primary save-btn" onclick="saveJob()">Munkalap mentése</button>
+        <button class="secondary save-btn" onclick="resetForm()" style="margin-top:8px">Üresítés</button>
+        <div class="hint">Mentéskor a munka „Nyitott” státuszban kerül a Munkák közé. A lezárás külön történik a munkalap részleteinél.</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="view" id="view-jobs">
+  <div class="toolbar">
+    <div class="search"><input id="jobSearch" placeholder="Keresés ügyfél, rendszám, munkalap vagy szolgáltatás alapján..." oninput="renderJobs()"></div>
+    <button class="filter-btn active" data-filter="all" onclick="setJobFilter('all')">Mind</button>
+    <button class="filter-btn" data-filter="open" onclick="setJobFilter('open')">Nyitott</button>
+    <button class="filter-btn" data-filter="closed" onclick="setJobFilter('closed')">Lezárt</button>
+  </div>
+  <div class="card panel"><div class="jobs-wrap" id="jobsList"></div></div>
+</section>
+
+<section class="view" id="view-customers">
+  <div class="toolbar"><div class="search"><input id="customerSearch" placeholder="Keresés név, telefonszám vagy rendszám alapján..." oninput="renderCustomers()"></div></div>
+  <div class="customer-grid" id="customerGrid"></div>
+</section>
+
+<section class="view" id="view-prices">
+  <div class="prices" id="priceGrid"></div>
+  <div class="note-box">Az árlista az aktuális D-Tail szolgáltatási struktúrát követi. Az alapár nem autótípusonként változik; tényleges pluszmunka esetén extra vagy egyedi ár kerül a munkalapra.</div>
+</section>
+</div>
+</main>
+</div>
+
+<div class="mobile-nav">
+  <button class="nav-btn active" data-view="dashboard" onclick="navigate('dashboard')"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>Home</button>
+  <button class="nav-btn" data-view="new" onclick="navigate('new')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Új</button>
+  <button class="nav-btn" data-view="jobs" onclick="navigate('jobs')"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Munkák</button>
+  <button class="nav-btn" data-view="customers" onclick="navigate('customers')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"/></svg>Ügyfelek</button>
+</div>
+
+<div class="modal-backdrop" id="jobModal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div><h3 id="modalTitle">Munkalap</h3><p id="modalSub"></p></div>
+      <button class="close" onclick="closeJobModal()">×</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="customerModal" onclick="closeCustomerModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head"><div><h3 id="customerTitle">Ügyfél</h3><p id="customerSub"></p></div><button class="close" onclick="closeCustomerModal()">×</button></div>
+    <div id="customerBody"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="customExtraModal" onclick="closeExtraModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head"><div><h3>Egyedi extra</h3><p>Add meg a tényleges pluszmunka összegét.</p></div><button class="close" onclick="closeExtraModal()">×</button></div>
+    <div style="margin-top:18px" class="field"><label>Megnevezés</label><input id="customExtraName" placeholder="Pl. extrém szennyeződés kezelése"></div>
+    <div class="field"><label>Összeg (Ft)</label><input id="customExtraPrice" type="number" min="0" placeholder="15000"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button class="secondary" onclick="closeExtraModal()">Mégse</button><button class="primary" onclick="addCustomExtra()">Hozzáadás</button></div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="dataModal" onclick="closeDataModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div><h3>Adatok & rendszer</h3><p>Helyi D-Tail adatkezelés</p></div>
+      <button class="close" onclick="closeDataModal()">×</button>
+    </div>
+    <div class="detail-card" style="margin-top:17px">
+      <h4>Biztonsági mentés</h4>
+      <div class="detail-main">Munkák és ügyféladatok exportálása</div>
+      <div class="detail-sub">A mentés egyetlen JSON fájl. Ezzel később ugyanarra vagy másik iPadre vissza tudod tölteni az adatokat.</div>
+    </div>
+    <div class="data-actions">
+      <button class="data-action" onclick="exportBackup()"><strong>↓ Biztonsági mentés</strong><span>JSON fájl letöltése</span></button>
+      <button class="data-action" onclick="document.getElementById('backupInput').click()"><strong>↑ Biztonsági mentés visszaállítása</strong><span>Korábbi D-Tail mentés betöltése</span></button>
+    </div>
+    <input id="backupInput" type="file" accept="application/json,.json" style="display:none" onchange="importBackup(event)">
+    <div class="detail-card" style="margin-top:12px">
+      <h4>Rendszer</h4>
+      <div class="detail-main" id="dataStats">—</div>
+      <div class="detail-sub">Az adatok ezen az eszközön, ebben a böngészőben vannak tárolva.</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const EXTRA_DATA=[
+ {name:"Extra kárpittisztítás / extrakció",price:5000,label:"+5 000 Ft"},
+ {name:"Állatszőr eltávolítás",price:9990,label:"+9 990 Ft-tól"},
+ {name:"Ózonos szagtalanítás",price:2000,label:"+2 000 Ft"},
+ {name:"Csomagtér mélytisztítás",price:4990,label:"+4 990 Ft"},
+ {name:"Erős / speciális foltkezelés",price:4990,label:"+4 990 Ft-tól"}
+];
+const PRICE_DATA=[
+ ["Fresh Interior","19 990 Ft"],["Deep Interior","39 990 Ft-tól"],
+ ...EXTRA_DATA.map(x=>[x.name,x.label]),["Egyedi extra / extrém állapot","egyedi ár"]
+];
+
+function normalizeJobs(raw){
+ return (Array.isArray(raw)?raw:[]).map(j=>{
+   const createdAt=j.createdAt||j.date||new Date().toISOString();
+   return {
+     id:j.id||("DT-"+String(Date.now()).slice(-7)),
+     createdAt, updatedAt:j.updatedAt||createdAt, closedAt:j.closedAt||"",
+     status:j.status==="Lezárt"?"Lezárt":"Nyitott",
+     paid:Boolean(j.paid), paymentMethod:j.paymentMethod||"",
+     paidAt:j.paidAt||"",
+     client:j.client||{name:j.clientName||"",phone:j.phone||"",email:j.email||""},
+     car:j.car||{plate:j.plate||"",make:j.make||"",model:j.model||"",year:j.year||"",km:j.km||""},
+     service:j.service||"Fresh Interior", base:Number(j.base)||0,
+     extras:Array.isArray(j.extras)?j.extras.map(x=>({name:x.name||"Extra",price:Number(x.price)||0,custom:Boolean(x.custom)})):[],
+     discount:Number(j.discount)||0, total:Number(j.total)||0,
+     notes:j.notes||"",
+     checks:Object.assign({before:false,damage:false,after:false,handover:false},j.checks||{})
+   };
+ });
+}
+let state={
+ service:null, extras:[], customExtras:[], jobs:normalizeJobs(loadJSON("dtail_jobs",[])), filter:"all"
+};
+
+function loadJSON(key,fallback){
+ try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
+}
+function persist(){
+ const clean=state.jobs.map(j=>{const x={...j};delete x._selectedPayment;return x});
+ localStorage.setItem("dtail_jobs",JSON.stringify(clean));
+}
+function fmt(n){return new Intl.NumberFormat("hu-HU").format(Math.round(Number(n)||0))+" Ft"}
+function initials(name){return (name||"—").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase()}
+function dateHU(iso){return new Intl.DateTimeFormat("hu-HU",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso))}
+function monthKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
+function jobTotal(j){return Number(j.total)||0}
+function isClosed(j){return j.status==="Lezárt"}
+function showToast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),2100)}
+function navigate(view){
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+ document.getElementById("view-"+view).classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+ const map={
+  dashboard:["Áttekintés","A részletek számítanak."],
+  new:["Új munkalap","Szolgáltatásból kész, követhető munkafolyamat."],
+  jobs:["Munkák","Nyitott és lezárt munkalapok egy helyen."],
+  customers:["Ügyfelek","Ügyfélelőzmények és visszatérő munkák."],
+  prices:["Árlista","D-Tail Studio · szolgáltatások és árak."]
+ };
+ document.getElementById("pageTitle").textContent=map[view][0];
+ document.getElementById("pageSub").textContent=map[view][1];
+ if(view==="dashboard")renderDashboard();
+ if(view==="jobs")renderJobs();
+ if(view==="customers")renderCustomers();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function startService(name){
+ navigate("new");
+ setTimeout(()=>{const el=[...document.querySelectorAll(".service-card")].find(x=>x.dataset.name===name);if(el)chooseService(el)},30);
+}
+function chooseService(el){
+ state.service={name:el.dataset.name,price:Number(el.dataset.price)};
+ document.querySelectorAll(".service-card").forEach(x=>x.classList.toggle("selected",x===el));
+ renderCart();
+}
+function renderExtras(){
+ const g=document.getElementById("extraGrid");
+ const base=EXTRA_DATA.map((x,i)=>`<div class="extra ${state.extras.some(e=>e.sourceIndex===i)?"selected":""}" onclick="toggleExtra(${i})">
+  <div class="extra-check">✓</div><div class="extra-name">${x.name}</div><div class="extra-price">${x.label}</div>
+ </div>`).join("");
+ const custom=state.customExtras.map((x,i)=>`<div class="extra selected" onclick="removeCustomExtra(${i})">
+  <div class="extra-check">×</div><div class="extra-name">${x.name}</div><div class="extra-price">${fmt(x.price)} · kopp a törléshez</div>
+ </div>`).join("");
+ const add=`<div class="extra" onclick="openExtraModal()" style="display:grid;place-items:center;min-height:86px"><div style="text-align:center"><div style="font-size:18px;color:var(--cyan)">+</div><div class="extra-name" style="padding:0">Egyedi extra</div></div></div>`;
+ g.innerHTML=base+custom+add;
+}
+function toggleExtra(i){
+ const at=state.extras.findIndex(e=>e.sourceIndex===i);
+ if(at>-1)state.extras.splice(at,1);else state.extras.push({sourceIndex:i,...EXTRA_DATA[i]});
+ renderExtras();renderCart();
+}
+function openExtraModal(){
+ document.getElementById("customExtraName").value="";
+ document.getElementById("customExtraPrice").value="";
+ document.getElementById("customExtraModal").classList.add("show");
+ setTimeout(()=>document.getElementById("customExtraName").focus(),30);
+}
+function closeExtraModal(e){if(!e||e.target.id==="customExtraModal")document.getElementById("customExtraModal").classList.remove("show")}
+function addCustomExtra(){
+ const name=document.getElementById("customExtraName").value.trim(), price=Number(document.getElementById("customExtraPrice").value);
+ if(!name||price<=0){showToast("Add meg a megnevezést és az összeget.");return}
+ state.customExtras.push({name,price});
+ document.getElementById("customExtraModal").classList.remove("show");renderExtras();renderCart();showToast("Egyedi extra hozzáadva");
+}
+function removeCustomExtra(i){
+ state.customExtras.splice(i,1);renderExtras();renderCart();
+}
+function renderCart(){
+ const all=[];
+ if(state.service)all.push({name:state.service.name,price:state.service.price,base:true});
+ state.extras.forEach(e=>all.push({name:e.name,price:e.price,sourceIndex:e.sourceIndex}));
+ state.customExtras.forEach((e,i)=>all.push({name:e.name,price:e.price,customIndex:i}));
+ document.getElementById("cartCount").textContent=all.length+" tétel";
+ document.getElementById("cartItems").innerHTML=all.length?all.map((x,i)=>`<div class="cart-item"><div><strong>${x.name}</strong><small>${fmt(x.price)}</small></div>${x.base?"":"<button class='remove' onclick='"+(x.customIndex!==undefined?`removeCustomExtra(${x.customIndex})`:`toggleExtra(${state.extras[i-1].sourceIndex})`)+"'>×</button>"}</div>`).join(""):'<div class="empty">Válassz egy alapcsomagot.<br>A kiválasztott tételeket itt látod.</div>';
+ const base=state.service?.price||0, extra=state.extras.reduce((s,x)=>s+x.price,0)+state.customExtras.reduce((s,x)=>s+x.price,0), discount=Math.max(0,Number(document.getElementById("fDiscount").value)||0);
+ document.getElementById("cartBase").textContent=fmt(base);
+ document.getElementById("cartExtras").textContent=fmt(extra);
+ document.getElementById("cartTotal").textContent=fmt(Math.max(0,base+extra-discount));
+}
+function formVal(id){return document.getElementById(id).value.trim()}
+function resetForm(){
+ state.service=null;state.extras=[];state.customExtras=[];
+ ["fName","fPhone","fEmail","fPlate","fMake","fModel","fYear","fKm","fNotes"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("fDiscount").value=0;
+ ["cBefore","cDamage","cAfter","cHandover"].forEach(id=>document.getElementById(id).checked=false);
+ document.querySelectorAll(".service-card").forEach(x=>x.classList.remove("selected"));
+ renderExtras();renderCart();
+}
+function nowISO(){return new Date().toISOString()}
+function saveJob(){
+ if(!state.service){showToast("Válassz alapcsomagot.");return}
+ if(!formVal("fName")){showToast("Add meg az ügyfél nevét.");return}
+ const extras=[...state.extras.map(x=>({name:x.name,price:x.price})),...state.customExtras.map(x=>({name:x.name,price:x.price,custom:true}))];
+ const discount=Math.max(0,Number(document.getElementById("fDiscount").value)||0);
+ const base=state.service.price, total=Math.max(0,base+extras.reduce((s,x)=>s+x.price,0)-discount);
+ const job={
+  id:"DT-"+String(Date.now()).slice(-7),createdAt:nowISO(),updatedAt:nowISO(),status:"Nyitott",paid:false,paymentMethod:"",
+  client:{name:formVal("fName"),phone:formVal("fPhone"),email:formVal("fEmail")},
+  car:{plate:formVal("fPlate").toUpperCase(),make:formVal("fMake"),model:formVal("fModel"),year:formVal("fYear"),km:formVal("fKm")},
+  service:state.service.name,base,extras,discount,total,
+  notes:formVal("fNotes"),
+  checks:{before:document.getElementById("cBefore").checked,damage:document.getElementById("cDamage").checked,after:document.getElementById("cAfter").checked,handover:document.getElementById("cHandover").checked}
+ };
+ state.jobs.unshift(job);persist();showToast(job.id+" · munkalap létrehozva");resetForm();navigate("jobs");
+}
+function renderDashboard(){
+ const now=new Date(), mk=monthKey(now);
+ const closed=state.jobs.filter(isClosed), monthClosed=closed.filter(j=>monthKey(new Date(j.closedAt||j.updatedAt||j.createdAt))===mk);
+ const rev=monthClosed.reduce((s,j)=>s+jobTotal(j),0), openVal=state.jobs.filter(j=>!isClosed(j)).reduce((s,j)=>s+jobTotal(j),0);
+ document.getElementById("kRevenue").textContent=fmt(rev);
+ document.getElementById("kClosed").textContent=closed.length;
+ document.getElementById("kAvg").textContent=fmt(closed.length?closed.reduce((s,j)=>s+jobTotal(j),0)/closed.length:0);
+ document.getElementById("kOpen").textContent=fmt(openVal);
+ document.getElementById("dashDate").textContent=new Intl.DateTimeFormat("hu-HU",{year:"numeric",month:"long",day:"numeric"}).format(now);
+ const active=state.jobs.filter(j=>!isClosed(j)).slice(0,7);document.getElementById("activeCount").textContent=active.length;
+ document.getElementById("activeList").innerHTML=active.length?active.map(jobRowHTML).join(""):'<div class="empty">Nincs nyitott munka.</div>';
+ const latest=closed.slice(0,6);document.getElementById("closedPreview").innerHTML=latest.length?latest.map(jobRowHTML).join(""):'<div class="empty">Még nincs lezárt munkád.</div>';
+}
+function jobRowHTML(j){
+ const status=isClosed(j)?'<span class="chip green">LEZÁRT</span>':(j.paid?'<span class="chip cyan">FIZETVE</span>':'<span class="chip amber">NYITOTT</span>');
+ return `<div class="row clickable" onclick='openJobModal("${j.id}")'>
+   <div class="identity"><div class="avatar">${initials(j.client.name)}</div><div style="min-width:0"><div class="row-title">${j.client.name} · ${[j.car.make,j.car.model].filter(Boolean).join(" ")}</div><div class="row-sub">${j.id} · ${dateHU(j.closedAt||j.createdAt)} · ${j.car.plate||"nincs rendszám"}</div></div></div>
+   <div class="row-right"><div class="amount">${fmt(j.total)}</div>${status}</div>
+ </div>`;
+}
+function setJobFilter(f){
+ state.filter=f;document.querySelectorAll("#view-jobs .filter-btn").forEach(x=>x.classList.toggle("active",x.dataset.filter===f));renderJobs();
+}
+function renderJobs(){
+ const q=(document.getElementById("jobSearch").value||"").toLowerCase().trim();
+ const openCount=state.jobs.filter(j=>!isClosed(j)).length;
+ const closedCount=state.jobs.filter(isClosed).length;
+ const allBtns=document.querySelectorAll("#view-jobs .filter-btn");
+ allBtns.forEach(btn=>{
+   const f=btn.dataset.filter;
+   btn.textContent=(f==="all"?"Mind":f==="open"?"Nyitott":"Lezárt")+" · "+(f==="all"?state.jobs.length:f==="open"?openCount:closedCount);
+ });
+ let arr=state.jobs.filter(j=>{
+   const match=[j.id,j.client.name,j.client.phone,j.car.plate,j.car.make,j.car.model,j.service].join(" ").toLowerCase().includes(q);
+   const f=state.filter;
+   return match&&(f==="all"||(f==="closed"&&isClosed(j))||(f==="open"&&!isClosed(j)));
+ });
+ const list=document.getElementById("jobsList");
+ if(!arr.length){list.innerHTML='<div class="empty">Nincs a szűrésnek megfelelő munkalap.</div>';return}
+ list.innerHTML=arr.map(j=>`<div class="job-card" onclick='openJobModal("${j.id}")'>
+   <div><div class="job-service">${j.client.name} · ${[j.car.make,j.car.model].filter(Boolean).join(" ")}</div><div class="job-id">${j.id} · ${dateHU(j.createdAt)} · ${j.car.plate||"—"}</div><div class="job-meta"><span class="job-date">${j.service}</span>${isClosed(j)?'<span class="chip green">LEZÁRT</span>':(j.paid?'<span class="chip cyan">FIZETVE</span>':'<span class="chip amber">NYITOTT</span>')}</div></div>
+   <div class="job-total">${fmt(j.total)}</div>
+   <div class="job-actions"><button class="tiny" onclick='event.stopPropagation();openJobModal("${j.id}")'>Megnyitás</button></div>
+ </div>`).join("");
+}
+function buildCustomerIndex(){
+ const map=new Map();
+ state.jobs.forEach(j=>{
+  const key=(j.client.name||"").toLowerCase()+"|"+(j.car.plate||"").toLowerCase();
+  if(!map.has(key))map.set(key,{key,name:j.client.name,phone:j.client.phone,email:j.client.email,car:j.car,jobs:[]});
+  map.get(key).jobs.push(j);
+ });
+ return [...map.values()].sort((a,b)=>(b.jobs[0]?.createdAt||"").localeCompare(a.jobs[0]?.createdAt||""));
+}
+function renderCustomers(){
+ const q=(document.getElementById("customerSearch").value||"").toLowerCase().trim();
+ const arr=buildCustomerIndex().filter(c=>[c.name,c.phone,c.email,c.car.plate,c.car.make,c.car.model].join(" ").toLowerCase().includes(q));
+ const grid=document.getElementById("customerGrid");
+ if(!arr.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Nincs találat.</div>';return}
+ grid.innerHTML=arr.map(c=>{
+  const closed=c.jobs.filter(isClosed),spent=closed.reduce((s,j)=>s+jobTotal(j),0),last=c.jobs[0]?.createdAt;
+  return `<div class="customer-card" onclick='openCustomerModal(${JSON.stringify(c.key)})'><div class="customer-top"><div class="avatar">${initials(c.name)}</div><div><strong>${c.name}</strong><p>${[c.car.make,c.car.model].filter(Boolean).join(" ")} · ${c.car.plate||"—"}</p></div></div><div class="customer-stat"><span>${c.jobs.length} látogatás</span><b>${fmt(spent)}</b></div><div style="margin-top:7px;font-size:9px;color:#617082">utolsó: ${last?dateHU(last):"—"}</div></div>`;
+ }).join("");
+}
+function openCustomerModal(key){
+ const c=buildCustomerIndex().find(x=>x.key===key);if(!c)return;
+ document.getElementById("customerTitle").textContent=c.name;
+ document.getElementById("customerSub").textContent=[c.car.make,c.car.model,c.car.plate].filter(Boolean).join(" · ");
+ const spent=c.jobs.filter(isClosed).reduce((s,j)=>s+jobTotal(j),0);
+ document.getElementById("customerBody").innerHTML=`<div class="detail-grid">
+  <div class="detail-card"><h4>Kapcsolat</h4><div class="detail-main">${c.phone||"—"}</div><div class="detail-sub">${c.email||"—"}</div></div>
+  <div class="detail-card"><h4>Összes költés</h4><div class="detail-main">${fmt(spent)}</div><div class="detail-sub">${c.jobs.length} munkalap</div></div>
+ </div>
+ <div class="modal-section"><div class="modal-section-title">Munkatörténet</div><div class="detail-items">${c.jobs.map(j=>`<div class="detail-item" style="cursor:pointer" onclick='closeCustomerModal();openJobModal("${j.id}")'><span>${j.service} · ${dateHU(j.createdAt)} · ${isClosed(j)?"Lezárt":"Nyitott"}</span><span>${fmt(j.total)}</span></div>`).join("")}</div></div>`;
+ document.getElementById("customerModal").classList.add("show");
+}
+function closeCustomerModal(e){if(!e||e.target.id==="customerModal")document.getElementById("customerModal").classList.remove("show")}
+function openJobModal(id){
+ const j=state.jobs.find(x=>x.id===id);if(!j)return;
+ window.__currentJob=id;
+ document.getElementById("modalTitle").textContent=j.client.name+" · "+([j.car.make,j.car.model].filter(Boolean).join(" ")||"Autó");
+ document.getElementById("modalSub").textContent=j.id+" · "+dateHU(j.createdAt)+" · "+(j.car.plate||"rendszám nélkül");
+ document.getElementById("modalBody").innerHTML=`
+  <div class="detail-grid">
+   <div class="detail-card"><h4>Ügyfél</h4><div class="detail-main">${j.client.name}</div><div class="detail-sub">${j.client.phone||"—"}<br>${j.client.email||"—"}</div></div>
+   <div class="detail-card"><h4>Autó</h4><div class="detail-main">${[j.car.make,j.car.model].filter(Boolean).join(" ")||"—"}</div><div class="detail-sub">${j.car.plate||"—"} · ${j.car.year||"—"} · ${j.car.km||"—"} km</div></div>
+  </div>
+  <div class="modal-section"><div class="modal-section-title">Tételek</div><div class="detail-items">
+    <div class="detail-item"><span>${j.service}</span><span>${fmt(j.base)}</span></div>
+    ${j.extras.map(x=>`<div class="detail-item"><span>${x.name}</span><span>${fmt(x.price)}</span></div>`).join("")}
+    ${j.discount?`<div class="detail-item"><span>Kedvezmény</span><span>−${fmt(j.discount)}</span></div>`:""}
+    <div class="detail-item" style="border-color:#31404a;background:#10171e"><span style="font-weight:900">Végösszeg</span><span style="font-size:13px">${fmt(j.total)}</span></div>
+  </div></div>
+  <div class="modal-section"><div class="modal-section-title">Munkafolyamat</div>
+    <div class="checks">
+      <label class="check"><input type="checkbox" ${j.checks?.before?"checked":""} onchange="updateCheck('${j.id}','before',this.checked)"> BEFORE fotók</label>
+      <label class="check"><input type="checkbox" ${j.checks?.damage?"checked":""} onchange="updateCheck('${j.id}','damage',this.checked)"> Sérülések rögzítve</label>
+      <label class="check"><input type="checkbox" ${j.checks?.after?"checked":""} onchange="updateCheck('${j.id}','after',this.checked)"> AFTER fotók</label>
+      <label class="check"><input type="checkbox" ${j.checks?.handover?"checked":""} onchange="updateCheck('${j.id}','handover',this.checked)"> Ügyfél átvette</label>
+    </div>
+  </div>
+  ${j.notes?`<div class="modal-section"><div class="modal-section-title">Megjegyzés</div><div class="detail-card" style="color:#aeb8c3;font-size:10px;line-height:1.6">${escapeHTML(j.notes)}</div></div>`:""}
+ `;
+ const pay=j.paid?`<span class="chip green">FIZETVE · ${j.paymentMethod||"—"}</span>`:`<span class="chip amber">FIZETÉSRE VÁR</span>`;
+ const paymentBlock=!j.paid?`<div style="width:100%;margin-top:9px"><div class="modal-section-title">Fizetés rögzítése</div><div class="payment-grid">
+   <button class="payment-btn ${j._selectedPayment==="Készpénz"?"selected":""}" onclick="selectPayment('${j.id}','Készpénz')">Készpénz</button>
+   <button class="payment-btn ${j._selectedPayment==="Átutalás"?"selected":""}" onclick="selectPayment('${j.id}','Átutalás')">Átutalás</button>
+   <button class="payment-btn ${j._selectedPayment==="Bankkártya"?"selected":""}" onclick="selectPayment('${j.id}','Bankkártya')">Bankkártya</button>
+ </div></div>`:"";
+ document.getElementById("modalActions").innerHTML=`
+  <div class="action-left" style="width:100%;flex-wrap:wrap">${pay}${j.closedAt?`<span class="chip gray">${dateHU(j.closedAt)} · lezárva</span>`:""}${paymentBlock}</div>
+  <div class="action-right">
+    ${!j.paid?`<button class="primary" onclick="recordPayment('${j.id}')">Fizetés mentése</button>`:""}
+    ${!isClosed(j)?`<button class="secondary" onclick="closeJob('${j.id}')">Munkalap lezárása</button>`:`<button class="secondary" onclick="reopenJob('${j.id}')">Újranyitás</button>`}
+  </div>`;
+ document.getElementById("jobModal").classList.add("show");
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function updateCheck(id,key,val){
+ const j=state.jobs.find(x=>x.id===id);if(!j)return;
+ j.checks=j.checks||{};j.checks[key]=val;j.updatedAt=nowISO();persist();
+}
+function selectPayment(id,method){
+ const j=state.jobs.find(x=>x.id===id);if(!j)return;
+ j._selectedPayment=method;
+ openJobModal(id);
+}
+function recordPayment(id){
+ const j=state.jobs.find(x=>x.id===id);if(!j)return;
+ const method=j._selectedPayment||j.paymentMethod||"";
+ if(!method){showToast("Válassz fizetési módot.");return}
+ delete j._selectedPayment;
+ j.paid=true;j.paymentMethod=method;j.paidAt=nowISO();j.updatedAt=nowISO();persist();
+ openJobModal(id);renderDashboard();renderJobs();showToast("Fizetés rögzítve · "+method);
+}
+function closeJob(id){
+ const j=state.jobs.find(x=>x.id===id);if(!j)return;
+ if(!j.paid){showToast("Előbb rögzítsd a fizetést.");return}
+ j.status="Lezárt";j.closedAt=nowISO();j.updatedAt=nowISO();persist();openJobModal(id);renderDashboard();renderJobs();showToast("Munkalap lezárva");
+}
+function reopenJob(id){
+ const j=state.jobs.find(x=>x.id===id);if(!j)return;
+ j.status="Nyitott";j.closedAt="";j.updatedAt=nowISO();persist();openJobModal(id);renderDashboard();renderJobs();showToast("Munkalap újranyitva");
+}
+function closeJobModal(e){if(!e||e.target.id==="jobModal")document.getElementById("jobModal").classList.remove("show")}
+function renderPrices(){document.getElementById("priceGrid").innerHTML=PRICE_DATA.map(x=>`<div class="price-card"><strong>${x[0]}</strong><span>${x[1]}</span></div>`).join("")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.querySelectorAll(".modal-backdrop.show").forEach(x=>x.classList.remove("show"))}});
+
+function openDataModal(){
+ const el=document.getElementById("dataStats");
+ const closed=state.jobs.filter(isClosed).length;
+ el.textContent=state.jobs.length+" munkalap · "+closed+" lezárt";
+ document.getElementById("dataModal").classList.add("show");
+}
+function closeDataModal(e){if(!e||e.target.id==="dataModal")document.getElementById("dataModal").classList.remove("show")}
+function exportBackup(){
+ const payload={app:"D-Tail Studio",version:3,exportedAt:new Date().toISOString(),jobs:state.jobs};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="D-Tail-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+ showToast("Biztonsági mentés elkészült");
+}
+function importBackup(event){
+ const file=event.target.files?.[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const data=JSON.parse(reader.result);
+   if(!Array.isArray(data.jobs))throw new Error("invalid");
+   if(!confirm("A jelenlegi munkalapokat lecseréljük a mentésben lévőkre?"))return;
+   state.jobs=normalizeJobs(data.jobs);persist();
+   renderDashboard();renderJobs();renderCustomers();openDataModal();showToast("Mentés visszaállítva");
+  }catch(e){showToast("Érvénytelen D-Tail mentés.");}
+  event.target.value="";
+ };
+ reader.readAsText(file);
+}
+
+
+function dismissSplash(){
+  const splash=document.getElementById("splashScreen");
+  if(!splash)return;
+  setTimeout(()=>splash.classList.add("hide"),650);
+  setTimeout(()=>splash.remove(),1400);
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+ persist();
+ renderExtras();renderCart();renderPrices();renderDashboard();renderJobs();dismissSplash();
+ if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+});
+</script>
+</body>
+</html>
