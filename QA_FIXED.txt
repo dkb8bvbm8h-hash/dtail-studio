@@ -1,0 +1,9 @@
+D-Tail Studio ULTIMATE FIXED
+- AI chat layout constrained and responsive.
+- AI full page uses one-column primary layout to prevent panel drift.
+- Inventory is directly editable in a table.
+- Quantity, unit, minimum and unit price can be entered inline.
+- Status recalculates live while typing.
+- Dashboard inventory cards reflect saved inventory.
+- Inventory value uses qty * unit price.
+- Cache version bumped.

@@ -1,0 +1,9 @@
+{
+  "name": "dtail-studio-ai-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "openai": "^6.0.0"
+  }
+}
