@@ -1,0 +1,25 @@
+D-TAIL STUDIO FINAL QA
+- Splash screen: implemented, animated, brand logo, fade transition.
+- iPad portrait/landscape breakpoints: implemented.
+- Safe-area insets: implemented.
+- iPad Safari input zoom prevention: implemented (16px controls).
+- Touch target sizing: implemented.
+- PWA manifest: implemented.
+- Service worker cache: implemented.
+- Brand assets: logo + 192/512 icons + Apple touch icon.
+- Existing work, payment, close/reopen, customer, search, backup flows preserved.
+
+STARTUP SOUND FIX v5
+- startup.wav is included in assets/
+- iPad/iPhone playback is triggered directly by the first splash touch/pointer gesture.
+- Audio uses playsinline and cache-busting.
+- Service-worker cache version bumped to final-5.
+
+D-TAIL STUDIO 2.0 AI
+- Added D-Tail AI local intelligence panel.
+- Added automatic inventory status cards with green/yellow/red thresholds.
+- Critical inventory uses a subtle red pulse instead of distracting constant flashing.
+- Added local analytics for monthly closed revenue and top service.
+- Added quick AI questions and free-form local query handling.
+- No external API key is embedded; core AI-style intelligence works offline from localStorage.
+- Cache version bumped to dtail-studio-2-0-ai-1.

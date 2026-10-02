@@ -1,0 +1,26 @@
+{
+  "name": "D-Tail Studio",
+  "short_name": "D-Tail",
+  "description": "D-Tail Studio prémium autókozmetikai munkalap és ügyfélkezelő rendszer.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05070a",
+  "theme_color": "#080a0e",
+  "lang": "hu",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
