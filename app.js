@@ -315,7 +315,7 @@ function openDetail(id){
       <button class="secondary" id="detailPay">💳 Fizetés</button>
       <button class="secondary" id="detailTimer">⏱ Munkaidő</button>
       <button class="secondary" id="detailClose">${isClosed(j)?'↩ Újranyitás':'✓ Munkalap lezárása'}</button>
-      <button class="secondary" id="detailPrint">▣ Dizájnos PDF / munkalap</button>
+      <button class="secondary" id="detailPrint">▣ Dizájnos PDF / munkalap</button><button class="secondary danger-btn" id="detailDelete">Munkalap törlése</button>
     </div>
   </div></div>
   <div class="kicker" style="margin-top:18px">Fotódokumentáció</div>
@@ -327,7 +327,7 @@ function openDetail(id){
   $('detailPay').onclick=()=>setPayment(id);
   $('detailTimer').onclick=()=>toggleTimer(id);
   $('detailClose').onclick=()=>closeJob(id);
-  $('detailPrint').onclick=()=>printJob(id);
+  $('detailPrint').onclick=()=>printJob(id);$('detailDelete').onclick=()=>deleteJob(id);
   $('photoInput').onchange=e=>handlePhotos(id,e.target.files);
 }
 
@@ -464,14 +464,45 @@ async function deleteStock(id){if(!confirm('Biztosan törlöd ezt a készlettét
 
 function renderJobs(){
   const q=($('jobSearch').value||'').toLowerCase(),f=$('jobFilter').value||'all';const a=state.jobs.filter(j=>(f==='all'||f==='open'&&!isClosed(j)||f==='closed'&&isClosed(j))&&JSON.stringify(j).toLowerCase().includes(q)).sort((x,y)=>new Date(y.startAt)-new Date(x.startAt));
-  $('jobsTable').innerHTML=a.length?a.map(j=>`<tr><td><b>${esc(j.id)}</b><br><span class="muted">${fmtDate(j.startAt)}</span></td><td><b>${esc(j.customerName)}</b><br><span class="muted">${esc(j.car)} ${j.plate?'· '+esc(j.plate):''}</span></td><td>${esc(j.serviceName)}</td><td>${fmtTime(j.startAt)}–${fmtTime(j.endAt)}</td><td>${money(j.total)}</td><td><span class="badge ${isClosed(j)?'ok':'warn'}">${isClosed(j)?'Lezárt':'Nyitott'}</span></td><td><button class="secondary" data-open-job="${j.id}">Megnyitás</button></td></tr>`).join(''):'<tr><td colspan="7" class="muted">Nincs találat.</td></tr>';
-  document.querySelectorAll('[data-open-job]').forEach(b=>b.onclick=()=>openDetail(b.dataset.openJob));
+  $('jobsTable').innerHTML=a.length?a.map(j=>`<tr><td><b>${esc(j.id)}</b><br><span class="muted">${fmtDate(j.startAt)}</span></td><td><b>${esc(j.customerName)}</b><br><span class="muted">${esc(j.car)} ${j.plate?'· '+esc(j.plate):''}</span></td><td>${esc(j.serviceName)}</td><td>${fmtTime(j.startAt)}–${fmtTime(j.endAt)}</td><td>${money(j.total)}</td><td><span class="badge ${isClosed(j)?'ok':'warn'}">${isClosed(j)?'Lezárt':'Nyitott'}</span></td><td><button class="secondary" data-open-job="${j.id}">Megnyitás</button><button class="secondary danger-btn" data-delete-job="${j.id}">Törlés</button></td></tr>`).join(''):'<tr><td colspan="7" class="muted">Nincs találat.</td></tr>';
+  document.querySelectorAll('[data-open-job]').forEach(b=>b.onclick=()=>openDetail(b.dataset.openJob));document.querySelectorAll('[data-delete-job]').forEach(b=>b.onclick=()=>deleteJob(b.dataset.deleteJob));
 }
 function customerLevel(n){return n>=20?'GOLD':n>=10?'SILVER':n>=5?'BRONZE':'NEW';}
 function buildCustomers(){const map=new Map(state.customers.map(c=>[c.id,{...c,jobs:[],cars:[]}]));for(const car of state.cars){const c=map.get(car.customerId);if(c)c.cars.push(car);}for(const j of state.jobs){const c=map.get(j.customerId)||[...map.values()].find(x=>x.name.toLowerCase()===j.customerName.toLowerCase());if(c)c.jobs.push(j);}return [...map.values()];}
-function renderCustomers(){const q=($('customerSearch').value||'').toLowerCase(),a=buildCustomers().filter(c=>JSON.stringify(c).toLowerCase().includes(q));$('customerTable').innerHTML=a.length?a.map(c=>{const cj=c.jobs.filter(isClosed),sp=cj.reduce((s,j)=>s+j.total,0);return `<tr><td><b>${esc(c.name)}</b><br><span class="muted">${esc(c.phone||'')}</span></td><td>${c.cars.length?c.cars.map(x=>`${esc(x.makeModel)}${x.plate?' · '+esc(x.plate):''}`).join('<br>'):'—'}</td><td>${cj.length}</td><td>${money(sp)}</td><td><span class="badge neutral">${customerLevel(cj.length)}</span></td><td><button class="secondary" data-edit-customer="${c.id}">Megnyitás</button></td></tr>`}).join(''):'<tr><td colspan="6" class="muted">Nincs ügyfél.</td></tr>';document.querySelectorAll('[data-edit-customer]').forEach(b=>b.onclick=()=>openCustomer(b.dataset.editCustomer));}
-function openCustomer(id=null){state.editingCustomerId=id;const c=id?state.customers.find(x=>x.id===id):null;$('customerModalTitle').textContent=c?'Ügyfél szerkesztése':'Új ügyfél';$('cuName').value=c?.name||'';$('cuPhone').value=c?.phone||'';$('cuEmail').value=c?.email||'';$('cuNote').value=c?.note||'';$('customerModal').classList.add('show');}
+function renderCustomers(){const q=($('customerSearch').value||'').toLowerCase(),a=buildCustomers().filter(c=>JSON.stringify(c).toLowerCase().includes(q));$('customerTable').innerHTML=a.length?a.map(c=>{const cj=c.jobs.filter(isClosed),sp=cj.reduce((s,j)=>s+j.total,0);return `<tr><td><b>${esc(c.name)}</b><br><span class="muted">${esc(c.phone||'')}</span></td><td>${c.cars.length?c.cars.map(x=>`${esc(x.makeModel)}${x.plate?' · '+esc(x.plate):''}`).join('<br>'):'—'}</td><td>${cj.length}</td><td>${money(sp)}</td><td><span class="badge neutral">${customerLevel(cj.length)}</span></td><td><button class="secondary" data-edit-customer="${c.id}">Megnyitás</button><button class="secondary danger-btn" data-delete-customer="${c.id}">Törlés</button></td></tr>`}).join(''):'<tr><td colspan="6" class="muted">Nincs ügyfél.</td></tr>';document.querySelectorAll('[data-edit-customer]').forEach(b=>b.onclick=()=>openCustomer(b.dataset.editCustomer));document.querySelectorAll('[data-delete-customer]').forEach(b=>b.onclick=()=>deleteCustomer(b.dataset.deleteCustomer));}
+function openCustomer(id=null){state.editingCustomerId=id;const c=id?state.customers.find(x=>x.id===id):null;$('customerModalTitle').textContent=c?'Ügyfél szerkesztése':'Új ügyfél';$('cuName').value=c?.name||'';$('cuPhone').value=c?.phone||'';$('cuEmail').value=c?.email||'';$('cuNote').value=c?.note||'';$('deleteCustomerBtn')&&($('deleteCustomerBtn').style.display=c?'inline-flex':'none');$('customerModal').classList.add('show');}
 async function saveCustomer(){const c={id:state.editingCustomerId||uid('CU'),name:$('cuName').value.trim()||'Ismeretlen',phone:$('cuPhone').value.trim(),email:$('cuEmail').value.trim(),note:$('cuNote').value.trim(),createdAt:state.editingCustomerId?(state.customers.find(x=>x.id===state.editingCustomerId)?.createdAt||new Date().toISOString()):new Date().toISOString()};try{const saved=state.cloud?await cloudUpsert('customers',c):c;const i=state.customers.findIndex(x=>x.id===c.id);if(i>=0)state.customers[i]=saved;else state.customers.push(saved);saveLocal();closeModal('customerModal');renderAll();toast('Ügyfél mentve');}catch(e){toast('Ügyfél mentési hiba');}}
+
+async function deleteJob(id){
+  const j=state.jobs.find(x=>x.id===id);if(!j)return;
+  if(!confirm('Biztosan törlöd a '+j.id+' munkalapot? Ez a művelet nem vonható vissza.'))return;
+  try{
+    if(isClosed(j)&&j.checklist?.materialUsage?.length){
+      for(const u of j.checklist.materialUsage){
+        const s=state.stock.find(x=>x.id===u.stockId);if(!s)continue;
+        const add=convertQty(Number(u.qty)||0,u.unit,s.unit);s.qty=(Number(s.qty)||0)+add;
+        state.stockMovements.unshift({type:'in',product:s.name,qty:add,unit:s.unit,reason:'Törölt munkalap visszaírása',jobId:j.id,at:new Date().toISOString()});
+        if(state.cloud)await cloudUpsert('inventory',s);
+      }
+    }
+    if(state.cloud&&supabase&&state.session){
+      const paths=(state.photos[id]||[]).map(p=>p.storagePath).filter(Boolean);
+      if(paths.length){const sr=await supabase.storage.from('job-photos').remove(paths);if(sr.error)console.warn(sr.error);}
+      const dr=await supabase.from('jobs').delete().eq('id',id).eq('user_id',state.session.user.id);if(dr.error)throw dr.error;
+    }
+    state.jobs=state.jobs.filter(x=>x.id!==id);delete state.photos[id];saveLocal();closeModal('detailModal');renderAll();toast('Munkalap törölve');
+  }catch(e){console.error(e);toast('Munkalap törlési hiba: '+(e.message||''));}
+}
+async function deleteCustomer(id){
+  const c=state.customers.find(x=>x.id===id);if(!c)return;
+  const count=state.jobs.filter(j=>j.customerId===id).length;
+  if(!confirm('Biztosan törlöd az ügyfelet: '+c.name+'? Az ügyfélprofil és az autói törlődnek. A korábbi munkalapok megmaradnak előzményként.'))return;
+  try{
+    if(state.cloud&&supabase&&state.session){const dr=await supabase.from('customers').delete().eq('id',id).eq('user_id',state.session.user.id);if(dr.error)throw dr.error;}
+    state.customers=state.customers.filter(x=>x.id!==id);state.cars=state.cars.filter(x=>x.customerId!==id);state.jobs.forEach(j=>{if(j.customerId===id)j.customerId=null;});
+    saveLocal();closeModal('customerModal');renderAll();toast('Ügyfél törölve · '+count+' korábbi munkalap megmaradt');
+  }catch(e){console.error(e);toast('Ügyfél törlési hiba: '+(e.message||''));}
+}
 
 function renderCalendar(){
   const m=state.calMonth,y=m.getFullYear(),mo=m.getMonth(),first=new Date(y,mo,1),start=(first.getDay()+6)%7,days=new Date(y,mo+1,0).getDate(),prev=new Date(y,mo,0).getDate(),cells=Math.ceil((start+days)/7)*7;const names=['H','K','Sze','Cs','P','Szo','V'];let h=names.map(n=>`<div class="dow">${n}</div>`).join('');
@@ -525,6 +556,11 @@ function wire(){
   $('calPrev').onclick=()=>{state.calMonth=new Date(state.calMonth.getFullYear(),state.calMonth.getMonth()-1,1);renderCalendar();};$('calNext').onclick=()=>{state.calMonth=new Date(state.calMonth.getFullYear(),state.calMonth.getMonth()+1,1);renderCalendar();};
   $('saveInventory').onclick=saveInventory;$('inventoryEditor').onclick=e=>{const b=e.target.closest('[data-delete-stock]');if(b)deleteStock(b.dataset.deleteStock);};
   $('saveCustomerBtn').onclick=saveCustomer;$('saveStockBtn').onclick=saveStock;
+  $('deleteCustomerBtn')?.addEventListener('click',()=>state.editingCustomerId&&deleteCustomer(state.editingCustomerId));
+  $('openNewStockTop')?.addEventListener('click',addStock);$('openRestockTop')?.addEventListener('click',()=>openRestock());$('openRestock')?.addEventListener('click',()=>openRestock());
+  $('restockSave')?.addEventListener('click',saveRestock);$('restockProduct')?.addEventListener('change',renderRestockPreview);$('restockQty')?.addEventListener('input',renderRestockPreview);$('restockCost')?.addEventListener('input',renderRestockPreview);
+  $('inventoryProductList')?.addEventListener('click',e=>{const r=e.target.closest('[data-restock]');if(r)return openRestock(r.dataset.restock);const d=e.target.closest('[data-delete-stock]');if(d)return deleteStock(d.dataset.deleteStock);const s=e.target.closest('[data-save-stock]');if(s){const card=s.closest('[data-stock-card]');if(card)saveInventoryCard(card);}});
+  $('fCost')?.addEventListener('input',()=>state.costManual=true);
   $('saveGoal').onclick=async()=>{state.goal=Number($('goalInput').value)||0;saveLocal();try{if(state.cloud)await saveSetting();toast('Havi cél mentve');renderAll();}catch(e){toast('Cél mentési hiba');}};
   $('printReport').onclick=printReport;$('exportData').onclick=exportData;$('importFile').onchange=e=>e.target.files[0]&&importJson(e.target.files[0]).catch(()=>toast('Hibás JSON'));$('importLegacy').onclick=importLegacy;$('clearLocal').onclick=clearLocal;
   $('cloudLoginBtn')?.addEventListener('click',openAuth);$('cloudLogoutBtn')?.addEventListener('click',signOut);
