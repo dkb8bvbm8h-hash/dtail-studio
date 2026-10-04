@@ -54,7 +54,7 @@ function updateCustomerReward(){
 function applyLoyaltyDiscount(){
  if(state.editJob||!state.autoDiscount)return;
  const t=customerLoyalty($('fCustomer').value);
- $('fDiscount').value=t.discount?Math.round(state.service.price*t.discount/100):0;
+ $('fDiscount').value=t.discount?Math.round((state.service.price+state.extras.reduce((s,x)=>s+x.price,0))*t.discount/100):0;
  updateCustomerReward();
  renderCart();
 }
