@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07090d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./assets/dtail-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./assets/dtail-icon.svg">
+<title>D-Tail Studio</title>
+<style>
+:root{
+  --bg:#07090d;--panel:#0d1016;--panel2:#11151d;--card:#121720;--line:rgba(255,255,255,.08);
+  --text:#f3f5f7;--muted:#8f98a6;--dim:#5e6877;--accent:#6fe7ff;--accent2:#b6f5ff;
+  --green:#67dc9f;--yellow:#e9bb61;--red:#ef6b70;--shadow:0 20px 70px rgba(0,0,0,.34);--r:20px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,rgba(111,231,255,.06),transparent 32%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+a{color:inherit}
+#boot{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#161c25,#06080b 58%,#020304);transition:opacity .35s ease}
+#boot.hide{opacity:0;pointer-events:none}
+.boot-inner{text-align:center}
+.boot-logo{width:72px;height:72px;display:grid;place-items:center;margin:auto;border-radius:22px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 70px rgba(0,0,0,.35)}
+.boot-logo img{width:46px;height:46px}
+.boot-name{font-weight:800;letter-spacing:.28em;font-size:11px;margin-top:14px;color:#d8dee7}
+.boot-line{width:170px;height:2px;margin:20px auto 0;overflow:hidden;background:#1b222d;border-radius:99px}
+.boot-line i{display:block;height:100%;width:44%;background:var(--accent);animation:load 1.1s ease-in-out infinite}
+@keyframes load{0%{transform:translateX(-130%)}100%{transform:translateX(420%)}}
+
+.app{min-height:100dvh}
+.sidebar{position:fixed;left:14px;top:14px;bottom:14px;width:285px;padding:18px 14px;background:linear-gradient(180deg,#0a0d12,#080a0e);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);z-index:120;transform:translateX(calc(-100% + 56px));transition:transform .28s cubic-bezier(.22,.8,.22,1);display:flex;flex-direction:column;overflow:auto}
+body.drawer-open .sidebar{transform:translateX(0)}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:110;opacity:0;visibility:hidden;pointer-events:none;transition:.2s}
+body.drawer-open .drawer-overlay{opacity:1;visibility:visible;pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 7px 24px}
+.brand-mark{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;border:1px solid var(--line);background:linear-gradient(145deg,#1a212b,#0b0e13);font-weight:900;color:var(--accent)}
+.brand b{font-size:13px;letter-spacing:.08em}.brand small{display:block;color:var(--dim);font-size:8px;letter-spacing:.18em;margin-top:3px}
+.nav{display:grid;gap:5px}
+.nav button{border:0;background:transparent;color:#9ca5b2;text-align:left;padding:12px;border-radius:13px;display:flex;align-items:center;gap:10px;font-size:11px;font-weight:800}
+.nav button:hover{background:rgba(255,255,255,.04);color:#fff}
+.nav button.active{background:linear-gradient(90deg,rgba(111,231,255,.12),rgba(255,255,255,.035));color:#fff;box-shadow:inset 2px 0 var(--accent)}
+.nav .ico{width:20px;text-align:center;font-size:16px}
+.side-bottom{margin-top:auto;padding:12px 8px}
+.sync-card{padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.sync-row{display:flex;align-items:center;gap:7px;font-size:9px;font-weight:900;letter-spacing:.08em}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 11px rgba(103,220,159,.45)}
+.sync-dot.local{background:var(--yellow)}.sync-dot.error{background:var(--red)}
+.sync-card p{margin:6px 0 0;color:var(--muted);font-size:9px;line-height:1.45}
+
+.main{width:100%;min-width:0}
+.topbar{position:sticky;top:0;z-index:100;height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 76px;border-bottom:1px solid var(--line);background:rgba(7,9,13,.84);backdrop-filter:blur(18px)}
+.page-title{font-size:17px;font-weight:900;letter-spacing:-.025em}.page-sub{font-size:9px;color:var(--dim);margin-top:4px}
+.top-actions{display:flex;gap:8px;align-items:center}
+.icon-btn,.secondary,.primary{border-radius:12px;padding:10px 13px}
+.icon-btn{width:42px;height:42px;border:1px solid var(--line);background:rgba(255,255,255,.035);color:#eef2f6}
+.primary{border:1px solid rgba(255,255,255,.18);background:#edf3f7;color:#06080b;font-weight:900}.secondary{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#e8edf2;font-weight:800}
+#menuToggle{position:fixed;left:18px;top:15px;z-index:140;font-size:18px}
+
+.content{padding:28px;max-width:1560px;margin:auto}
+.view{display:none;animation:fade .22s ease}.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}
+.hero h1{margin:0;font-size:28px;font-weight:900;letter-spacing:-.04em}.hero p{margin:6px 0 0;color:var(--muted);font-size:11px}
+.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.two{grid-template-columns:1.35fr .65fr}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:linear-gradient(145deg,rgba(18,23,32,.96),rgba(10,13,18,.96));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.stat{padding:17px}.stat label{display:block;color:var(--dim);font-size:9px;text-transform:uppercase;letter-spacing:.12em}.stat strong{display:block;font-size:25px;margin-top:8px;letter-spacing:-.04em}.stat span{display:block;color:var(--muted);font-size:9px;margin-top:6px}
+.section{padding:18px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.section-head h3{margin:0;font-size:12px;font-weight:900}.section-head span{font-size:9px;color:var(--dim)}
+.job-row,.list-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.job-row:last-child,.list-row:last-child{border-bottom:0}
+.job-main b,.list-main b{font-size:11px}.job-main p,.list-main p{margin:4px 0 0;color:var(--muted);font-size:9px;line-height:1.4}
+.money{font-weight:900;font-size:11px}.muted{color:var(--muted)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:99px;font-size:8px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.ok{color:#8ce7b8;background:rgba(103,220,159,.08);border:1px solid rgba(103,220,159,.14)}
+.warn{color:#f0cf82;background:rgba(233,187,97,.08);border:1px solid rgba(233,187,97,.14)}
+.danger{color:#ff9194;background:rgba(239,107,112,.08);border:1px solid rgba(239,107,112,.14)}
+.neutral{color:#b6bdc7;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+.insight{padding:12px 13px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:14px;margin-bottom:8px}.insight b{font-size:10px}.insight p{margin:5px 0 0;color:var(--muted);font-size:9px;line-height:1.45}
+
+.stock-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stock-card{padding:14px}.stock-card.critical{border-color:rgba(239,107,112,.22)}.stock-card.low{border-color:rgba(233,187,97,.2)}
+.stock-top{display:flex;justify-content:space-between;gap:8px}.stock-top b{font-size:10px}.stock-top span{font-size:9px;color:var(--muted)}
+.bar{height:6px;background:rgba(255,255,255,.055);border-radius:99px;overflow:hidden;margin:12px 0 8px}.bar i{display:block;height:100%;border-radius:99px}.stock-card.ok .bar i{background:var(--green)}.stock-card.low .bar i{background:var(--yellow)}.stock-card.critical .bar i{background:var(--red)}
+
+.searchbar{display:flex;gap:8px;margin-bottom:14px}.input,.select,.textarea{width:100%;background:#080b10;color:#edf1f4;border:1px solid var(--line);border-radius:12px;padding:11px 12px;outline:none}.input:focus,.select:focus,.textarea:focus{border-color:rgba(111,231,255,.35)}.textarea{min-height:100px;resize:vertical}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:760px}.table th{padding:10px;text-align:left;font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line)}.table td{padding:11px 10px;font-size:10px;border-bottom:1px solid var(--line)}.table tr:last-child td{border-bottom:0}
+
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field label{display:block;font-size:9px;color:var(--muted);margin-bottom:6px}.full{grid-column:1/-1}
+.service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.service{padding:13px;border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:14px}.service.selected{border-color:rgba(111,231,255,.5);box-shadow:0 0 0 1px rgba(111,231,255,.14) inset;background:rgba(111,231,255,.06)}.service b{font-size:10px}.service strong{float:right;font-size:10px}.service p{margin:5px 0 0;color:var(--muted);font-size:8px;line-height:1.35}
+.cart{padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.018)}.cart-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:10px}.cart-line:last-child{border-bottom:0}.cart-total{display:flex;justify-content:space-between;margin-top:12px;font-size:16px;font-weight:900}
+
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.calendar-toolbar strong{font-size:14px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:18px;overflow:hidden}.dow,.day{min-height:110px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.dow{min-height:auto;padding:9px;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);background:rgba(255,255,255,.02)}.day{padding:8px}.day:nth-child(7n){border-right:0}.day.muted-day{opacity:.4}.day.today{background:linear-gradient(180deg,rgba(111,231,255,.07),rgba(255,255,255,.01))}.day-num{font-size:9px;color:#bbc3ce;margin-bottom:6px}.day-event{width:100%;text-align:left;border:0;background:rgba(255,255,255,.045);color:#eef2f5;border-radius:8px;padding:6px 7px;font-size:8px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.day-event.closed{opacity:.6}.timeline{display:grid;gap:7px}.timeline-item{display:grid;grid-template-columns:60px 1fr auto;gap:9px;align-items:center}.timeline-time{font-size:10px;font-weight:900;color:var(--accent)}.timeline-card{padding:10px 11px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.02)}.timeline-card b{font-size:10px}.timeline-card p{margin:3px 0 0;color:var(--muted);font-size:8px}
+
+.photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{aspect-ratio:4/3;position:relative;overflow:hidden;border-radius:13px;border:1px solid var(--line);background:#080b0f}.photo img{width:100%;height:100%;object-fit:cover}.photo small{position:absolute;left:7px;bottom:6px;background:rgba(0,0,0,.65);padding:4px 6px;border-radius:7px;font-size:7px}
+
+.progress{height:7px;background:rgba(255,255,255,.055);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#5c6673,#eef4f7);border-radius:99px}
+.modal{position:fixed;inset:0;z-index:4000;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.7);backdrop-filter:blur(12px)}.modal.show{display:grid}.modal-box{width:min(980px,100%);max-height:92dvh;overflow:auto;border:1px solid var(--line);border-radius:23px;background:#0c1016;box-shadow:0 40px 120px rgba(0,0,0,.55)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}.modal-head h2{margin:0;font-size:15px}.modal-body{padding:18px}.close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}.kicker{font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);font-weight:900}
+.alerts{display:grid;gap:8px}.alert{padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}.alert b{font-size:9px}.alert p{font-size:8px;color:var(--muted);margin:4px 0 0}
+.mobile-nav{display:none}
+.info-box{padding:11px 12px;border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:13px;color:var(--muted);font-size:9px;line-height:1.45}
+.print-sheet{display:none}
+@media print{
+ body{background:#fff;color:#111}.sidebar,.topbar,.mobile-nav,.modal,#boot,.content{display:none!important}.print-sheet{display:block!important}.print-page{font-family:Arial,sans-serif;color:#15171a;padding:12mm}.print-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:7mm;margin-bottom:7mm}.print-brand{display:flex;gap:10px;align-items:center}.print-mark{width:34px;height:34px;border:2px solid #111;border-radius:9px;display:grid;place-items:center;font-weight:900}.print-title{font-size:18px;font-weight:900}.print-sub{font-size:8px;color:#555;margin-top:2px}.print-id{text-align:right;font-size:8px;color:#555}.print-id b{display:block;color:#111;font-size:11px;margin-bottom:4px}.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-bottom:7mm}.print-card{border:1px solid #d3d6db;border-radius:10px;padding:5mm}.print-card h4{margin:0 0 3mm;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#666}.print-card p{margin:0;font-size:10px;line-height:1.5}.print-items{width:100%;border-collapse:collapse;font-size:9px}.print-items th,.print-items td{padding:7px 0;border-bottom:1px solid #e2e4e7;text-align:left}.print-items th:last-child,.print-items td:last-child{text-align:right}.print-total{margin-top:4mm;border-top:1px solid #d3d6db;padding-top:3mm}.print-total-row{display:flex;justify-content:space-between;padding:1.6mm 0;font-size:9px}.print-total-row.final{font-size:14px;font-weight:900;border-top:1.5px solid #111;margin-top:2mm;padding-top:3mm}.print-checks{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm}.check{border:1px solid #d3d6db;border-radius:8px;padding:3mm;font-size:8px}.print-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm}.print-photo{border:1px solid #d3d6db;border-radius:8px;overflow:hidden}.print-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.print-photo small{display:block;padding:2mm;font-size:7px}.print-footer{border-top:1px solid #d3d6db;margin-top:7mm;padding-top:3mm;display:flex;justify-content:space-between;color:#666;font-size:7px}
+}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .sidebar{left:10px;top:10px;bottom:10px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}
+ .topbar{padding-left:68px;padding-right:14px}.content{padding:18px 14px 88px}.hero{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.stock-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.service-grid{grid-template-columns:1fr}.photo-grid{grid-template-columns:1fr 1fr}.calendar{overflow:auto}.calendar{min-width:720px}.calendar-wrap{overflow:auto}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;z-index:130;padding:6px;border:1px solid var(--line);border-radius:18px;background:rgba(13,16,22,.93);backdrop-filter:blur(18px);box-shadow:var(--shadow)}.mobile-nav button{border:0;background:transparent;color:#7d8796;padding:7px 2px;font-size:8px}.mobile-nav button.active{color:#fff}.mobile-nav .mi{display:block;font-size:15px;margin-bottom:3px}.top-actions .optional-mobile{display:none}
+}
+
+.auth-modal{position:fixed;inset:0;z-index:4900;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(14px)}
+.auth-modal.show{display:grid}
+.auth-box{width:min(460px,100%);padding:24px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#121720,#080b10);box-shadow:0 30px 90px rgba(0,0,0,.55)}
+.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}.auth-brand img{width:48px;height:48px;border-radius:14px}.auth-brand b{font-size:15px;letter-spacing:.04em}.auth-brand small{display:block;color:var(--dim);font-size:9px;letter-spacing:.16em;margin-top:3px}
+.auth-box h2{margin:0;font-size:22px;letter-spacing:-.03em}.auth-box .lead{margin:7px 0 18px;color:var(--muted);font-size:11px;line-height:1.5}.auth-status{min-height:18px;margin-top:10px;color:var(--muted);font-size:10px}.auth-status.error{color:#ff9194}.auth-status.ok{color:#8ce7b8}
+.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.auth-user{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}.auth-user span{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.auth-mini{font-size:9px;color:var(--muted)}
+
+</style>
+</head>
+<body>
+<div id="boot"><div class="boot-inner"><div class="boot-logo"><img src="./assets/dtail-icon.svg" alt=""></div><div class="boot-name">D-TAIL STUDIO</div><div class="boot-line"><i></i></div></div></div>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<button class="icon-btn" id="menuToggle" aria-label="Menü">☰</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-mark">DT</div><div><b>D-TAIL STUDIO</b><small>DETAILING OS</small></div></div>
+  <nav class="nav">
+    <button data-view="dashboard" class="active"><span class="ico">⌂</span>Dashboard</button>
+    <button data-view="jobs"><span class="ico">▣</span>Munkák</button>
+    <button data-view="customers"><span class="ico">♙</span>Ügyfelek & autók</button>
+    <button data-view="calendar"><span class="ico">◷</span>Naptár</button>
+    <button data-view="inventory"><span class="ico">▤</span>Készlet</button>
+    <button data-view="analytics"><span class="ico">⌁</span>Pénzügy</button>
+    <button data-view="settings"><span class="ico">⚙</span>Beállítások</button>
+  </nav>
+  <div class="side-bottom"><div class="sync-card"><div class="sync-row"><i class="sync-dot" id="syncDot"></i><span id="syncLabel">LOCAL</span></div><p id="syncHint">Helyi mód. A közös többeszközös adatokhoz Supabase kapcsolható.</p></div></div>
+</aside>
+
+<main class="main">
+  <header class="topbar"><div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">D-Tail Studio · detailing workspace</div></div><div class="top-actions"><button class="icon-btn optional-mobile" id="globalSearch">⌕</button><button class="icon-btn" id="quickNew">＋</button></div></header>
+  <div class="content">
+    <section class="view active" id="view-dashboard">
+      <div class="hero"><div><h1 id="greeting">Szia Dominik! 👋</h1><p id="todayText"></p></div><button class="primary" data-action="new-job">+ Új időpont / munkalap</button></div>
+      <div class="grid stats">
+        <div class="card stat"><label>Mai bevétel</label><strong id="sToday">0 Ft</strong><span id="sTodayJobs">0 lezárt munka</span></div>
+        <div class="card stat"><label>Havi bevétel</label><strong id="sMonth">0 Ft</strong><span id="sMonthJobs">0 lezárt munka</span></div>
+        <div class="card stat"><label>Nyitott munkák</label><strong id="sOpen">0</strong><span>aktív / foglalt</span></div>
+        <div class="card stat"><label>Átlagos munkadíj</label><strong id="sAvg">0 Ft</strong><span>lezárt munkák alapján</span></div>
+      </div>
+      <div class="grid two" style="margin-top:14px">
+        <div class="card section"><div class="section-head"><h3>Mai műhelyterv</h3><span id="todayPlanLabel"></span></div><div id="todayJobs"></div></div>
+        <div class="card section"><div class="section-head"><h3>Havi cél</h3><span id="goalLabel"></span></div><div class="progress"><i id="goalBar" style="width:0%"></i></div><p id="goalText" class="muted" style="font-size:9px;line-height:1.45"></p><div class="section-head" style="margin-top:16px"><h3>Riasztások</h3><span></span></div><div id="dashAlerts" class="alerts"></div></div>
+      </div>
+      <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Készletfigyelő</h3><span id="dashStockMeta"></span></div><div id="dashStock" class="stock-grid"></div></div>
+    </section>
+
+    <section class="view" id="view-jobs">
+      <div class="hero"><div><h1>Munkák</h1><p>Időpont, munkalap, státusz, fizetés és PDF egy helyen.</p></div><button class="primary" data-action="new-job">+ Új munkalap</button></div>
+      <div class="searchbar"><input id="jobSearch" class="input" placeholder="Keresés ügyfél, rendszám, autó alapján…"><select id="jobFilter" class="select" style="max-width:170px"><option value="all">Összes</option><option value="open">Nyitott</option><option value="closed">Lezárt</option></select></div>
+      <div class="card table-wrap"><table class="table"><thead><tr><th>Azonosító</th><th>Ügyfél / autó</th><th>Szolgáltatás</th><th>Időpont</th><th>Összeg</th><th>Státusz</th><th></th></tr></thead><tbody id="jobsTable"></tbody></table></div>
+    </section>
+
+    <section class="view" id="view-customers">
+      <div class="hero"><div><h1>Ügyfelek & autók</h1><p>Ügyfélprofilok, autók, korábbi munkák és költés.</p></div><button class="primary" data-action="new-customer">+ Új ügyfél</button></div>
+      <div class="searchbar"><input id="customerSearch" class="input" placeholder="Keresés név, telefon, rendszám…"></div>
+      <div class="card table-wrap"><table class="table"><thead><tr><th>Ügyfél</th><th>Autók</th><th>Munkák</th><th>Összes költés</th><th>Szint</th><th></th></tr></thead><tbody id="customerTable"></tbody></table></div>
+    </section>
+
+    <section class="view" id="view-calendar">
+      <div class="hero"><div><h1>Naptár</h1><p>Az időpontok közvetlenül a munkalapokhoz kapcsolódnak.</p></div><button class="primary" data-action="new-job">+ Új időpont</button></div>
+      <div class="card section">
+        <div class="calendar-toolbar"><button class="secondary" id="calPrev">←</button><strong id="calTitle"></strong><button class="secondary" id="calNext">→</button></div>
+        <div class="calendar-wrap"><div class="calendar" id="calendarGrid"></div></div>
+      </div>
+      <div class="grid two" style="margin-top:14px"><div class="card section"><div class="section-head"><h3>Mai nap</h3><span id="calendarDate"></span></div><div id="calendarToday"></div></div><div class="card section"><div class="section-head"><h3>Következő időpontok</h3><span></span></div><div id="upcoming"></div></div></div>
+    </section>
+
+    <section class="view" id="view-inventory">
+      <div class="hero"><div><h1>Készlet</h1><p>Valódi készletérték, automatikus státuszok és teljes vizuális figyelő.</p></div><button class="primary" data-action="add-stock">+ Új készlettétel</button></div>
+      <div class="grid stats">
+        <div class="card stat"><label>Tételek</label><strong id="invCount">0</strong><span>összes készlettétel</span></div>
+        <div class="card stat"><label>Rendelés szükséges</label><strong id="invCritical">0</strong><span>kritikus</span></div>
+        <div class="card stat"><label>Hamarosan rendelni</label><strong id="invLow">0</strong><span>minimum közelében</span></div>
+        <div class="card stat"><label>Készletérték</label><strong id="invValue">0 Ft</strong><span>aktuális érték</span></div>
+      </div>
+      <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Vizuális készletfigyelő</h3><span id="inventoryVisualMeta"></span></div><div id="inventoryVisual" class="stock-grid"></div></div>
+      <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Készlet szerkesztése</h3><span>mennyiség × egységár = tételérték</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Termék</th><th>Menny.</th><th>Egység</th><th>Min.</th><th>Egységár</th><th>Érték</th><th>Státusz</th><th></th></tr></thead><tbody id="inventoryEditor"></tbody></table></div><div class="actions"><button class="primary" id="saveInventory">Készlet mentése</button></div></div>
+    </section>
+
+    <section class="view" id="view-analytics">
+      <div class="hero"><div><h1>Pénzügyek</h1><p>Bevétel, anyagköltség, fedezet és teljesítmény.</p></div><button class="secondary" id="printReport">Havi riport PDF</button></div>
+      <div class="grid stats"><div class="card stat"><label>Havi bevétel</label><strong id="aRevenue">0 Ft</strong><span>lezárt munkák</span></div><div class="card stat"><label>Anyagköltség</label><strong id="aCost">0 Ft</strong><span>rögzített költség</span></div><div class="card stat"><label>Becsült fedezet</label><strong id="aMargin">0 Ft</strong><span>bevétel − költség</span></div><div class="card stat"><label>Átlagos munkadíj</label><strong id="aAvg">0 Ft</strong><span>lezárt munkák alapján</span></div></div>
+      <div class="grid two" style="margin-top:14px"><div class="card section"><div class="section-head"><h3>Szolgáltatások</h3><span></span></div><div id="serviceMix"></div></div><div class="card section"><div class="section-head"><h3>Fizetési módok</h3><span></span></div><div id="paymentMix"></div></div></div>
+      <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Havi munkák</h3><span></span></div><div class="table-wrap"><table class="table"><thead><tr><th>Dátum</th><th>Ügyfél</th><th>Szolgáltatás</th><th>Bevétel</th><th>Anyag</th><th>Fedezet</th></tr></thead><tbody id="financeTable"></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="hero"><div><h1>Beállítások</h1><p>Adatok, felhőszinkron és rendszerbeállítások.</p></div></div>
+      <div class="grid two">
+        <div class="card section"><div class="section-head"><h3>Havi cél</h3><span></span></div><div class="field"><label>Havi bevételi cél</label><input id="goalInput" class="input" type="number" step="1000"></div><div class="actions"><button class="primary" id="saveGoal">Cél mentése</button></div></div>
+        <div class="card section"><div class="section-head"><h3>Adatok</h3><span></span></div><div class="info-box">A D-Tail 4.0 nem használ Vercel API-t és nem használ háttérben futó Service Workert. Az adatok helyben vagy közvetlen Supabase kapcsolaton keresztül kezelhetők.</div><div class="actions"><button class="secondary" id="exportData">JSON export</button><label class="secondary" style="display:inline-flex;align-items:center;gap:7px">JSON import<input id="importFile" type="file" accept=".json,application/json" hidden></label><button class="secondary" id="importLegacy">Régi D-Tail import</button><button class="secondary" id="clearLocal">Helyi cache törlése</button></div></div>
+      </div>
+      <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Felhő</h3><span id="cloudStateLabel">LOCAL MODE</span></div><div id="cloudSettings" class="info-box"></div><div id="authUserBox"></div><div class="actions"><button class="primary" id="cloudLoginBtn">Belépés / fiók létrehozása</button><button class="secondary" id="cloudLogoutBtn" style="display:none">Kijelentkezés</button></div></div>
+    </section>
+  </div>
+</main>
+
+<nav class="mobile-nav" id="mobileNav">
+  <button data-view="dashboard" class="active"><span class="mi">⌂</span>Főoldal</button>
+  <button data-view="jobs"><span class="mi">▣</span>Munkák</button>
+  <button data-view="calendar"><span class="mi">◷</span>Naptár</button>
+  <button data-view="inventory"><span class="mi">▤</span>Készlet</button>
+  <button data-view="analytics"><span class="mi">⌁</span>Pénzügy</button>
+</nav>
+
+<div class="modal" id="jobModal"><div class="modal-box"><div class="modal-head"><h2 id="jobModalTitle">Új időpont / munkalap</h2><button class="close" data-close="jobModal">×</button></div><div class="modal-body">
+  <div class="form-grid">
+    <div class="field"><label>Ügyfél</label><input id="fCustomer" class="input" placeholder="Név"></div>
+    <div class="field"><label>Telefon</label><input id="fPhone" class="input" placeholder="+36 …"></div>
+    <div class="field"><label>Autó</label><input id="fCar" class="input" placeholder="Audi A6"></div>
+    <div class="field"><label>Rendszám</label><input id="fPlate" class="input" placeholder="ABC-123"></div>
+    <div class="field"><label>Évjárat</label><input id="fYear" class="input" type="number"></div>
+    <div class="field"><label>Kilométer</label><input id="fKm" class="input" type="number"></div>
+    <div class="field"><label>Időpont</label><input id="fDate" class="input" type="datetime-local"></div>
+    <div class="field"><label>Időtartam (perc)</label><input id="fDuration" class="input" type="number" step="15" min="15" value="180"></div>
+    <div class="field full"><label>Szolgáltatás</label><div id="serviceGrid" class="service-grid"></div></div>
+    <div class="field full"><label>Extrák</label><div id="extraGrid" class="service-grid"></div></div>
+    <div class="field"><label>Anyagköltség (Ft)</label><input id="fCost" class="input" type="number" min="0"></div>
+    <div class="field"><label>Kedvezmény (Ft)</label><input id="fDiscount" class="input" type="number" min="0"></div>
+    <div class="field full"><label>Megjegyzés</label><textarea id="fNote" class="textarea"></textarea></div>
+  </div>
+  <div class="info-box" id="conflictNotice" style="display:none;margin-top:12px"></div>
+  <div class="cart" style="margin-top:12px"><div id="cartLines"></div><div class="cart-total"><span>Fizetendő</span><span id="cartTotal">0 Ft</span></div></div>
+  <div class="actions"><button class="secondary" data-close="jobModal">Mégse</button><button class="primary" id="saveJobBtn">Mentés</button></div>
+</div></div></div>
+
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><h2 id="detailTitle">Munkalap</h2><button class="close" data-close="detailModal">×</button></div><div class="modal-body" id="detailBody"></div></div></div>
+<div class="modal" id="customerModal"><div class="modal-box"><div class="modal-head"><h2 id="customerModalTitle">Új ügyfél</h2><button class="close" data-close="customerModal">×</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Név</label><input id="cuName" class="input"></div><div class="field"><label>Telefon</label><input id="cuPhone" class="input"></div><div class="field"><label>E-mail</label><input id="cuEmail" class="input"></div><div class="field full"><label>Megjegyzés</label><textarea id="cuNote" class="textarea"></textarea></div></div><div class="actions"><button class="secondary" data-close="customerModal">Mégse</button><button class="primary" id="saveCustomerBtn">Mentés</button></div></div></div></div>
+<div class="modal" id="stockModal"><div class="modal-box"><div class="modal-head"><h2 id="stockModalTitle">Készlettétel</h2><button class="close" data-close="stockModal">×</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Termék</label><input id="stockName" class="input"></div><div class="field"><label>Kategória</label><input id="stockCategory" class="input" placeholder="Vegyszer / textil / eszköz"></div><div class="field"><label>Készlet</label><input id="stockQty" class="input" type="number" step="0.01"></div><div class="field"><label>Egység</label><select id="stockUnit" class="select"><option>db</option><option>liter</option><option>ml</option><option>kg</option><option>%</option></select></div><div class="field"><label>Minimum</label><input id="stockMin" class="input" type="number" step="0.01"></div><div class="field"><label>Egységár / beszerzési érték (Ft)</label><input id="stockPrice" class="input" type="number"></div></div><div class="actions"><button class="secondary" data-close="stockModal">Mégse</button><button class="primary" id="saveStockBtn">Mentés</button></div></div></div></div>
+
+<div class="auth-modal" id="authModal">
+  <div class="auth-box">
+    <div class="auth-brand"><img src="./assets/dtail-icon.svg" alt=""><div><b>D-Tail Studio</b><small>CLOUD SYNC</small></div></div>
+    <h2 id="authTitle">Belépés</h2>
+    <p class="lead">Jelentkezz be ugyanazzal a D-Tail fiókkal az iPhone-on, iPaden, PC-n és Macen. Így ugyanazokat az adatokat látod minden eszközön.</p>
+    <div class="field"><label>E-mail</label><input id="authEmail" class="input" type="email" autocomplete="email" placeholder="te@email.hu"></div>
+    <div class="field" style="margin-top:10px"><label>Jelszó</label><input id="authPassword" class="input" type="password" autocomplete="current-password" placeholder="Legalább 6 karakter"></div>
+    <div class="auth-actions"><button class="primary" id="authSubmit">Belépés</button><button class="secondary" id="authSignup">Fiók létrehozása</button></div>
+    <div class="actions" style="justify-content:flex-start"><button class="secondary" id="authLocal">Folytatás helyi módban</button></div>
+    <div class="auth-status" id="authStatus"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="print-sheet" id="printSheet"></div>
+
+<script src="./config.js?v=4"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./app.js?v=4"></script>
+</body>
+</html>
