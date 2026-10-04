@@ -293,5 +293,4 @@ async function submitAuth(){const email=$('authEmail').value.trim(),password=$('
 function showAuthError(t){$('authError').style.display='block';$('authError').textContent=t;}
 
 window.openNewJob=openNewJob;window.openDetail=openDetail;window.openCustomer=openCustomer;window.addStock=addStock;
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-wire();boot();
+try{wire();}catch(e){console.error("D-Tail event wiring error:",e);} try{boot();}catch(e){console.error("D-Tail boot error:",e);$("splash")?.classList.add("hide");}
