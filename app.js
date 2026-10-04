@@ -112,6 +112,10 @@ function convertQty(qty,from,to){
   if(map[from]==null||map[to]==null)return q;
   return q*map[from]/map[to];
 }
+function packageUnitCost(packPrice,packQty,packUnit,stockUnit){
+  const qtyInStockUnit=convertQty(packQty,packUnit,stockUnit);
+  return qtyInStockUnit>0?(Number(packPrice)||0)/qtyInStockUnit:0;
+}
 function unitCostFor(stock,unit){
   return (Number(stock.price)||0)*convertQty(1,unit,stock.unit);
 }
@@ -439,11 +443,28 @@ async function saveInventoryCard(card){
   s.qty=Number(card.querySelector('.ip-qty').value)||0;s.min=Number(card.querySelector('.ip-min').value)||0;s.price=Number(card.querySelector('.ip-price').value)||0;
   try{if(state.cloud)Object.assign(s,await cloudUpsert('inventory',s));saveLocal();renderAll();toast(s.name+' · mentve');}catch(e){toast('Készlet mentési hiba');}
 }
-function addStock(){$('stockName').value='';$('stockCategory').value='';$('stockQty').value=0;$('stockUnit').value='db';$('stockMin').value=1;$('stockPrice').value=0;$('stockModal').classList.add('show');}
-async function saveStock(){
-  const x={id:uid('ST'),name:$('stockName').value.trim()||'Új termék',qty:Number($('stockQty').value)||0,unit:$('stockUnit').value,min:Number($('stockMin').value)||0,price:Number($('stockPrice').value)||0,category:$('stockCategory').value.trim()||'Egyéb',packQty:1,packUnit:$('stockUnit').value};
-  try{if(state.cloud)Object.assign(x,await cloudUpsert('inventory',x));state.stock.push(x);saveLocal();closeModal('stockModal');renderAll();toast('Készlettétel hozzáadva');}catch(e){toast('Készletmentési hiba: '+(e.message||''));}
+function renderNewStockCost(){
+  const packQty=Number($('stockPackQty')?.value)||0,packUnit=$('stockPackUnit')?.value||'liter',packPrice=Number($('stockPackPrice')?.value)||0,stockUnit=$('stockUnit')?.value||'liter';
+  const unitCost=packageUnitCost(packPrice,packQty,packUnit,stockUnit);
+  $('stockPrice').value=unitCost?unitCost.toFixed(4):'';
+  if($('stockCostPreview'))$('stockCostPreview').innerHTML=unitCost?('<b>'+money(packPrice)+'</b> / '+packQty+' '+esc(packUnit)+' = <b>'+unitCost.toFixed(2)+' Ft/'+esc(stockUnit)+'</b> · azaz '+(stockUnit==='liter'?(unitCost/1000).toFixed(4)+' Ft/ml':stockUnit==='ml'?unitCost.toFixed(2)+' Ft/ml':money(unitCost)+'/'+esc(stockUnit))+'.'):'Add meg a kiszerelést és a vételárat.';
 }
+function addStock(){
+  $('stockName').value='';$('stockCategory').value='';$('stockQty').value=0;$('stockUnit').value='liter';$('stockMin').value=0;
+  $('stockPackQty').value=1;$('stockPackUnit').value='liter';$('stockPackPrice').value='';$('stockPrice').value='';
+  renderNewStockCost();$('stockModal').classList.add('show');
+}
+async function saveStock(){
+  const packQty=Number($('stockPackQty').value)||0,packUnit=$('stockPackUnit').value,packPrice=Number($('stockPackPrice').value)||0,stockUnit=$('stockUnit').value;
+  if(packQty<=0||packPrice<0){toast('Add meg a kiszerelést és a vételárat.');return;}
+  const price=packageUnitCost(packPrice,packQty,packUnit,stockUnit);
+  const x={id:uid('ST'),name:$('stockName').value.trim()||'Új termék',qty:Number($('stockQty').value)||0,unit:stockUnit,min:Number($('stockMin').value)||0,price,category:$('stockCategory').value.trim()||'Egyéb',packQty,packUnit,packPrice};
+  try{
+    if(state.cloud)Object.assign(x,await cloudUpsert('inventory',x));
+    state.stock.push(x);saveLocal();closeModal('stockModal');renderAll();toast('Készlettétel hozzáadva · egységköltség számolva');
+  }catch(e){toast('Készletmentési hiba: '+(e.message||''));}
+}
+
 function openRestock(id){
   const sel=$('restockProduct');sel.innerHTML=state.stock.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+(Number(x.qty)||0)+' '+esc(x.unit)+'</option>').join('');
   if(id)sel.value=id;$('restockQty').value='';$('restockCost').value='';$('restockNote').value='';renderRestockPreview();$('restockModal').classList.add('show');
@@ -556,7 +577,7 @@ function wire(){
   $('calPrev').onclick=()=>{state.calMonth=new Date(state.calMonth.getFullYear(),state.calMonth.getMonth()-1,1);renderCalendar();};$('calNext').onclick=()=>{state.calMonth=new Date(state.calMonth.getFullYear(),state.calMonth.getMonth()+1,1);renderCalendar();};
   $('saveInventory').onclick=saveInventory;$('inventoryEditor').onclick=e=>{const b=e.target.closest('[data-delete-stock]');if(b)deleteStock(b.dataset.deleteStock);};
   $('saveCustomerBtn').onclick=saveCustomer;$('saveStockBtn').onclick=saveStock;
-  $('deleteCustomerBtn')?.addEventListener('click',()=>state.editingCustomerId&&deleteCustomer(state.editingCustomerId));
+  $('deleteCustomerBtn')?.addEventListener('click',()=>state.editingCustomerId&&deleteCustomer(state.editingCustomerId));  $('stockPackQty')?.addEventListener('input',renderNewStockCost);$('stockPackUnit')?.addEventListener('change',renderNewStockCost);$('stockPackPrice')?.addEventListener('input',renderNewStockCost);$('stockUnit')?.addEventListener('change',renderNewStockCost);
   $('openNewStockTop')?.addEventListener('click',addStock);$('openRestockTop')?.addEventListener('click',()=>openRestock());$('openRestock')?.addEventListener('click',()=>openRestock());
   $('restockSave')?.addEventListener('click',saveRestock);$('restockProduct')?.addEventListener('change',renderRestockPreview);$('restockQty')?.addEventListener('input',renderRestockPreview);$('restockCost')?.addEventListener('input',renderRestockPreview);
   $('inventoryProductList')?.addEventListener('click',e=>{const r=e.target.closest('[data-restock]');if(r)return openRestock(r.dataset.restock);const d=e.target.closest('[data-delete-stock]');if(d)return deleteStock(d.dataset.deleteStock);const s=e.target.closest('[data-save-stock]');if(s){const card=s.closest('[data-stock-card]');if(card)saveInventoryCard(card);}});
