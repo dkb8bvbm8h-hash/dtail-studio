@@ -67,6 +67,17 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{
   .mobile-nav button.active{color:#fff}
   .mobile-nav .mi{display:block;font-size:15px;margin-bottom:3px}
 }
+
+<style id="dtail-final-layout">
+/* D-TAIL 4.1 FINAL LAYOUT */
+#menu{display:none}
+.sidebar{left:16px;right:auto;transform:none;width:275px}
+.main{margin-left:307px;width:calc(100% - 307px)}
+.topbar{padding-left:30px}
+@media(max-width:1100px){#menu{display:grid}.sidebar{transform:translateX(calc(-100% + 55px));left:14px;width:285px}.main{margin-left:0;width:100%}.topbar{padding-left:76px}}
+@media(max-width:760px){#menu{display:grid}.sidebar{left:10px;top:10px;bottom:76px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}.main{margin-left:0;width:100%}.topbar{padding-left:68px}.content{padding-bottom:96px}.mobile-nav{display:grid!important}}
+.mobile-nav button{min-width:0}.mobile-nav button .mi{line-height:1}
+.head strong{font-size:14px}
 </style>
 </head>
 <body>
@@ -96,6 +107,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{
 </div></main>
 <nav class="mobile-nav" id="mobileNav"><button data-view="dashboard" class="active"><span class="mi">⌂</span>Főoldal</button><button data-view="jobs"><span class="mi">▣</span>Munkák</button><button data-view="calendar"><span class="mi">◷</span>Naptár</button><button data-view="inventory"><span class="mi">▤</span>Készlet</button><button data-view="analytics"><span class="mi">⌁</span>Pénzügy</button></nav>
 
+<div class="modal" id="authModal"><div class="modal-box" style="max-width:520px"><div class="modal-head"><div><h2>D-Tail Cloud</h2><div class="muted" style="font-size:9px;margin-top:3px">Közös munkatér telefon, iPad és PC között</div></div><button class="close" data-close="authModal">×</button></div><div class="modal-body"><div class="info">A felhő mód opcionális. Helyi módban az app önállóan működik. Cloud módban minden eszköz ugyanazt az adatbázist használja.</div><div class="form" style="margin-top:12px"><div class="field full"><label>E-mail</label><input id="authEmail" class="input" type="email" autocomplete="email"></div><div class="field full"><label>Jelszó</label><input id="authPassword" class="input" type="password" autocomplete="current-password"></div></div><div id="authMessage" class="info" style="display:none;margin-top:10px"></div><div class="actions"><button class="secondary" data-close="authModal">Mégse</button><button class="secondary" id="authSignup">Regisztráció</button><button class="primary" id="authLogin">Belépés</button></div></div></div></div>
 <div class="modal" id="jobModal"><div class="modal-box"><div class="modal-head"><h2 id="jobModalTitle">Új időpont / munkalap</h2><button class="close" data-close="jobModal">×</button></div><div class="modal-body"><div class="form">
 <div class="field"><label>Ügyfél</label><input id="fCustomer" class="input"></div><div class="field"><label>Telefon</label><input id="fPhone" class="input"></div><div class="field"><label>Autó</label><input id="fCar" class="input"></div><div class="field"><label>Rendszám</label><input id="fPlate" class="input"></div><div class="field"><label>Évjárat</label><input id="fYear" class="input" type="number"></div><div class="field"><label>Kilométer</label><input id="fKm" class="input" type="number"></div><div class="field"><label>Időpont</label><input id="fDate" class="input" type="datetime-local"></div><div class="field"><label>Időtartam (perc)</label><input id="fDuration" class="input" type="number" value="180" min="15" step="15"></div><div class="field full"><label>Szolgáltatás</label><div id="serviceGrid" class="service-grid"></div></div><div class="field full"><label>Extrák</label><div id="extraGrid" class="service-grid"></div></div><div class="field"><label>Anyagköltség (Ft)</label><input id="fCost" class="input" type="number"></div><div class="field"><label>Kedvezmény (Ft)</label><input id="fDiscount" class="input" type="number"></div><div class="field full"><label>Megjegyzés</label><textarea id="fNote" class="textarea"></textarea></div></div><div class="info" id="conflictNotice" style="display:none;margin-top:12px"></div><div class="cart" style="margin-top:12px"><div id="cartLines"></div><div class="cart-total"><span>Fizetendő</span><span id="cartTotal">0 Ft</span></div></div><div class="actions"><button class="secondary" data-close="jobModal">Mégse</button><button class="primary" id="saveJobBtn">Mentés</button></div></div></div></div>
 
