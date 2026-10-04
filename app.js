@@ -71,10 +71,24 @@ const EXTRAS = [
   {id:'spot',name:'Erős / speciális foltkezelés',price:4990}
 ];
 
+const MATERIAL_RECIPES = {
+  fresh:[
+    {stockId:'ST-APC',stockName:'ADBL APC',qty:80,unit:'ml'},
+    {stockId:'ST-INT',stockName:'ADBL Interior Cleaner',qty:100,unit:'ml'},
+    {stockId:'ST-TOWEL',stockName:'Mikroszálas kendő',qty:0.2,unit:'db'}
+  ],
+  deep:[
+    {stockId:'ST-APC',stockName:'ADBL APC',qty:150,unit:'ml'},
+    {stockId:'ST-INT',stockName:'ADBL Interior Cleaner',qty:200,unit:'ml'},
+    {stockId:'ST-TOWEL',stockName:'Mikroszálas kendő',qty:0.3,unit:'db'}
+  ]
+};
+const EXTRA_MATERIAL_RECIPES = {};
+
 const KEY = 'dtail_studio_4_local';
 const OLD_KEYS = ['dtail_studio_v3_local','dtail_jobs','dtail_customers','dtail_inventory_v2'];
 const state = {
-  jobs:[],customers:[],cars:[],stock:[],photos:{},goal:1000000,
+  jobs:[],customers:[],cars:[],stock:[],photos:{},stockMovements:[],goal:1000000,costManual:false,
   selectedService:SERVICES[0],selectedExtras:[],editingJobId:null,editingCustomerId:null,editingStockId:null,
   calMonth:new Date(new Date().getFullYear(),new Date().getMonth(),1),
   session:null,cloud:HAS_CLOUD,sync:'local'
@@ -92,9 +106,24 @@ const monthJobs = () => {const n=new Date();return state.jobs.filter(j=>{const d
 const dayJobs = () => state.jobs.filter(j=>sameDay(j.startAt,new Date())).sort((a,b)=>new Date(a.startAt)-new Date(b.startAt));
 const stockState = x => {const q=Number(x.qty)||0,min=Number(x.min)||0;if(q<=0)return'critical';if(min>0&&q<=min/2)return'critical';if(min>0&&q<=min)return'low';return'ok';};
 const stockLabel = x => ({critical:'RENDELÉS SZÜKSÉGES',low:'HAMAROSAN RENDELNI',ok:'RENDBEN'})[stockState(x)];
-const stockValue = x => {const q=Number(x.qty)||0,p=Number(x.price)||0;return x.unit==='%'?p*(q/100):q*p;};
-const stockPercent = x => {const q=Number(x.qty)||0,min=Number(x.min)||0;if(x.unit==='%')return Math.max(0,Math.min(100,q));const target=Math.max(min*3,1);return Math.max(0,Math.min(100,q/target*100));};
-const normalizeStock = arr => (Array.isArray(arr)?arr:[]).map(x=>({id:x.id||uid('ST'),name:x.name||'Új termék',qty:Number(x.qty)||0,unit:x.unit||'db',min:Number(x.min ?? x.min_qty)||0,price:Number(x.price ?? x.unit_price)||0,category:x.category||'Egyéb'}));
+function convertQty(qty,from,to){
+  const q=Number(qty)||0;if(from===to)return q;
+  const map={ml:1,liter:1000,g:1,kg:1000,db:1,'%':1};
+  if(map[from]==null||map[to]==null)return q;
+  return q*map[from]/map[to];
+}
+function unitCostFor(stock,unit){
+  return (Number(stock.price)||0)/Math.max(convertQty(1,unit,stock.unit),0.000001);
+}
+function stockValue(x){return (Number(x.qty)||0)*(Number(x.price)||0);}
+function stockPercent(x){const q=Number(x.qty)||0,min=Number(x.min)||0;if(x.unit==='%')return Math.max(0,Math.min(100,q));const target=Math.max(min*3,1);return Math.max(0,Math.min(100,q/target*100));}
+function findMaterialStock(r){return state.stock.find(x=>x.id===r.stockId)||state.stock.find(x=>String(x.name).toLowerCase()===String(r.stockName||'').toLowerCase());}
+function jobMaterialLines(j){const lines=(MATERIAL_RECIPES[j.serviceId]||[]).slice();for(const e of (j.extras||[]))lines.push(...(EXTRA_MATERIAL_RECIPES[e.id]||[]));return lines;}
+function materialEstimateForJob(j){return jobMaterialLines(j).reduce((sum,r)=>{const s=findMaterialStock(r);return sum+(s?(Number(r.qty)||0)*unitCostFor(s,r.unit):0);},0);}
+function materialUsageForJob(j){return jobMaterialLines(j).map(r=>{const s=findMaterialStock(r);if(!s)return null;return {stockId:s.id,name:s.name,qty:Number(r.qty)||0,unit:r.unit,cost:(Number(r.qty)||0)*unitCostFor(s,r.unit)};}).filter(Boolean);}
+function materialAvailability(j){const missing=[];for(const r of jobMaterialLines(j)){const s=findMaterialStock(r);if(!s){missing.push((r.stockName||r.stockId)+' · nincs a készletben');continue;}const need=convertQty(r.qty,r.unit,s.unit);if((Number(s.qty)||0)<need)missing.push(`${s.name}: ${Number(s.qty)||0} ${s.unit} < ${need} ${s.unit}`);}return missing;}
+
+const normalizeStock = arr => (Array.isArray(arr)?arr:[]).map(x=>({id:x.id||uid('ST'),name:x.name||'Új termék',qty:Number(x.qty)||0,unit:x.unit||'db',min:Number(x.min ?? x.min_qty)||0,price:Number(x.price ?? x.unit_price)||0,category:x.category||'Egyéb',packQty:Number(x.packQty||x.package_qty)||1,packUnit:x.packUnit||x.package_unit||x.unit||'db'}));
 const migrateJobs = arr => (Array.isArray(arr)?arr:[]).map(j=>({id:j.id||uid('DT'),customerId:j.customerId||null,carId:j.carId||null,customerName:j.customerName||'Ismeretlen ügyfél',phone:j.phone||'',car:j.car||j.car_label||'Ismeretlen autó',plate:(j.plate||'').toUpperCase(),year:Number(j.year)||null,km:Number(j.km)||0,serviceId:j.serviceId||SERVICES.find(s=>s.name===j.serviceName)?.id||'fresh',serviceName:j.serviceName||'Fresh Interior',servicePrice:Number(j.servicePrice ?? j.service_price ?? 19990)||0,extras:Array.isArray(j.extras)?j.extras:[],discount:Number(j.discount)||0,cost:Number(j.cost)||0,total:Number(j.total)||0,status:j.status||'open',paymentMethod:j.paymentMethod||'',note:j.note||'',checklist:j.checklist||{before:false,damage:false,after:false},startAt:j.startAt||j.start_at||j.date||j.createdAt||new Date().toISOString(),endAt:j.endAt||j.end_at||new Date(Date.parse(j.startAt||j.date||Date.now())+180*60000).toISOString(),closedAt:j.closedAt||j.closed_at||null,createdAt:j.createdAt||j.created_at||new Date().toISOString(),updatedAt:j.updatedAt||new Date().toISOString(),timerSeconds:Number(j.timerSeconds)||0,timerStartedAt:j.timerStartedAt||null}));
 
 function seedStock(){return [
@@ -106,13 +135,13 @@ function seedStock(){return [
  {id:'ST-TEXT',name:'Kárpittisztító vegyszer',qty:1.5,unit:'liter',min:0.6,price:7900,category:'Vegyszer'}
 ];}
 
-function saveLocal(){localStorage.setItem(KEY,JSON.stringify({jobs:state.jobs,customers:state.customers,cars:state.cars,stock:state.stock,photos:state.photos,goal:state.goal,savedAt:new Date().toISOString()}));}
+function saveLocal(){localStorage.setItem(KEY,JSON.stringify({jobs:state.jobs,customers:state.customers,cars:state.cars,stock:state.stock,photos:state.photos,stockMovements:state.stockMovements||[],goal:state.goal,savedAt:new Date().toISOString()}));}
 function readJson(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'');return v??fallback;}catch{return fallback;}}
 function loadLocal(){
   const x=readJson(KEY,null);
-  if(x){state.jobs=migrateJobs(x.jobs);state.customers=Array.isArray(x.customers)?x.customers:[];state.cars=Array.isArray(x.cars)?x.cars:[];state.stock=normalizeStock(x.stock);state.photos=x.photos||{};state.goal=Number(x.goal)||1000000;return;}
+  if(x){state.jobs=migrateJobs(x.jobs);state.customers=Array.isArray(x.customers)?x.customers:[];state.cars=Array.isArray(x.cars)?x.cars:[];state.stock=normalizeStock(x.stock);state.photos=x.photos||{};state.stockMovements=Array.isArray(x.stockMovements)?x.stockMovements:[];state.goal=Number(x.goal)||1000000;return;}
   const old=readJson('dtail_studio_v3_local',null);
-  if(old){state.jobs=migrateJobs(old.jobs);state.customers=old.customers||[];state.cars=old.cars||[];state.stock=normalizeStock(old.stock);state.photos=old.photos||{};state.goal=Number(old.goal)||1000000;saveLocal();return;}
+  if(old){state.jobs=migrateJobs(old.jobs);state.customers=old.customers||[];state.cars=old.cars||[];state.stock=normalizeStock(old.stock);state.photos=old.photos||{};state.stockMovements=[];state.goal=Number(old.goal)||1000000;saveLocal();return;}
   const oldJobs=readJson('dtail_jobs',[]),oldCustomers=readJson('dtail_customers',[]),oldStock=readJson('dtail_inventory_v2',[]);
   state.jobs=migrateJobs(oldJobs);state.customers=oldCustomers;state.stock=oldStock.length?normalizeStock(oldStock):seedStock();saveLocal();
 }
