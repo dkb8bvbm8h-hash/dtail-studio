@@ -79,11 +79,47 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{
 .mobile-nav button{min-width:0}.mobile-nav button .mi{line-height:1}
 .head strong{font-size:14px}
 </style>
-<style id="dtail-real-logo">.brand-logo{width:190px;height:auto;display:block}.brand-logo-wrap{padding:3px 6px 24px;width:205px}.boot-logo .brand-logo{width:210px;max-width:62vw}.boot-logo{width:auto!important;height:auto!important;background:transparent!important;border:0!important}@media(max-width:1100px) and (min-width:761px){.brand-logo-wrap{display:block}.brand-logo{width:190px}}@media(max-width:760px){.brand-logo-wrap{width:190px}.brand-logo{width:180px}}</style></head>
+<style id="dtail-real-logo">.brand-logo{width:190px;height:auto;display:block}.brand-logo-wrap{padding:3px 6px 24px;width:205px}.boot-logo .brand-logo{width:210px;max-width:62vw}.boot-logo{width:auto!important;height:auto!important;background:transparent!important;border:0!important}@media(max-width:1100px) and (min-width:761px){.brand-logo-wrap{display:block}.brand-logo{width:190px}}@media(max-width:760px){.brand-logo-wrap{width:190px}.brand-logo{width:180px}}</style><style id="dtail-premium-theme">
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{
+ --bg:#06080b;--panel:#0b0f14;--card:#10151c;--card2:#0d1218;--line:rgba(220,235,245,.075);
+ --text:#f3f7fa;--muted:#909cab;--dim:#5f6a78;--a:#1bdcff;--a2:#77ecff;
+ --g:#69e0a2;--y:#e9bd67;--r:#ee7076;--shadow:0 24px 80px rgba(0,0,0,.36);
+ --radius:22px
+}
+html,body{font-family:'Manrope',Inter,ui-sans-serif,system-ui,sans-serif;background:
+ radial-gradient(900px 500px at 18% -10%,rgba(27,220,255,.045),transparent 62%),
+ radial-gradient(700px 450px at 88% 20%,rgba(120,150,180,.035),transparent 62%),var(--bg)}
+body:before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.34;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),transparent 80%);z-index:0}
+.main,.sidebar{position:relative;z-index:1}
+.sidebar{background:linear-gradient(180deg,rgba(8,12,16,.96),rgba(5,8,11,.98));border-color:rgba(220,235,245,.09);box-shadow:0 30px 100px rgba(0,0,0,.34)}
+.brand{padding:5px 4px 22px}.dtail-lockup{display:block;width:232px;height:auto;max-width:100%}.boot-logo .dtail-lockup{width:min(370px,72vw)}
+.nav button{font-family:'Space Grotesk',Manrope,sans-serif;letter-spacing:.01em;padding:13px 12px;border-radius:14px}.nav button.active{background:linear-gradient(100deg,rgba(27,220,255,.12),rgba(255,255,255,.025));box-shadow:inset 2px 0 var(--a),0 8px 24px rgba(0,0,0,.16)}
+.page-title,h1,h2,h3,.stat strong,.money{font-family:'Space Grotesk','Manrope',sans-serif}
+.page-title{letter-spacing:-.02em}.hero h1{letter-spacing:-.05em}.hero p,.page-sub{font-family:'Manrope',sans-serif}
+.card{background:linear-gradient(145deg,rgba(16,21,28,.94),rgba(9,13,18,.95));border-color:rgba(220,235,245,.075);box-shadow:0 18px 55px rgba(0,0,0,.22)}
+.card:hover{border-color:rgba(27,220,255,.12)}
+.primary{background:linear-gradient(180deg,#f6fbff,#dfe9ef);border:0;box-shadow:0 8px 30px rgba(255,255,255,.08);color:#071016}
+.primary:hover{transform:translateY(-1px);box-shadow:0 12px 36px rgba(27,220,255,.12)}
+.secondary,.icon{background:rgba(255,255,255,.028);border-color:rgba(220,235,245,.09)}
+.input,.select,.textarea{background:rgba(3,6,9,.72);border-color:rgba(220,235,245,.09);font-family:'Manrope',sans-serif}
+.input:focus,.select:focus,.textarea:focus{border-color:rgba(27,220,255,.38);box-shadow:0 0 0 3px rgba(27,220,255,.06)}
+.stat strong{font-size:28px;letter-spacing:-.035em}
+.stock{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}.stock:hover{transform:translateY(-2px);box-shadow:0 20px 55px rgba(0,0,0,.28)}
+.stock-top b{font-family:'Space Grotesk',sans-serif;font-size:11px}.badge{font-family:'Space Grotesk',sans-serif}
+.calendar{background:rgba(255,255,255,.012);border-color:rgba(220,235,245,.08)}.day-event{background:linear-gradient(180deg,rgba(27,220,255,.09),rgba(255,255,255,.025));border:1px solid rgba(27,220,255,.08)}
+.modal{background:rgba(0,0,0,.74)}.modal-box{background:linear-gradient(150deg,#0c1117,#080b0f);border-color:rgba(220,235,245,.09)}
+.section-head h3,.head h3{font-family:'Space Grotesk',sans-serif}
+.boot-name{display:none}
+@media(max-width:760px){
+ .dtail-lockup{width:205px}.boot-logo .dtail-lockup{width:min(330px,76vw)}
+ .hero h1{font-size:25px}.stat strong{font-size:22px}.content{padding-top:20px}
+}
+</style></head>
 <body>
-<div id="boot"><div class="boot"><div class="boot-logo"><svg class="brand-logo" viewBox="0 0 190 60" aria-label="D-Tail Studio" role="img"><defs><linearGradient id="dtg" x1="0" x2="1"><stop offset="0" stop-color="#1fdcff"/><stop offset="1" stop-color="#0aa9d0"/></linearGradient></defs><text x="0" y="34" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="800" fill="url(#dtg)">D-Tail</text><text x="4" y="52" font-family="Arial,Helvetica,sans-serif" font-size="12" letter-spacing="5" fill="#dfe5eb">STUDIO</text></svg></div><div class="boot-name">D-TAIL STUDIO</div><div class="boot-line"><i></i></div></div></div>
+<div id="boot"><div class="boot"><div class="boot-logo"><svg class="dtail-lockup" viewBox="0 0 360 92" aria-label="D-Tail Studio" role="img"><defs><linearGradient id="cyan" x1="0" x2="1"><stop offset="0" stop-color="#12dfff"/><stop offset="1" stop-color="#7feaff"/></linearGradient><linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#f7fafc"/><stop offset="1" stop-color="#aeb9c4"/></linearGradient></defs><path d="M22 67c25-47 73-57 104-34 15 11 21 29 16 43-8 22-38 31-67 24" fill="none" stroke="url(#cyan)" stroke-width="10" stroke-linecap="round"/><path d="M40 63c18-27 38-38 57-38 17 0 28 8 28 20 0 18-19 31-43 31" fill="none" stroke="url(#steel)" stroke-width="8" stroke-linecap="round"/><path d="M21 68l15-7" stroke="#f5fbff" stroke-width="5" stroke-linecap="round"/><text x="142" y="51" font-family="Manrope,Arial,sans-serif" font-size="42" font-weight="800" letter-spacing="-1.6" fill="url(#cyan)">D-Tail</text><text x="146" y="77" font-family="Manrope,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="7" fill="#e7edf2">STUDIO</text></svg></div><div class="boot-line"><i></i></div></div></div>
 <div class="overlay" id="overlay"></div><button class="icon" id="menu" aria-label="Menü">☰</button>
-<aside class="sidebar" id="sidebar"><div class="brand"><div class="mark">DT</div><div><b>D-TAIL STUDIO</b><small>DETAILING OS · 4.0</small></div></div><nav class="nav">
+<aside class="sidebar" id="sidebar"><div class="brand"><svg class="dtail-lockup" viewBox="0 0 360 92" aria-label="D-Tail Studio" role="img"><defs><linearGradient id="cyan" x1="0" x2="1"><stop offset="0" stop-color="#12dfff"/><stop offset="1" stop-color="#7feaff"/></linearGradient><linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#f7fafc"/><stop offset="1" stop-color="#aeb9c4"/></linearGradient></defs><path d="M22 67c25-47 73-57 104-34 15 11 21 29 16 43-8 22-38 31-67 24" fill="none" stroke="url(#cyan)" stroke-width="10" stroke-linecap="round"/><path d="M40 63c18-27 38-38 57-38 17 0 28 8 28 20 0 18-19 31-43 31" fill="none" stroke="url(#steel)" stroke-width="8" stroke-linecap="round"/><path d="M21 68l15-7" stroke="#f5fbff" stroke-width="5" stroke-linecap="round"/><text x="142" y="51" font-family="Manrope,Arial,sans-serif" font-size="42" font-weight="800" letter-spacing="-1.6" fill="url(#cyan)">D-Tail</text><text x="146" y="77" font-family="Manrope,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="7" fill="#e7edf2">STUDIO</text></svg></div><nav class="nav">
 <button data-view="dashboard" class="active"><span class="ico">⌂</span>Dashboard</button><button data-view="jobs"><span class="ico">▣</span>Munkák</button><button data-view="customers"><span class="ico">♙</span>Ügyfelek & autók</button><button data-view="calendar"><span class="ico">◷</span>Naptár</button><button data-view="inventory"><span class="ico">▤</span>Készlet</button><button data-view="analytics"><span class="ico">⌁</span>Pénzügy</button><button data-view="settings"><span class="ico">⚙</span>Beállítások</button>
 </nav><div class="side-bottom"><div class="sync-card"><div class="sync-row"><i class="sync-dot" id="syncDot"></i><span id="syncLabel">LOCAL</span></div><p id="syncHint">A D-Tail helyi módban is működik. Közös adatokhoz opcionális felhőszinkron használható.</p></div></div></aside>
 <main class="main"><header class="topbar"><div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">D-Tail Studio · detailing workspace</div></div><div class="top-actions"><button class="icon" id="globalSearch">⌕</button><button class="icon" id="quickNew">＋</button></div></header>
