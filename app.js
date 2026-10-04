@@ -271,23 +271,23 @@ function renderServiceChoices(){
   document.querySelectorAll('[data-extra]').forEach(e=>e.onclick=()=>{const x=EXTRAS.find(y=>y.id===e.dataset.extra);state.selectedExtras=state.selectedExtras.some(y=>y.id===x.id)?state.selectedExtras.filter(y=>y.id!==x.id):[...state.selectedExtras,x];renderServiceChoices();renderCart();});
 }
 function findConflicts(start,end,exclude=null){const s=new Date(start),e=new Date(end);return state.jobs.filter(j=>j.id!==exclude&&!isClosed(j)).filter(j=>s<new Date(j.endAt)&&e>new Date(j.startAt));}
-function renderCart(){const dis=Number($('fDiscount').value)||0;let html=`<div class="cart-line"><span>${esc(state.selectedService.name)}</span><b>${money(state.selectedService.price)}</b></div>`+state.selectedExtras.map(x=>`<div class="cart-line"><span>${esc(x.name)}</span><b>+${money(x.price)}</b></div>`).join('');if(dis)html+=`<div class="cart-line"><span>Kedvezmény</span><b>−${money(dis)}</b></div>`;$('cartLines').innerHTML=html;$('cartTotal').textContent=money(calcTotal());renderConflict();}
+function renderCart(){const dis=Number($('fDiscount').value)||0;let html=`<div class="cart-line"><span>${esc(state.selectedService.name)}</span><b>${money(state.selectedService.price)}</b></div>`+state.selectedExtras.map(x=>`<div class="cart-line"><span>${esc(x.name)}</span><b>+${money(x.price)}</b></div>`).join('');if(dis)html+=`<div class="cart-line"><span>Kedvezmény</span><b>−${money(dis)}</b></div>`;$('cartLines').innerHTML=html+`<div class="cart-line"><span>≈ Becsült anyagköltség</span><b>${money(materialEstimateForJob({serviceId:state.selectedService?.id,extras:state.selectedExtras}))}</b></div>`;$('cartTotal').textContent=money(calcTotal());if(!state.editingJobId||!state.costManual)$('fCost').value=Math.round(materialEstimateForJob({serviceId:state.selectedService?.id,extras:state.selectedExtras}));renderConflict();}
 function renderConflict(){const box=$('conflictNotice');if(!$('fDate')?.value){box.style.display='none';return;}const st=new Date($('fDate').value),end=new Date(st.getTime()+Math.max(15,Number($('fDuration').value)||180)*60000),c=findConflicts(st,end,state.editingJobId);box.style.display=c.length?'block':'none';box.innerHTML=c.length?`<b>Időpontütközés</b><br>${c.map(j=>`${fmtTime(j.startAt)}–${fmtTime(j.endAt)} · ${esc(j.customerName)} · ${esc(j.car)}`).join('<br>')}`:'';}
 
 async function openNewJob(){
-  state.editingJobId=null;state.selectedService=SERVICES[0];state.selectedExtras=[];
+  state.editingJobId=null;state.selectedService=SERVICES[0];state.selectedExtras=[];state.costManual=false;
   ['fCustomer','fPhone','fCar','fPlate','fYear','fKm','fNote'].forEach(id=>$(id).value='');
-  $('fCost').value=0;$('fDiscount').value=0;$('fDuration').value=180;$('fDate').value=localInput(new Date());
+  $('fCost').value=Math.round(materialEstimateForJob({serviceId:'fresh',extras:[]}));$('fDiscount').value=0;$('fDuration').value=180;$('fDate').value=localInput(new Date());
   renderServiceChoices();renderCart();$('jobModal').classList.add('show');
 }
 function localInput(date){const d=new Date(date.getTime()-date.getTimezoneOffset()*60000);return d.toISOString().slice(0,16);}
-function openEditJob(id){const j=state.jobs.find(x=>x.id===id);if(!j)return;state.editingJobId=id;state.selectedService=SERVICES.find(x=>x.id===j.serviceId)||SERVICES[0];state.selectedExtras=(j.extras||[]).map(x=>({...x}));$('jobModalTitle').textContent=`Szerkesztés · ${j.id}`;$('fCustomer').value=j.customerName||'';$('fPhone').value=j.phone||'';$('fCar').value=j.car||'';$('fPlate').value=j.plate||'';$('fYear').value=j.year||'';$('fKm').value=j.km||'';$('fDate').value=localInput(new Date(j.startAt));$('fDuration').value=Math.max(15,Math.round((new Date(j.endAt)-new Date(j.startAt))/60000)||180);$('fCost').value=j.cost||0;$('fDiscount').value=j.discount||0;$('fNote').value=j.note||'';renderServiceChoices();renderCart();$('jobModal').classList.add('show');}
+function openEditJob(id){const j=state.jobs.find(x=>x.id===id);if(!j)return;state.editingJobId=id;state.selectedService=SERVICES.find(x=>x.id===j.serviceId)||SERVICES[0];state.selectedExtras=(j.extras||[]).map(x=>({...x}));$('jobModalTitle').textContent=`Szerkesztés · ${j.id}`;$('fCustomer').value=j.customerName||'';$('fPhone').value=j.phone||'';$('fCar').value=j.car||'';$('fPlate').value=j.plate||'';$('fYear').value=j.year||'';$('fKm').value=j.km||'';$('fDate').value=localInput(new Date(j.startAt));$('fDuration').value=Math.max(15,Math.round((new Date(j.endAt)-new Date(j.startAt))/60000)||180);$('fCost').value=Math.round(j.cost||materialEstimateForJob(j));state.costManual=j.checklist?.costMode==='manual';$('fDiscount').value=j.discount||0;$('fNote').value=j.note||'';renderServiceChoices();renderCart();$('jobModal').classList.add('show');}
 
 async function saveJob(){
   const start=new Date($('fDate').value),duration=Math.max(15,Number($('fDuration').value)||180),end=new Date(start.getTime()+duration*60000);
   const conflict=findConflicts(start,end,state.editingJobId);if(conflict.length&&!confirm('Az időpont ütközik. Mentsem így is?'))return;
   const existing=state.jobs.find(j=>j.id===state.editingJobId);
-  const j={id:state.editingJobId||uid('DT'),customerName:$('fCustomer').value.trim()||'Ismeretlen ügyfél',phone:$('fPhone').value.trim(),car:$('fCar').value.trim()||'Ismeretlen autó',plate:$('fPlate').value.trim().toUpperCase(),year:Number($('fYear').value)||null,km:Number($('fKm').value)||0,startAt:start.toISOString(),endAt:end.toISOString(),serviceId:state.selectedService.id,serviceName:state.selectedService.name,servicePrice:state.selectedService.price,extras:state.selectedExtras.map(x=>({id:x.id,name:x.name,price:x.price})),discount:Number($('fDiscount').value)||0,cost:Number($('fCost').value)||0,total:calcTotal(),status:existing?.status||'open',paymentMethod:existing?.paymentMethod||'',note:$('fNote').value.trim(),checklist:existing?.checklist||{before:false,damage:false,after:false},closedAt:existing?.closedAt||null,createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString(),timerSeconds:existing?.timerSeconds||0,timerStartedAt:existing?.timerStartedAt||null};
+  const j={id:state.editingJobId||uid('DT'),customerName:$('fCustomer').value.trim()||'Ismeretlen ügyfél',phone:$('fPhone').value.trim(),car:$('fCar').value.trim()||'Ismeretlen autó',plate:$('fPlate').value.trim().toUpperCase(),year:Number($('fYear').value)||null,km:Number($('fKm').value)||0,startAt:start.toISOString(),endAt:end.toISOString(),serviceId:state.selectedService.id,serviceName:state.selectedService.name,servicePrice:state.selectedService.price,extras:state.selectedExtras.map(x=>({id:x.id,name:x.name,price:x.price})),discount:Number($('fDiscount').value)||0,cost:Number($('fCost').value)||0,total:calcTotal(),status:existing?.status||'open',paymentMethod:existing?.paymentMethod||'',note:$('fNote').value.trim(),checklist:{...(existing?.checklist||{before:false,damage:false,after:false}),costMode:state.costManual?'manual':'auto'},closedAt:existing?.closedAt||null,createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString(),timerSeconds:existing?.timerSeconds||0,timerStartedAt:existing?.timerStartedAt||null};
   ensureRelations(j);
   try{
     if(state.cloud){const c=getCustomerForJob(j);if(c)await cloudUpsert('customers',c);const car=getCarForJob(j);if(car)await cloudUpsert('cars',car);const saved=await cloudUpsert('jobs',j);Object.assign(j,saved);}
@@ -332,7 +332,39 @@ function openDetail(id){
 }
 
 async function setPayment(id){const j=state.jobs.find(x=>x.id===id);const m=prompt('Fizetési mód: Készpénz / Átutalás / Bankkártya',j.paymentMethod||'Bankkártya');if(!m)return;j.paymentMethod=m.trim();try{if(state.cloud)Object.assign(j,await cloudUpsert('jobs',j));saveLocal();renderAll();openDetail(id);toast('Fizetési mód mentve');}catch(e){setSync('error','SYNC HIBA');toast('Mentés hiba');}}
-async function closeJob(id){const j=state.jobs.find(x=>x.id===id);if(!j)return;if(isClosed(j)){j.status='open';j.closedAt=null;}else{if(!j.paymentMethod){toast('Előbb válassz fizetési módot');return;}j.status='closed';j.closedAt=new Date().toISOString();}try{if(state.cloud)Object.assign(j,await cloudUpsert('jobs',j));saveLocal();renderAll();openDetail(id);toast(isClosed(j)?'Munkalap újranyitva':'Munkalap lezárva');}catch(e){toast('Mentés hiba');}}
+async function closeJob(id){
+  const j=state.jobs.find(x=>x.id===id);if(!j)return;
+  const reopening=isClosed(j);
+  try{
+    if(reopening){
+      const usage=j.checklist?.materialUsage||[];
+      for(const u of usage){
+        const s=state.stock.find(x=>x.id===u.stockId);if(!s)continue;
+        const add=convertQty(Number(u.qty)||0,u.unit,s.unit);s.qty=(Number(s.qty)||0)+add;
+        state.stockMovements.unshift({type:'in',product:s.name,qty:add,unit:s.unit,reason:'Munkalap újranyitása',jobId:j.id,at:new Date().toISOString()});
+        if(state.cloud)await cloudUpsert('inventory',s);
+      }
+      j.checklist={...(j.checklist||{}),materialsApplied:false,materialUsage:[]};
+      j.status='open';j.closedAt=null;
+    }else{
+      if(!j.paymentMethod){toast('Előbb válassz fizetési módot');return;}
+      const missing=materialAvailability(j);
+      if(missing.length){toast('Nincs elég készlet: '+missing.join(' · '));return;}
+      const usage=materialUsageForJob(j);
+      for(const u of usage){
+        const s=state.stock.find(x=>x.id===u.stockId);if(!s)continue;
+        const need=convertQty(Number(u.qty)||0,u.unit,s.unit);s.qty=(Number(s.qty)||0)-need;
+        state.stockMovements.unshift({type:'out',product:s.name,qty:need,unit:s.unit,reason:'Munkalap lezárása',jobId:j.id,at:new Date().toISOString()});
+        if(state.cloud)await cloudUpsert('inventory',s);
+      }
+      if(j.checklist?.costMode!=='manual')j.cost=Math.round(materialEstimateForJob(j));
+      j.checklist={...(j.checklist||{}),materialsApplied:usage.length>0,materialUsage:usage};
+      j.status='closed';j.closedAt=new Date().toISOString();
+    }
+    if(state.cloud)Object.assign(j,await cloudUpsert('jobs',j));
+    saveLocal();renderAll();openDetail(id);toast(reopening?'Munkalap újranyitva · készlet visszaírva':'Munkalap lezárva · készlet levonva');
+  }catch(e){console.error(e);setSync('error','SYNC HIBA');toast('Mentés hiba: '+(e.message||'ismeretlen'));}
+}
 async function toggleTimer(id){const j=state.jobs.find(x=>x.id===id);if(!j)return;if(j.timerStartedAt){j.timerSeconds=(j.timerSeconds||0)+Math.max(0,Math.round((Date.now()-new Date(j.timerStartedAt).getTime())/1000));j.timerStartedAt=null;}else j.timerStartedAt=new Date().toISOString();if(state.cloud)cloudUpsert('jobs',j).then(x=>Object.assign(j,x)).catch(()=>{});saveLocal();openDetail(id);}
 
 async function handlePhotos(jobId,files){
@@ -362,17 +394,73 @@ function renderDashboard(){
 }
 function stockCard(x){const s=stockState(x);return `<div class="card stock-card ${s}"><div class="stock-top"><b>${esc(x.name)}</b><span>${Number(x.qty)||0} ${esc(x.unit)}</span></div><div class="bar"><i style="width:${stockPercent(x)}%"></i></div><div class="stock-top"><span class="badge ${s==='critical'?'danger':s==='low'?'warn':'ok'}">${stockLabel(x)}</span><span>${money(stockValue(x))}</span></div></div>`;}
 function renderInventory(){
-  const rank={critical:0,low:1,ok:2},s=[...state.stock].sort((a,b)=>rank[stockState(a)]-rank[stockState(b)]);const c=s.filter(x=>stockState(x)==='critical').length,l=s.filter(x=>stockState(x)==='low').length;
-  $('inventoryVisualMeta').textContent=`${s.length} tétel · ${c} piros · ${l} sárga`;$('dashStockMeta').textContent=`${s.length} tétel`;$('dashStock').innerHTML=s.length?s.map(stockCard).join(''):'<div class="muted" style="font-size:9px">Nincs készlettétel.</div>';$('inventoryVisual').innerHTML=s.length?s.map(stockCard).join(''):'<div class="muted" style="font-size:9px">Nincs készlettétel.</div>';
+  const rank={critical:0,low:1,ok:2};
+  const s=[...state.stock].sort((a,b)=>rank[stockState(a)]-rank[stockState(b)]||a.name.localeCompare(b.name,'hu'));
+  const c=s.filter(x=>stockState(x)==='critical').length,l=s.filter(x=>stockState(x)==='low').length;
+  $('inventoryVisualMeta').textContent=s.length+' tétel · '+c+' piros · '+l+' sárga';
   $('invCount').textContent=s.length;$('invCritical').textContent=c;$('invLow').textContent=l;$('invValue').textContent=money(s.reduce((t,x)=>t+stockValue(x),0));
-  $('inventoryEditor').innerHTML=s.length?s.map(x=>{const st=stockState(x);return `<tr data-stock="${x.id}"><td><input class="input stock-name" value="${esc(x.name)}"></td><td><input class="input stock-qty" type="number" step="0.01" value="${Number(x.qty)||0}"></td><td><select class="select stock-unit">${['db','liter','ml','kg','%'].map(u=>`<option ${x.unit===u?'selected':''}>${u}</option>`).join('')}</select></td><td><input class="input stock-min" type="number" step="0.01" value="${Number(x.min)||0}"></td><td><input class="input stock-price" type="number" value="${Number(x.price)||0}"></td><td class="row-value">${money(stockValue(x))}</td><td><span class="badge ${st==='critical'?'danger':st==='low'?'warn':'ok'}">${stockLabel(x)}</span></td><td><button class="secondary" data-delete-stock="${x.id}">Törlés</button></td></tr>`;}).join(''):'<tr><td colspan="8" class="muted">Nincs készlettétel.</td></tr>';
+  $('inventoryVisual').innerHTML=s.length?s.map(stockCard).join(''):'<div class="muted" style="font-size:9px">Nincs készlettétel.</div>';
+  $('dashStock').innerHTML=s.slice(0,6).map(stockCard).join('')||'<div class="muted" style="font-size:9px">Nincs készlettétel.</div>';
+  $('inventoryProductList').innerHTML=s.length?s.map(x=>{
+    const st=stockState(x);
+    return '<div class="inventory-product '+st+'" data-stock-card="'+esc(x.id)+'">'+
+      '<div class="ip-head"><div><b>'+esc(x.name)+'</b><div class="ip-meta">'+esc(x.category||'Egyéb')+'</div></div><span class="badge '+(st==='critical'?'danger':st==='low'?'warn':'ok')+'">'+stockLabel(x)+'</span></div>'+
+      '<div class="bar" style="margin-top:11px"><div class="fill" style="width:'+stockPercent(x)+'%"></div></div>'+
+      '<div class="ip-grid"><div class="ip-stat"><span>Készlet</span><b>'+(Number(x.qty)||0)+' '+esc(x.unit)+'</b></div><div class="ip-stat"><span>Egységköltség</span><b>'+money(x.price)+' / '+esc(x.unit)+'</b></div><div class="ip-stat"><span>Készletérték</span><b>'+money(stockValue(x))+'</b></div></div>'+
+      '<div class="ip-edit"><label>Mennyiség<input class="input ip-qty" type="number" step="0.01" value="'+(Number(x.qty)||0)+'"></label><label>Minimum<input class="input ip-min" type="number" step="0.01" value="'+(Number(x.min)||0)+'"></label><label>Egységköltség<input class="input ip-price" type="number" step="0.01" value="'+(Number(x.price)||0)+'"></label></div>'+
+      '<div class="ip-actions"><button class="secondary" data-restock="'+esc(x.id)+'">＋ Beszerzés</button><button class="secondary" data-save-stock="'+esc(x.id)+'">Mentés</button><button class="secondary danger-btn" data-delete-stock="'+esc(x.id)+'">Törlés</button></div>'+
+    '</div>';
+  }).join(''):'<div class="info-box">Nincs készlettétel.</div>';
+
+  const groups=[{name:'Fresh Interior',id:'fresh'},{name:'Deep Interior',id:'deep'}].concat(EXTRAS.map(x=>({name:x.name,id:'extra:'+x.id})));
+  $('recipeList').innerHTML=groups.map(g=>{
+    const rows=g.id.indexOf('extra:')===0?(EXTRA_MATERIAL_RECIPES[g.id.slice(6)]||[]):(MATERIAL_RECIPES[g.id]||[]);
+    let total=0;
+    const body=rows.length?rows.map(r=>{const s=findMaterialStock(r),cost=s?(Number(r.qty)||0)*unitCostFor(s,r.unit):0;total+=cost;return '<div class="recipe-row"><span>'+esc(r.stockName||s?.name||'Hiányzó termék')+' <small>· '+r.qty+' '+r.unit+'</small></span><b>'+money(cost)+'</b></div>';}).join(''):'<div class="muted" style="font-size:9px">Nincs rögzített anyagfelhasználás.</div>';
+    return '<div class="recipe-card"><h4>'+esc(g.name)+'</h4>'+body+'<div class="recipe-total"><span>Becsült anyagköltség</span><b>'+money(total)+'</b></div></div>';
+  }).join('');
+
+  const moves=(state.stockMovements||[]).slice(0,18);
+  $('stockMovements').innerHTML=moves.length?moves.map(m=>'<div class="movement-item"><div><b>'+(m.type==='in'?'＋ Beérkezés':'− Felhasználás')+' · '+esc(m.product)+'</b><p>'+esc(m.reason||'')+' · '+fmtDate(m.at)+'</p></div><strong class="'+(m.type==='in'?'movement-in':'movement-out')+'">'+(m.type==='in'?'+':'−')+Number(m.qty).toFixed(2)+' '+esc(m.unit)+'</strong></div>').join(''):'<div class="muted" style="font-size:9px">Még nincs készletmozgás.</div>';
 }
 async function saveInventory(){
-  const rows=[...document.querySelectorAll('#inventoryEditor tr[data-stock]')];
-  try{const next=[];for(const tr of rows){let x={id:tr.dataset.stock,name:tr.querySelector('.stock-name').value.trim()||'Új termék',qty:Number(tr.querySelector('.stock-qty').value)||0,unit:tr.querySelector('.stock-unit').value,min:Number(tr.querySelector('.stock-min').value)||0,price:Number(tr.querySelector('.stock-price').value)||0,category:'Egyéb'};if(state.cloud)x=await cloudUpsert('inventory',x);next.push(x);}state.stock=next;saveLocal();renderAll();toast('Készlet mentve');}catch(e){console.error(e);setSync('error','SYNC HIBA');toast('Készlet mentési hiba');}}
+  try{
+    const cards=[...document.querySelectorAll('#inventoryProductList [data-stock-card]')];
+    for(const card of cards){
+      const s=state.stock.find(x=>x.id===card.dataset.stockCard);if(!s)continue;
+      s.qty=Number(card.querySelector('.ip-qty').value)||0;s.min=Number(card.querySelector('.ip-min').value)||0;s.price=Number(card.querySelector('.ip-price').value)||0;
+      if(state.cloud)Object.assign(s,await cloudUpsert('inventory',s));
+    }
+    saveLocal();renderAll();toast('Készlet mentve');
+  }catch(e){console.error(e);setSync('error','SYNC HIBA');toast('Készlet mentési hiba: '+(e.message||''));}
+}
+async function saveInventoryCard(card){
+  const s=state.stock.find(x=>x.id===card.dataset.stockCard);if(!s)return;
+  s.qty=Number(card.querySelector('.ip-qty').value)||0;s.min=Number(card.querySelector('.ip-min').value)||0;s.price=Number(card.querySelector('.ip-price').value)||0;
+  try{if(state.cloud)Object.assign(s,await cloudUpsert('inventory',s));saveLocal();renderAll();toast(s.name+' · mentve');}catch(e){toast('Készlet mentési hiba');}
+}
 function addStock(){$('stockName').value='';$('stockCategory').value='';$('stockQty').value=0;$('stockUnit').value='db';$('stockMin').value=1;$('stockPrice').value=0;$('stockModal').classList.add('show');}
-async function saveStock(){let x={id:uid('ST'),name:$('stockName').value.trim()||'Új termék',qty:Number($('stockQty').value)||0,unit:$('stockUnit').value,min:Number($('stockMin').value)||0,price:Number($('stockPrice').value)||0,category:$('stockCategory').value.trim()||'Egyéb'};try{if(state.cloud)x=await cloudUpsert('inventory',x);state.stock.push(x);saveLocal();closeModal('stockModal');renderAll();toast('Készlettétel hozzáadva');}catch(e){toast('Készletmentési hiba');}}
-async function deleteStock(id){if(!confirm('Biztosan törlöd ezt a készlettételt?'))return;try{if(state.cloud){const r=await supabase.from('inventory').delete().eq('id',id).eq('user_id',state.session.user.id);if(r.error)throw r.error;}state.stock=state.stock.filter(x=>x.id!==id);saveLocal();renderAll();}catch(e){toast('Törlés hiba');}}
+async function saveStock(){
+  const x={id:uid('ST'),name:$('stockName').value.trim()||'Új termék',qty:Number($('stockQty').value)||0,unit:$('stockUnit').value,min:Number($('stockMin').value)||0,price:Number($('stockPrice').value)||0,category:$('stockCategory').value.trim()||'Egyéb',packQty:1,packUnit:$('stockUnit').value};
+  try{if(state.cloud)Object.assign(x,await cloudUpsert('inventory',x));state.stock.push(x);saveLocal();closeModal('stockModal');renderAll();toast('Készlettétel hozzáadva');}catch(e){toast('Készletmentési hiba: '+(e.message||''));}
+}
+function openRestock(id){
+  const sel=$('restockProduct');sel.innerHTML=state.stock.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+(Number(x.qty)||0)+' '+esc(x.unit)+'</option>').join('');
+  if(id)sel.value=id;$('restockQty').value='';$('restockCost').value='';$('restockNote').value='';renderRestockPreview();$('restockModal').classList.add('show');
+}
+function renderRestockPreview(){
+  const s=state.stock.find(x=>x.id===$('restockProduct')?.value);if(!s){$('restockPreview').textContent='';return;}
+  const add=Number($('restockQty').value)||0,cost=Number($('restockCost').value)||0,batchUnit=add>0?cost/add:0,newQty=(Number(s.qty)||0)+add,newPrice=newQty>0?(((Number(s.qty)||0)*(Number(s.price)||0))+(add*batchUnit))/newQty:(Number(s.price)||0);
+  $('restockPreview').innerHTML='Jelenlegi: <b>'+Number(s.qty||0)+' '+esc(s.unit)+'</b> · '+money(s.price)+'/'+esc(s.unit)+'<br>Új súlyozott egységköltség: <b>'+money(newPrice)+'/'+esc(s.unit)+'</b> · új készlet: <b>'+newQty+' '+esc(s.unit)+'</b>';
+}
+async function saveRestock(){
+  const s=state.stock.find(x=>x.id===$('restockProduct').value),add=Number($('restockQty').value)||0,cost=Number($('restockCost').value)||0;
+  if(!s||add<=0||cost<0){toast('Add meg a beszerzési mennyiséget és teljes költségét.');return;}
+  const oldQty=Number(s.qty)||0,oldPrice=Number(s.price)||0,batchUnit=cost/add,newQty=oldQty+add;s.price=((oldQty*oldPrice)+(add*batchUnit))/newQty;s.qty=newQty;
+  state.stockMovements.unshift({type:'in',product:s.name,qty:add,unit:s.unit,reason:$('restockNote').value.trim()||'Beszerzés',at:new Date().toISOString()});
+  try{if(state.cloud)Object.assign(s,await cloudUpsert('inventory',s));saveLocal();closeModal('restockModal');renderAll();toast('Beszerzés rögzítve');}catch(e){toast('Beszerzés mentési hiba: '+(e.message||''));}
+}
+async function deleteStock(id){if(!confirm('Biztosan törlöd ezt a készlettételt?'))return;try{if(state.cloud){const r=await supabase.from('inventory').delete().eq('id',id).eq('user_id',state.session.user.id);if(r.error)throw r.error;}state.stock=state.stock.filter(x=>x.id!==id);saveLocal();renderAll();toast('Készlettétel törölve');}catch(e){toast('Törlés hiba');}}
 
 function renderJobs(){
   const q=($('jobSearch').value||'').toLowerCase(),f=$('jobFilter').value||'all';const a=state.jobs.filter(j=>(f==='all'||f==='open'&&!isClosed(j)||f==='closed'&&isClosed(j))&&JSON.stringify(j).toLowerCase().includes(q)).sort((x,y)=>new Date(y.startAt)-new Date(x.startAt));
