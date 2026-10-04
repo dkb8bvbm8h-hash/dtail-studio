@@ -7,357 +7,251 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<link rel="icon" href="./assets/dtail-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./assets/dtail-icon.svg">
 <title>D-Tail Studio</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
-:root{
- --bg:#07090d;--panel:#0d1016;--panel2:#11151d;--card:#121720;--line:rgba(255,255,255,.075);
- --text:#f2f4f7;--muted:#8e97a6;--dim:#596272;--accent:#e9edf2;--green:#63d99b;--yellow:#e6b55b;--red:#ef6666;--blue:#6da8ff;
- --shadow:0 18px 55px rgba(0,0,0,.32);--radius:22px;
-}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
-body{overflow-x:hidden}button,input,select,textarea{font:inherit}button{cursor:pointer}
-#splash{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at 50% 40%,#151a23 0,#080a0e 42%,#030405 100%);display:grid;place-items:center;transition:opacity .55s ease}
-#splash.hide{opacity:0;pointer-events:none}.splash-inner{text-align:center}.splash-logo{width:min(210px,55vw);filter:drop-shadow(0 12px 40px rgba(255,255,255,.08))}
-.splash-name{font-family:Manrope,sans-serif;font-weight:800;letter-spacing:.24em;font-size:12px;margin-top:16px;color:#cfd4db}
-.splash-line{width:170px;height:2px;background:#20252e;margin:22px auto 0;overflow:hidden;border-radius:99px}.splash-line i{display:block;height:100%;width:45%;background:#f4f6f8;animation:load 1.1s ease-in-out infinite}
-.splash-enter{display:none;margin-top:25px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;border-radius:14px;padding:12px 18px;font-weight:700;font-size:12px}
-@keyframes load{0%{transform:translateX(-120%)}100%{transform:translateX(400%)}}
-.app{display:grid;grid-template-columns:255px 1fr;min-height:100dvh}
-.sidebar{position:sticky;top:0;height:100dvh;border-right:1px solid var(--line);background:linear-gradient(180deg,#090b10,#07090d);padding:22px 15px;display:flex;flex-direction:column;z-index:20}
-.brand{display:flex;align-items:center;gap:11px;padding:4px 9px 24px}.brand img{width:39px;height:39px;object-fit:contain;border-radius:11px}.brand b{font-family:Manrope;font-size:14px;letter-spacing:.08em}.brand small{display:block;color:var(--dim);font-size:9px;letter-spacing:.18em;margin-top:3px}
-.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#929baa;text-align:left;padding:12px 12px;border-radius:13px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:10px;transition:.18s}
-.nav button:hover{background:rgba(255,255,255,.035);color:#fff}.nav button.active{background:linear-gradient(90deg,rgba(255,255,255,.09),rgba(255,255,255,.035));color:#fff;box-shadow:inset 2px 0 #e9edf2}
-.nav .ico{width:20px;text-align:center;opacity:.85}.side-bottom{margin-top:auto;padding:10px}.studio-status{padding:13px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:16px}.studio-status .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 13px rgba(99,217,155,.5);margin-right:7px}.studio-status b{font-size:10px;letter-spacing:.08em}.studio-status p{font-size:10px;color:var(--muted);margin:7px 0 0;line-height:1.45}
-.main{min-width:0}.topbar{height:74px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;background:rgba(7,9,13,.82);backdrop-filter:blur(18px);z-index:15}.page-title{font-family:Manrope;font-size:18px;font-weight:800}.page-sub{font-size:10px;color:var(--dim);margin-top:4px}.top-actions{display:flex;gap:8px}.iconbtn{width:40px;height:40px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#dce0e6;border-radius:12px}
-.content{padding:28px;max-width:1600px;margin:auto}.view{display:none;animation:fade .25s ease}.view.active{display:block}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:20px}.hero h1{font-family:Manrope;font-size:28px;margin:0;letter-spacing:-.03em}.hero p{color:var(--muted);font-size:12px;margin:7px 0 0}.primary{border:1px solid rgba(255,255,255,.12);background:#eef1f4;color:#080a0e;border-radius:13px;padding:12px 16px;font-weight:800;font-size:12px;box-shadow:0 10px 30px rgba(0,0,0,.2)}.secondary{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#e6e9ed;border-radius:13px;padding:11px 14px;font-weight:700;font-size:12px}
-.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:linear-gradient(145deg,rgba(19,23,31,.96),rgba(10,13,18,.96));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.stat{padding:18px}.stat .label{font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:var(--dim)}.stat .value{font-family:Manrope;font-size:26px;font-weight:800;margin-top:9px;letter-spacing:-.04em}.stat .delta{font-size:10px;color:var(--muted);margin-top:6px}
-.two{grid-template-columns:1.35fr .65fr}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-.section{padding:19px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.section-head h3{font-family:Manrope;margin:0;font-size:13px}.section-head span{font-size:10px;color:var(--dim)}
-.jobrow{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.jobrow:last-child{border-bottom:0}.jobmain b{font-size:12px}.jobmain p{margin:5px 0 0;color:var(--muted);font-size:10px}.money{font-family:Manrope;font-weight:800;font-size:12px}.badge{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:6px 8px;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.ok{color:#84e3ae;background:rgba(99,217,155,.08);border:1px solid rgba(99,217,155,.14)}.warn{color:#efc976;background:rgba(230,181,91,.08);border:1px solid rgba(230,181,91,.14)}.danger{color:#ff8b8b;background:rgba(239,102,102,.08);border:1px solid rgba(239,102,102,.15)}.neutral{color:#aab3c1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
-.insight{padding:13px 14px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:15px;margin-bottom:9px}.insight b{font-size:11px}.insight p{font-size:10px;line-height:1.45;color:var(--muted);margin:5px 0 0}
-.stockgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.stock{padding:15px;position:relative;overflow:hidden}.stock.critical{border-color:rgba(239,102,102,.25);box-shadow:0 0 25px rgba(239,102,102,.05)}.stock.low{border-color:rgba(230,181,91,.22)}.stocktop{display:flex;justify-content:space-between;gap:8px}.stock b{font-size:11px}.stock small{font-size:10px;color:var(--muted)}.bar{height:6px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin:13px 0 9px}.fill{height:100%;border-radius:99px}.stock.ok .fill{background:var(--green)}.stock.low .fill{background:var(--yellow)}.stock.critical .fill{background:var(--red);animation:pulse 1.5s infinite}@keyframes pulse{50%{opacity:.55}}
-.searchbar{display:flex;gap:8px;margin-bottom:15px}.input,.select,.textarea{width:100%;background:#0a0d12;border:1px solid var(--line);color:#edf0f4;border-radius:12px;padding:11px 12px;outline:none}.input:focus,.select:focus,.textarea:focus{border-color:rgba(255,255,255,.18)}.textarea{min-height:95px;resize:vertical}
-.table{width:100%;border-collapse:collapse}.table th{text-align:left;font-size:9px;color:var(--dim);letter-spacing:.09em;text-transform:uppercase;padding:10px;border-bottom:1px solid var(--line)}.table td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:11px}.table tr:last-child td{border-bottom:0}
-.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}.full{grid-column:1/-1}
-.service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.service{padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025);cursor:pointer}.service:hover{background:rgba(255,255,255,.05)}.service b{font-size:11px}.service span{float:right;font-weight:800;font-size:11px}.service p{margin:6px 0 0;font-size:10px;color:var(--muted)}
-.cart{padding:15px;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.02)}.cartline{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:11px}.cartline:last-child{border-bottom:0}.total{display:flex;justify-content:space-between;margin-top:13px;font-family:Manrope;font-weight:800;font-size:17px}
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.photo{aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#0a0d12;position:relative}.photo img{width:100%;height:100%;object-fit:cover}.photo small{position:absolute;left:8px;bottom:7px;background:rgba(0,0,0,.65);padding:5px 7px;border-radius:8px;font-size:9px}
-.progress{height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#6f7784,#f0f2f5);border-radius:99px}
-.ai{background:radial-gradient(circle at 100% 0,rgba(116,150,210,.13),transparent 35%),linear-gradient(145deg,#111722,#0a0d12);padding:0;overflow:hidden}.ai-head{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid var(--line)}.ai-brand{display:flex;align-items:center;gap:10px}.ai-orb{width:35px;height:35px;border-radius:11px;background:linear-gradient(145deg,#2a313c,#0d1015);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;font-weight:800;font-size:11px}.ai-head b{font-size:12px}.ai-head small{display:block;color:var(--dim);font-size:9px;margin-top:2px}.ai-live{font-size:9px;color:#84e3ae;letter-spacing:.1em}.ai-body{padding:17px}.ai-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#d9dde3;border-radius:99px;padding:8px 10px;font-size:10px}.aibox{display:flex;gap:7px;margin-top:12px}.aibox input{flex:1;min-width:0}.aibox button{width:42px;border:0;border-radius:11px;background:#eef1f4;color:#07090d;font-weight:900}.answer{display:none;margin-top:11px;padding:12px;border-radius:13px;background:rgba(255,255,255,.035);border:1px solid var(--line);font-size:11px;line-height:1.55}.answer.show{display:block}
-.alerts{display:grid;gap:8px}.alert{display:flex;gap:9px;align-items:flex-start;padding:11px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid var(--line)}.alert .aicon{width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.05);display:grid;place-items:center}.alert b{font-size:10px}.alert p{margin:4px 0 0;font-size:9px;color:var(--muted);line-height:1.35}
-.mobile-nav{display:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px;z-index:80}.modal.show{display:flex}.modalbox{width:min(920px,100%);max-height:90dvh;overflow:auto;background:#0c1016;border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 100px rgba(0,0,0,.55)}.modalhead{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}.modalhead h2{font-family:Manrope;font-size:16px;margin:0}.modalbody{padding:20px}.close{border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;width:34px;height:34px;border-radius:10px}
-.toast{position:fixed;right:20px;bottom:20px;z-index:120;display:none;padding:12px 15px;background:#eef1f4;color:#07090d;border-radius:12px;font-size:11px;font-weight:800;box-shadow:0 18px 50px rgba(0,0,0,.4)}.toast.show{display:block;animation:toast .22s ease}@keyframes toast{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.printsheet{display:none}
-@media(max-width:1050px){.app{grid-template-columns:82px 1fr}.sidebar{padding:17px 10px}.brand div,.nav button span,.studio-status p,.studio-status b{display:none}.brand{justify-content:center}.nav button{justify-content:center}.nav .ico{font-size:16px}.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.stockgrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.app{display:block}.sidebar{display:none}.content{padding:18px 15px 90px}.topbar{padding:0 15px}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;z-index:50;padding:7px;background:rgba(13,16,22,.92);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.mobile-nav button{border:0;background:transparent;color:#7f8897;padding:7px 2px;font-size:9px}.mobile-nav button.active{color:#fff}.mobile-nav .mi{display:block;font-size:16px;margin-bottom:3px}.hero{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.three,.stockgrid{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.service-grid{grid-template-columns:1fr}.full{grid-column:auto}.photo-grid{grid-template-columns:1fr 1fr}.top-actions .iconbtn:nth-child(2){display:none}}
-@media(pointer:coarse){button{touch-action:manipulation}.input,.select,.textarea{font-size:16px}}
-@media print{body{background:#fff;color:#111}.sidebar,.topbar,.mobile-nav,.toast{display:none!important}.content{padding:0}.view{display:none!important}.printsheet{display:block}}
-</style><style id="inventory-premium-fix">
-.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
-.inventory-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.inventory-product{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(19,23,31,.96),rgba(9,12,17,.96));padding:15px;min-width:0}
-.inventory-product.critical{border-color:rgba(239,102,102,.26);box-shadow:0 0 30px rgba(239,102,102,.05)}
-.inventory-product.low{border-color:rgba(230,181,91,.24)}
-.inventory-product .ip-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.inventory-product .ip-head b{font-family:Manrope;font-size:13px}
-.inventory-product .ip-meta{color:var(--muted);font-size:9px;margin-top:4px}
-.inventory-product .ip-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
-.inventory-product .ip-stat{padding:10px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
-.inventory-product .ip-stat span{display:block;font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
-.inventory-product .ip-stat b{display:block;font-size:11px;margin-top:4px}
-.inventory-product .ip-edit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
-.inventory-product .ip-edit label{font-size:8px;color:var(--muted)}
-.inventory-product .ip-edit input{margin-top:5px}
-.inventory-product .ip-actions{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
-.recipe-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.recipe-card{padding:13px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.018)}
-.recipe-card h4{margin:0 0 8px;font-family:Manrope;font-size:12px}
-.recipe-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:10px}
-.recipe-row:last-child{border-bottom:0}
-.recipe-row small{color:var(--muted)}
-.recipe-total{display:flex;justify-content:space-between;margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-family:Manrope;font-weight:800;font-size:11px}
-.movement-list{display:grid;gap:7px}
-.movement-item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.movement-item:last-child{border-bottom:0}
-.movement-item b{font-size:10px}
-.movement-item p{margin:3px 0 0;font-size:9px;color:var(--muted)}
-.movement-in{color:#84e3ae}.movement-out{color:#ff8b8b}
-.danger-btn{color:#ff8b8b!important;border-color:rgba(239,102,102,.2)!important;background:rgba(239,102,102,.05)!important}
-@media(max-width:900px){.inventory-products,.recipe-list{grid-template-columns:1fr}}
-@media(max-width:600px){.inventory-product .ip-grid,.inventory-product .ip-edit{grid-template-columns:1fr 1fr}.hero-actions{width:100%}}
-</style>
+:root{--bg:#07090d;--panel:#0d1016;--card:#121720;--line:rgba(255,255,255,.08);--text:#f3f5f7;--muted:#8f98a6;--dim:#5e6877;--a:#6fe7ff;--g:#67dc9f;--y:#e9bb61;--r:#ef6b70;--shadow:0 22px 80px rgba(0,0,0,.34);--radius:20px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,rgba(111,231,255,.06),transparent 32%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{overflow-x:hidden}
+button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+#boot{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#161c25,#06080b 58%,#020304);transition:opacity .3s ease}#boot.hide{opacity:0;pointer-events:none}.boot{text-align:center}.boot-logo{width:72px;height:72px;margin:auto;display:grid;place-items:center;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.04)}.boot-logo img{width:46px;height:46px}.boot-name{font-size:11px;font-weight:800;letter-spacing:.28em;margin-top:14px}.boot-line{width:160px;height:2px;background:#1b222d;margin:20px auto 0;border-radius:99px;overflow:hidden}.boot-line i{display:block;width:45%;height:100%;background:var(--a);animation:load 1s ease-in-out infinite}@keyframes load{0%{transform:translateX(-130%)}100%{transform:translateX(420%)}}
+.sidebar{position:fixed;left:14px;top:14px;bottom:14px;width:285px;padding:18px 14px;background:linear-gradient(180deg,#0a0d12,#080a0e);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);z-index:120;transform:translateX(calc(-100% + 55px));transition:transform .28s cubic-bezier(.22,.8,.22,1);display:flex;flex-direction:column;overflow:auto}body.drawer .sidebar{transform:translateX(0)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:110;opacity:0;visibility:hidden;pointer-events:none;transition:.2s}body.drawer .overlay{opacity:1;visibility:visible;pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:3px 7px 24px}.mark{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;border:1px solid var(--line);background:linear-gradient(145deg,#1a212b,#0b0e13);color:var(--a);font-weight:900}.brand b{font-size:13px;letter-spacing:.08em}.brand small{display:block;color:var(--dim);font-size:8px;letter-spacing:.18em;margin-top:3px}
+.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#9ca5b2;text-align:left;padding:12px;border-radius:13px;display:flex;align-items:center;gap:10px;font-size:11px;font-weight:800}.nav button:hover{background:rgba(255,255,255,.04);color:#fff}.nav button.active{background:linear-gradient(90deg,rgba(111,231,255,.12),rgba(255,255,255,.035));color:#fff;box-shadow:inset 2px 0 var(--a)}.ico{width:20px;text-align:center;font-size:16px}
+.side-bottom{margin-top:auto;padding:12px 8px}.sync-card{padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}.sync-row{display:flex;align-items:center;gap:7px;font-size:9px;font-weight:900;letter-spacing:.08em}.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 12px rgba(103,220,159,.45)}.sync-dot.local{background:var(--y)}.sync-dot.error{background:var(--r)}.sync-card p{margin:6px 0 0;color:var(--muted);font-size:9px;line-height:1.45}
+.main{width:100%;min-width:0}.topbar{position:sticky;top:0;z-index:100;height:74px;display:flex;justify-content:space-between;align-items:center;padding:0 30px 0 76px;border-bottom:1px solid var(--line);background:rgba(7,9,13,.84);backdrop-filter:blur(18px)}.page-title{font-size:17px;font-weight:900}.page-sub{font-size:9px;color:var(--dim);margin-top:4px}.top-actions{display:flex;gap:8px}.icon,.primary,.secondary{border-radius:12px;padding:10px 13px}.icon{width:42px;height:42px;border:1px solid var(--line);background:rgba(255,255,255,.035);color:#eef2f6}.primary{border:1px solid rgba(255,255,255,.18);background:#edf3f7;color:#06080b;font-weight:900}.secondary{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#e8edf2;font-weight:800}#menu{position:fixed;left:18px;top:15px;z-index:140;font-size:18px}
+.content{padding:28px;max-width:1560px;margin:auto}.view{display:none;animation:fade .2s ease}.view.active{display:block}@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:20px}.hero h1{margin:0;font-size:28px;letter-spacing:-.04em}.hero p{margin:6px 0 0;color:var(--muted);font-size:11px}.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:1.35fr .65fr}
+.card{background:linear-gradient(145deg,rgba(18,23,32,.96),rgba(10,13,18,.96));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.section{padding:18px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.head h3{margin:0;font-size:12px}.head span{font-size:9px;color:var(--dim)}
+.stat{padding:17px}.stat label{display:block;color:var(--dim);font-size:9px;letter-spacing:.12em;text-transform:uppercase}.stat strong{display:block;font-size:25px;margin-top:8px}.stat small{display:block;color:var(--muted);font-size:9px;margin-top:6px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row b{font-size:11px}.row p{margin:4px 0 0;color:var(--muted);font-size:9px}.money{font-size:11px;font-weight:900}
+.badge{display:inline-flex;padding:5px 8px;border-radius:99px;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.ok{color:#8ce7b8;background:rgba(103,220,159,.08);border:1px solid rgba(103,220,159,.14)}.warn{color:#f0cf82;background:rgba(233,187,97,.08);border:1px solid rgba(233,187,97,.14)}.danger{color:#ff9194;background:rgba(239,107,112,.08);border:1px solid rgba(239,107,112,.14)}.neutral{color:#b6bdc7;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+.stock-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stock{padding:14px}.stock.critical{border-color:rgba(239,107,112,.22)}.stock.low{border-color:rgba(233,187,97,.2)}.stock-top{display:flex;justify-content:space-between;gap:8px}.stock-top b{font-size:10px}.stock-top span{font-size:9px;color:var(--muted)}.bar{height:6px;background:rgba(255,255,255,.055);border-radius:99px;overflow:hidden;margin:12px 0 8px}.bar i{display:block;height:100%;border-radius:99px}.stock.ok .bar i{background:var(--g)}.stock.low .bar i{background:var(--y)}.stock.critical .bar i{background:var(--r)}
+.search{display:flex;gap:8px;margin-bottom:14px}.input,.select,.textarea{width:100%;background:#080b10;color:#edf1f4;border:1px solid var(--line);border-radius:12px;padding:11px 12px;outline:none}.input:focus,.select:focus,.textarea:focus{border-color:rgba(111,231,255,.35)}.textarea{min-height:100px;resize:vertical}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:760px}.table th{padding:10px;text-align:left;font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line)}.table td{padding:11px 10px;font-size:10px;border-bottom:1px solid var(--line)}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field label{display:block;font-size:9px;color:var(--muted);margin-bottom:6px}.full{grid-column:1/-1}.service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.service{padding:13px;border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:14px}.service.sel{border-color:rgba(111,231,255,.5);background:rgba(111,231,255,.06)}.service b{font-size:10px}.service strong{float:right;font-size:10px}.service p{margin:5px 0 0;color:var(--muted);font-size:8px}
+.cart{padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.018)}.cart-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:10px}.cart-total{display:flex;justify-content:space-between;margin-top:12px;font-size:16px;font-weight:900}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));min-width:720px;border:1px solid var(--line);border-radius:18px;overflow:hidden}.dow,.day{min-height:105px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.dow{min-height:0;padding:9px;color:var(--dim);font-size:8px;text-transform:uppercase}.day{padding:8px}.day:nth-child(7n){border-right:0}.muted-day{opacity:.4}.day.today{background:rgba(111,231,255,.06)}.day-num{font-size:9px;margin-bottom:6px}.day-event{display:block;width:100%;border:0;background:rgba(255,255,255,.045);color:#eef2f5;border-radius:8px;padding:6px;font-size:8px;margin-bottom:5px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{aspect-ratio:4/3;overflow:hidden;border-radius:13px;border:1px solid var(--line);background:#080b0f;position:relative}.photo img{width:100%;height:100%;object-fit:cover}.photo small{position:absolute;bottom:6px;left:7px;background:rgba(0,0,0,.65);padding:4px 6px;border-radius:7px;font-size:7px}
+.progress{height:7px;background:rgba(255,255,255,.055);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#5c6673,#eef4f7);border-radius:99px}
+.modal{position:fixed;inset:0;z-index:4000;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.7);backdrop-filter:blur(12px)}.modal.show{display:grid}.modal-box{width:min(980px,100%);max-height:92dvh;overflow:auto;border:1px solid var(--line);border-radius:23px;background:#0c1016;box-shadow:0 40px 120px rgba(0,0,0,.55)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.modal-head h2{margin:0;font-size:15px}.modal-body{padding:18px}.close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff}
+.info{padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02);font-size:9px;color:var(--muted);line-height:1.5}.actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px}.toast{position:fixed;right:18px;bottom:18px;z-index:6000;display:none;padding:11px 13px;border-radius:12px;background:#edf3f7;color:#07090d;font-size:10px;font-weight:900}
+.print-sheet{display:none}
+@media print{body{background:#fff;color:#111}.sidebar,.topbar,.mobile-nav,.modal,#boot,.content{display:none!important}.print-sheet{display:block!important}.print-page{font-family:Arial,sans-serif;color:#15171a;padding:12mm}.print-header{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:7mm;margin-bottom:7mm}.print-brand{display:flex;gap:10px;align-items:center}.print-mark{width:34px;height:34px;border:2px solid #111;border-radius:9px;display:grid;place-items:center;font-weight:900}.print-title{font-size:18px;font-weight:900}.print-sub{font-size:8px;color:#555}.print-id{text-align:right;font-size:8px;color:#555}.print-id b{display:block;color:#111;font-size:11px;margin-bottom:4px}.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-bottom:7mm}.print-card{border:1px solid #d3d6db;border-radius:10px;padding:5mm}.print-card h4{margin:0 0 3mm;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#666}.print-card p{margin:0;font-size:10px;line-height:1.5}.print-items{width:100%;border-collapse:collapse;font-size:9px}.print-items th,.print-items td{padding:7px 0;border-bottom:1px solid #e2e4e7;text-align:left}.print-items th:last-child,.print-items td:last-child{text-align:right}.print-total{margin-top:4mm;border-top:1px solid #d3d6db;padding-top:3mm}.print-total-row{display:flex;justify-content:space-between;padding:1.6mm 0;font-size:9px}.print-total-row.final{font-size:14px;font-weight:900;border-top:1.5px solid #111;margin-top:2mm;padding-top:3mm}.print-checks{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm}.check{border:1px solid #d3d6db;border-radius:8px;padding:3mm;font-size:8px}.print-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm}.print-photo{border:1px solid #d3d6db;border-radius:8px;overflow:hidden}.print-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.print-photo small{display:block;padding:2mm;font-size:7px}.print-footer{border-top:1px solid #d3d6db;margin-top:7mm;padding-top:3mm;display:flex;justify-content:space-between;color:#666;font-size:7px}}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.sidebar{left:10px;top:10px;bottom:10px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}.topbar{padding-left:68px;padding-right:14px}.content{padding:18px 14px 88px}.hero{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.stock-grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.service-grid{grid-template-columns:1fr}.photo-grid{grid-template-columns:1fr 1fr}.calendar-wrap{overflow:auto}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;z-index:130;padding:6px;border:1px solid var(--line);border-radius:18px;background:rgba(13,16,22,.93);backdrop-filter:blur(18px);box-shadow:var(--shadow)}.mobile-nav button{border:0;background:transparent;color:#7d8796;padding:7px 2px;font-size:8px}.mobile-nav button.active{color:#fff}.mobile-nav .mi{display:block;font-size:15px;margin-bottom:3px}}
 
-<style id="ultimate-ui-fix">
-/* D-TAIL ULTIMATE UI FIX */
-.ai{min-width:0;width:100%;overflow:hidden}
-.ai-body{min-width:0}
-.ai-actions{min-width:0}
-.aibox{display:grid;grid-template-columns:minmax(0,1fr) 44px;width:100%;min-width:0}
-.aibox .input{min-width:0;width:100%}
-.ai-connection{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;width:100%;min-width:0}
-.ai-connection .input{min-width:0}
-#view-ai>.grid.two{grid-template-columns:minmax(0,1fr);max-width:1100px}
-#view-ai .ai{min-height:420px}
-#view-ai .ai-body{max-width:100%}
-#aiFullAnswer,#aiDashAnswer{overflow-wrap:anywhere;word-break:break-word}
-#aiFullInput,#aiDashInput{min-width:0}
-#aiEndpoint{min-width:0}
-@media(max-width:850px){
-  .ai-connection{grid-template-columns:1fr}
-  #view-dashboard .grid.two{grid-template-columns:1fr}
-}
-@media(max-width:700px){
-  .aibox{grid-template-columns:minmax(0,1fr) 42px}
-  .ai-body{padding:14px}
-}
-
-/* Editable inventory */
-.inventory-editor{overflow:auto;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.015)}
-.inventory-editor table{min-width:760px}
-.inventory-editor input,.inventory-editor select{
-  background:#080b10;border:1px solid rgba(255,255,255,.09);color:#f2f4f7;
-  border-radius:9px;padding:8px 9px;width:100%;font-size:11px;outline:none
-}
-.inventory-editor input:focus,.inventory-editor select:focus{border-color:rgba(255,255,255,.25)}
-.inventory-editor .qty-input{font-family:Manrope;font-weight:800;text-align:right}
-.stock-actions{display:flex;gap:7px;align-items:center}
-.stock-actions button{white-space:nowrap}
-.stock-status{white-space:nowrap}
-.stock-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
-.stock-dot.ok{background:var(--green);box-shadow:0 0 9px rgba(99,217,155,.35)}
-.stock-dot.low{background:var(--yellow);box-shadow:0 0 9px rgba(230,181,91,.35)}
-.stock-dot.critical{background:var(--red);box-shadow:0 0 11px rgba(239,102,102,.5);animation:pulse 1.3s infinite}
-.inventory-help{font-size:10px;color:var(--muted);line-height:1.5;margin:0 0 12px}
-</style>
-
-<style id="dtail-floating-sidebar">
-/* D-TAIL iPad / touch navigation: visible edge rail + slide-in drawer */
-.app{display:block;min-height:100dvh}
-.sidebar{
-  position:fixed;left:10px;top:calc(10px + env(safe-area-inset-top));bottom:calc(10px + env(safe-area-inset-bottom));width:285px;height:auto;
-  border:1px solid rgba(255,255,255,.09);border-radius:24px;
-  box-shadow:0 30px 90px rgba(0,0,0,.52);
-  transform:translateX(calc(-100% + 58px));
-  transition:transform .32s cubic-bezier(.22,.8,.22,1);
-  z-index:90;
-  overflow:hidden;
-}
-body.drawer-open .sidebar{transform:translateX(0)}
-.main{min-width:0;width:100%}
-.drawer-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(6px);
-  opacity:0;visibility:hidden;pointer-events:none;transition:.25s;z-index:80
-}
-body.drawer-open .drawer-overlay{opacity:1;visibility:visible;pointer-events:auto}
-.top-actions{align-items:center}
-#menuToggle{font-size:18px;position:fixed;left:16px;top:calc(17px + env(safe-area-inset-top));z-index:95;width:44px;height:44px}
-.topbar{padding-left:76px}
-.nav button{transition:background .18s,color .18s,transform .18s}
-.nav button:hover{transform:translateX(2px)}
-@media(min-width:701px){
-  .sidebar{width:285px}
-}
-@media(max-width:700px){
- .sidebar{left:10px;top:calc(10px + env(safe-area-inset-top));bottom:calc(10px + env(safe-area-inset-bottom));width:min(310px,calc(100vw - 20px));transform:translateX(calc(-100% + 56px));}
- .topbar{padding-left:70px}
- #menuToggle{left:12px;top:calc(12px + env(safe-area-inset-top));}
-}
-@media(orientation:landscape) and (min-width:701px) and (max-width:1180px){
- .sidebar{width:300px;transform:translateX(calc(-100% + 60px));}
-}
-</style>
-
-<style id="dtail-sidebar-final">
-/* D-TAIL SIDEBAR / TABLET FINAL */
-.app{display:grid;grid-template-columns:255px minmax(0,1fr);min-height:100dvh}
-.sidebar{position:sticky;left:auto;top:0;bottom:auto;width:auto;height:100dvh;transform:none!important;overflow:auto;z-index:20}
+/* D-TAIL 4.0 DESKTOP / RESPONSIVE POLISH */
+.mobile-nav{display:none!important}
+#menu{display:none}
+.sidebar{transform:none;left:16px;top:16px;bottom:16px}
+.main{margin-left:315px;width:calc(100% - 315px)}
 .topbar{padding-left:30px}
-#menuToggle{display:none}
-.brand{align-items:center}.brand img{width:190px;height:auto;object-fit:contain;border-radius:0}.brand>div{min-width:0}
-.drawer-overlay{display:none}
-@media (min-width:701px) and (max-width:1100px){
-  .app{display:block;min-height:100dvh}
-  .sidebar{
-    position:fixed;left:10px;top:calc(10px + env(safe-area-inset-top));bottom:calc(10px + env(safe-area-inset-bottom));
-    width:300px;height:auto;border:1px solid rgba(255,255,255,.09);border-radius:24px;
-    box-shadow:0 30px 90px rgba(0,0,0,.52);overflow:auto;transform:translateX(calc(-100% - 26px))!important;
-    transition:transform .3s cubic-bezier(.22,.8,.22,1);z-index:90;
-  }
-  body.drawer-open .sidebar{transform:translateX(0)!important}
+.content{max-width:1480px}
+@media (max-width:1100px){
+  #menu{display:grid}
+  .sidebar{transform:translateX(calc(-100% + 55px));left:14px}
+  body.drawer .sidebar{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
   .topbar{padding-left:76px}
-  #menuToggle{display:block;position:fixed;left:16px;top:calc(15px + env(safe-area-inset-top));z-index:95;width:44px;height:44px}
-  .drawer-overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(6px);opacity:0;visibility:hidden;pointer-events:none;transition:.2s;z-index:80}
-  body.drawer-open .drawer-overlay{opacity:1;visibility:visible;pointer-events:auto}
-  .brand{padding-left:9px}
-  .mobile-nav{display:none!important}
 }
-@media (max-width:700px){
-  .app{display:block}
-  .sidebar{
-    position:fixed;left:10px;top:calc(10px + env(safe-area-inset-top));bottom:calc(10px + env(safe-area-inset-bottom));
-    width:min(320px,calc(100vw - 20px));height:auto;border:1px solid rgba(255,255,255,.09);border-radius:24px;
-    box-shadow:0 30px 90px rgba(0,0,0,.52);overflow:auto;transform:translateX(calc(-100% - 26px))!important;
-    transition:transform .3s cubic-bezier(.22,.8,.22,1);z-index:90;
-  }
-  body.drawer-open .sidebar{transform:translateX(0)!important}
-  .topbar{padding-left:70px}
-  #menuToggle{display:block;position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:95;width:44px;height:44px}
-  .drawer-overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(6px);opacity:0;visibility:hidden;pointer-events:none;transition:.2s;z-index:80}
-  body.drawer-open .drawer-overlay{opacity:1;visibility:visible;pointer-events:auto}
-  .brand img{width:min(220px,78vw)}
+@media (max-width:760px){
+  #menu{display:grid}
+  .sidebar{left:10px;top:10px;bottom:10px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}
+  body.drawer .sidebar{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
+  .topbar{padding-left:68px;padding-right:14px}
+  .content{padding:18px 14px 92px}
+  .mobile-nav{display:grid!important;position:fixed;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;z-index:130;padding:6px;border:1px solid var(--line);border-radius:18px;background:rgba(13,16,22,.93);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+  .mobile-nav button{border:0;background:transparent;color:#7d8796;padding:7px 2px;font-size:8px}
+  .mobile-nav button.active{color:#fff}
+  .mobile-nav .mi{display:block;font-size:15px;margin-bottom:3px}
 }
+
+<style id="dtail-final-layout">
+/* D-TAIL 4.1 FINAL LAYOUT */
+#menu{display:none}
+.sidebar{left:16px;right:auto;transform:none;width:275px}
+.main{margin-left:307px;width:calc(100% - 307px)}
+.topbar{padding-left:30px}
+@media(max-width:1100px){#menu{display:grid}.sidebar{transform:translateX(calc(-100% + 55px));left:14px;width:285px}.main{margin-left:0;width:100%}.topbar{padding-left:76px}}
+@media(max-width:760px){#menu{display:grid}.sidebar{left:10px;top:10px;bottom:76px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}.main{margin-left:0;width:100%}.topbar{padding-left:68px}.content{padding-bottom:96px}.mobile-nav{display:grid!important}}
+.mobile-nav button{min-width:0}.mobile-nav button .mi{line-height:1}
+.head strong{font-size:14px}
 </style>
-
-</head>
+<style id="dtail-real-logo">.brand-logo{width:190px;height:auto;display:block}.brand-logo-wrap{padding:3px 6px 24px;width:205px}.boot-logo .brand-logo{width:210px;max-width:62vw}.boot-logo{width:auto!important;height:auto!important;background:transparent!important;border:0!important}@media(max-width:1100px) and (min-width:761px){.brand-logo-wrap{display:block}.brand-logo{width:190px}}@media(max-width:760px){.brand-logo-wrap{width:190px}.brand-logo{width:180px}}</style><style id="dtail-premium-theme">
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{
+ --bg:#06080b;--panel:#0b0f14;--card:#10151c;--card2:#0d1218;--line:rgba(220,235,245,.075);
+ --text:#f3f7fa;--muted:#909cab;--dim:#5f6a78;--a:#1bdcff;--a2:#77ecff;
+ --g:#69e0a2;--y:#e9bd67;--r:#ee7076;--shadow:0 24px 80px rgba(0,0,0,.36);
+ --radius:22px
+}
+html,body{font-family:'Manrope',Inter,ui-sans-serif,system-ui,sans-serif;background:
+ radial-gradient(900px 500px at 18% -10%,rgba(27,220,255,.045),transparent 62%),
+ radial-gradient(700px 450px at 88% 20%,rgba(120,150,180,.035),transparent 62%),var(--bg)}
+body:before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.34;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),transparent 80%);z-index:0}
+.main{position:relative;z-index:1}.sidebar{position:fixed;z-index:120}
+.sidebar{background:linear-gradient(180deg,rgba(8,12,16,.96),rgba(5,8,11,.98));border-color:rgba(220,235,245,.09);box-shadow:0 30px 100px rgba(0,0,0,.34)}
+.brand{padding:5px 4px 22px}.dtail-lockup{display:block;width:232px;height:auto;max-width:100%}.boot-logo .dtail-lockup{width:min(370px,72vw)}
+.nav button{font-family:'Space Grotesk',Manrope,sans-serif;letter-spacing:.01em;padding:13px 12px;border-radius:14px}.nav button.active{background:linear-gradient(100deg,rgba(27,220,255,.12),rgba(255,255,255,.025));box-shadow:inset 2px 0 var(--a),0 8px 24px rgba(0,0,0,.16)}
+.page-title,h1,h2,h3,.stat strong,.money{font-family:'Space Grotesk','Manrope',sans-serif}
+.page-title{letter-spacing:-.02em}.hero h1{letter-spacing:-.05em}.hero p,.page-sub{font-family:'Manrope',sans-serif}
+.card{background:linear-gradient(145deg,rgba(16,21,28,.94),rgba(9,13,18,.95));border-color:rgba(220,235,245,.075);box-shadow:0 18px 55px rgba(0,0,0,.22)}
+.card:hover{border-color:rgba(27,220,255,.12)}
+.primary{background:linear-gradient(180deg,#f6fbff,#dfe9ef);border:0;box-shadow:0 8px 30px rgba(255,255,255,.08);color:#071016}
+.primary:hover{transform:translateY(-1px);box-shadow:0 12px 36px rgba(27,220,255,.12)}
+.secondary,.icon{background:rgba(255,255,255,.028);border-color:rgba(220,235,245,.09)}
+.input,.select,.textarea{background:rgba(3,6,9,.72);border-color:rgba(220,235,245,.09);font-family:'Manrope',sans-serif}
+.input:focus,.select:focus,.textarea:focus{border-color:rgba(27,220,255,.38);box-shadow:0 0 0 3px rgba(27,220,255,.06)}
+.stat strong{font-size:28px;letter-spacing:-.035em}
+.stock{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}.stock:hover{transform:translateY(-2px);box-shadow:0 20px 55px rgba(0,0,0,.28)}
+.stock-top b{font-family:'Space Grotesk',sans-serif;font-size:11px}.badge{font-family:'Space Grotesk',sans-serif}
+.calendar{background:rgba(255,255,255,.012);border-color:rgba(220,235,245,.08)}.day-event{background:linear-gradient(180deg,rgba(27,220,255,.09),rgba(255,255,255,.025));border:1px solid rgba(27,220,255,.08)}
+.modal{background:rgba(0,0,0,.74)}.modal-box{background:linear-gradient(150deg,#0c1117,#080b0f);border-color:rgba(220,235,245,.09)}
+.section-head h3,.head h3{font-family:'Space Grotesk',sans-serif}
+.boot-name{display:none}
+@media(max-width:760px){
+ .dtail-lockup{width:205px}.boot-logo .dtail-lockup{width:min(330px,76vw)}
+ .hero h1{font-size:25px}.stat strong{font-size:22px}.content{padding-top:20px}
+}
+</style><style id="dtail-premium-v2">
+:root{
+ --bg:#05070a;--panel:#0b0f14;--panel-2:#0e141b;--card:#111820;--card-hi:#151d26;
+ --line:rgba(227,241,249,.08);--line-hi:rgba(64,220,255,.18);
+ --text:#f3f7fa;--muted:#8e99a6;--dim:#596574;--a:#15ddff;--a-hi:#7cecff;
+ --ok:#65df9f;--warn:#e9bd66;--danger:#f07179;
+ --shadow:0 28px 90px rgba(0,0,0,.42);--r:22px
+}
+body{background:
+ radial-gradient(1100px 600px at 15% -15%,rgba(21,221,255,.065),transparent 60%),
+ radial-gradient(900px 600px at 100% 18%,rgba(95,116,140,.04),transparent 62%),var(--bg)}
+body:before{opacity:.22;background-size:42px 42px}
+.sidebar{background:linear-gradient(180deg,rgba(8,12,17,.985),rgba(5,8,11,.985));border-color:rgba(220,235,245,.095);box-shadow:35px 0 100px rgba(0,0,0,.25)}
+.brand{padding:2px 3px 24px}.dtail-logo{display:block;width:228px;height:auto;max-width:100%;filter:drop-shadow(0 12px 28px rgba(21,221,255,.09))}
+.boot-logo{width:min(520px,78vw)!important;height:auto!important;border:0!important;background:transparent!important;box-shadow:none!important}.boot-logo .dtail-logo{width:min(420px,72vw);margin:auto;filter:drop-shadow(0 18px 50px rgba(21,221,255,.12))}
+.topbar{border-bottom-color:rgba(220,235,245,.08);background:rgba(5,7,10,.80);box-shadow:0 10px 35px rgba(0,0,0,.14)}
+.page-title{font-family:'Space Grotesk','Manrope',sans-serif;font-size:18px;letter-spacing:-.03em}
+.content{padding:34px 32px 44px}
+.hero{margin-bottom:24px}.hero h1{font-family:'Space Grotesk','Manrope',sans-serif;font-size:31px;letter-spacing:-.055em}.hero p{font-size:10px;max-width:620px}
+.stats{gap:12px}.stat{position:relative;overflow:hidden;padding:19px 18px;min-height:132px}.stat:before{content:'';position:absolute;inset:auto -30px -35px auto;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(21,221,255,.09),transparent 68%)}.stat strong{font-size:30px}.stat label{font-family:'Space Grotesk',sans-serif;letter-spacing:.15em}
+.card{background:linear-gradient(145deg,rgba(17,24,32,.96),rgba(8,12,17,.985));border-color:rgba(220,235,245,.075);box-shadow:0 18px 70px rgba(0,0,0,.20)}
+.section{padding:20px}.head{margin-bottom:16px}.head h3{font-size:12px;letter-spacing:.01em}.head span{font-family:'Space Grotesk',sans-serif}
+.row{padding:13px 0}.row b{font-size:11px}.money{font-family:'Space Grotesk',sans-serif}
+.primary{background:linear-gradient(180deg,#fbfeff,#dae6ed);padding:11px 15px;border-radius:13px;box-shadow:0 12px 35px rgba(255,255,255,.065);transition:.18s}.primary:hover{transform:translateY(-1px);box-shadow:0 16px 40px rgba(21,221,255,.14)}
+.secondary,.icon{border-color:rgba(220,235,245,.09);background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));transition:.18s}.secondary:hover,.icon:hover{border-color:rgba(21,221,255,.2);background:rgba(21,221,255,.055)}
+.input,.select,.textarea{background:rgba(3,6,9,.76);box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
+.badge{font-family:'Space Grotesk',sans-serif}
+.stock{padding:15px;min-height:106px}.stock .bar{margin-top:13px}.stock-top b{font-family:'Space Grotesk',sans-serif;font-size:11px}
+.calendar{box-shadow:inset 0 0 0 1px rgba(255,255,255,.015);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.008))}
+.day-event{border:1px solid rgba(21,221,255,.08);transition:.15s}.day-event:hover{border-color:rgba(21,221,255,.22);background:rgba(21,221,255,.07)}
+.modal-box{background:linear-gradient(150deg,#0d1218,#070a0e);border-color:rgba(220,235,245,.10);box-shadow:0 40px 130px rgba(0,0,0,.64)}
+.photo{box-shadow:0 10px 35px rgba(0,0,0,.22)}
+.mobile-nav{background:rgba(8,12,17,.94);border-color:rgba(220,235,245,.10)}
+@media(max-width:760px){
+ .content{padding:20px 14px 94px}.hero h1{font-size:26px}.stat{min-height:116px}.stat strong{font-size:23px}.dtail-logo{width:205px}
+}
+</style><style id="dtail-premium-v3">
+.control-strip{display:flex;align-items:stretch;justify-content:space-between;gap:18px;padding:16px;margin:-4px 0 18px;border:1px solid rgba(21,221,255,.12);border-radius:20px;background:linear-gradient(115deg,rgba(21,221,255,.055),rgba(255,255,255,.02) 45%,rgba(0,0,0,.12));box-shadow:0 22px 70px rgba(0,0,0,.22);position:relative;overflow:hidden}
+.control-strip:after{content:'';position:absolute;right:-100px;top:-100px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(21,221,255,.12),transparent 68%);pointer-events:none}
+.control-intro{display:flex;flex-direction:column;justify-content:center;min-width:245px;position:relative;z-index:1}
+.control-intro .eyebrow{font:700 8px 'Space Grotesk',sans-serif;letter-spacing:.18em;color:var(--a);margin-bottom:6px}.control-intro b{font:800 16px 'Space Grotesk',sans-serif;letter-spacing:-.02em}.control-intro span:last-child{font-size:9px;color:var(--muted);margin-top:4px}
+.control-actions{display:grid;grid-template-columns:repeat(3,minmax(145px,1fr));gap:8px;position:relative;z-index:1}
+.control-action{display:flex;align-items:center;text-align:left;gap:10px;padding:11px 12px;border-radius:15px;border:1px solid rgba(220,235,245,.08);background:rgba(7,10,14,.55);color:#fff;transition:.18s}
+.control-action:hover{border-color:rgba(21,221,255,.24);background:rgba(21,221,255,.055);transform:translateY(-1px)}
+.control-action>span{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:rgba(21,221,255,.08);color:var(--a);font-size:16px}.control-action b{display:block;font:700 10px 'Space Grotesk',sans-serif}.control-action small{display:block;color:var(--dim);font-size:8px;margin-top:2px}
+.section>.head h3{font-size:12px}.section>.head:after{content:'';display:block}
+#view-dashboard .stats .stat:nth-child(1){border-color:rgba(103,224,162,.10)}
+#view-dashboard .stats .stat:nth-child(2){border-color:rgba(21,221,255,.10)}
+#view-dashboard .stats .stat:nth-child(3){border-color:rgba(233,189,102,.10)}
+#view-dashboard .stats .stat:nth-child(4){border-color:rgba(255,255,255,.10)}
+@media(max-width:900px){.control-strip{flex-direction:column}.control-actions{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.control-actions{grid-template-columns:1fr}.control-intro{min-width:0}.control-strip{padding:13px}.control-action{padding:10px}}
+</style><style id="dtail-loyalty-system">
+.reward-box{margin-top:8px;padding:10px 11px;border:1px solid rgba(21,221,255,.14);border-radius:12px;background:linear-gradient(100deg,rgba(21,221,255,.055),rgba(255,255,255,.012));font-size:9px;color:var(--muted)}
+.reward-line{display:flex;justify-content:space-between;align-items:center;gap:12px}.reward-title{font:800 10px 'Space Grotesk',sans-serif;color:#fff}.reward-discount{font:800 11px 'Space Grotesk',sans-serif;color:var(--a)}
+.reward-progress{height:4px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:8px}.reward-progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a),#b3f5ff)}
+.tier-new{color:#b8c1ca;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}.tier-bronze{color:#e4ae7e;background:rgba(194,127,75,.09);border:1px solid rgba(194,127,75,.16)}.tier-silver{color:#d5dee6;background:rgba(190,205,217,.08);border:1px solid rgba(190,205,217,.15)}.tier-gold{color:#f2d27f;background:rgba(233,189,102,.09);border:1px solid rgba(233,189,102,.16)}.tier-platinum{color:#7cecff;background:rgba(21,221,255,.08);border:1px solid rgba(21,221,255,.18)}
+.print-logo{width:170px;height:auto;display:block;margin-bottom:4mm}
+.print-header .print-brand{align-items:flex-start}.print-header .print-brand>div:first-child{display:none}
+</style><style id="dtail-layout-fix">.sidebar{position:fixed!important;z-index:120!important}.main{position:relative;z-index:1!important}@media(max-width:760px){.sidebar{position:fixed!important}}</style><style id="dtail-stability">
+/* Stable tablet/phone drawer: no visible sliver when closed */
+@media(max-width:1050px){
+  .sidebar{transform:translateX(calc(-100% - 16px))!important;left:0!important;border-radius:0 22px 22px 0!important}
+  body.drawer .sidebar{transform:translateX(0)!important}
+  .main{margin-left:0!important;width:100%!important;min-width:0!important}
+  .content{padding-left:16px!important;padding-right:16px!important}
+}
+@media(max-width:760px){
+  .topbar{padding-left:12px!important;padding-right:12px!important}
+  .content{padding:14px 12px 82px!important}
+  .mobile-nav{left:8px!important;right:8px!important;bottom:8px!important;width:auto!important}
+  .mobile-nav button{min-width:0!important;font-size:8px!important}
+  .form{grid-template-columns:1fr!important}
+  .grid.two,.grid.three{grid-template-columns:1fr!important}
+  .modal-box{width:min(100% - 16px,760px)!important;max-height:92dvh!important}
+  .table-wrap,.table-scroller{overflow-x:auto!important}
+}
+</style><style id="dtail-inventory-pro">
+.recipe-card{padding:16px;position:relative;overflow:hidden}.recipe-card h4{margin:0;font:800 13px 'Space Grotesk',sans-serif}.recipe-card p{margin:4px 0 0;color:var(--muted);font-size:8px}.recipe-total{font:800 17px 'Space Grotesk',sans-serif;color:var(--a)}.recipe-line{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:9px}.recipe-line:last-child{border-bottom:0}.recipe-line b{font-size:9px}.recipe-empty{padding:12px;border:1px dashed rgba(220,235,245,.12);border-radius:12px;color:var(--muted);font-size:9px}.movement{display:grid;grid-template-columns:125px 1fr auto;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}.movement:last-child{border-bottom:0}.movement-kind{font:800 8px 'Space Grotesk',sans-serif;letter-spacing:.08em}.movement p{margin:3px 0 0;color:var(--muted);font-size:8px}.movement .qty{font:800 10px 'Space Grotesk',sans-serif}.qty-plus{color:var(--g)}.qty-minus{color:var(--r)}.qty-adjust{color:var(--y)}@media(max-width:1050px){#view-inventory .stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){#view-inventory .stock-grid{grid-template-columns:1fr}.movement{grid-template-columns:75px 1fr auto}.table{min-width:980px}}
+</style></head>
 <body>
-<div id="splash"><div class="splash-inner"><img class="splash-logo" src="./assets/dtail-logo.png"><div class="splash-name">D-TAIL STUDIO</div><div class="splash-line"><i></i></div><button class="splash-enter" id="splashEnter">BELÉPÉS</button></div></div>
-<audio id="startupAudio" preload="none" playsinline webkit-playsinline></audio>
-
-<div class="app">
-<aside class="sidebar">
-  <div class="brand"><img src="./assets/dtail-logo.png"><div><b>D-TAIL STUDIO</b><small>DETAILING OS</small></div></div>
-  <nav class="nav" id="nav">
-    <button data-view="dashboard" class="active"><span class="ico">⌂</span><span>Dashboard</span></button>
-    <button data-view="jobs"><span class="ico">▣</span><span>Munkák</span></button>
-    <button data-view="customers"><span class="ico">♙</span><span>Ügyfelek & autók</span></button>
-    <button data-view="calendar"><span class="ico">◷</span><span>Időpontok</span></button>
-    <button data-view="inventory"><span class="ico">▤</span><span>Készlet</span></button>
-    <button data-view="analytics"><span class="ico">⌁</span><span>Pénzügyek</span></button>
-    <button data-view="ai"><span class="ico">✦</span><span>D-Tail AI</span></button>
-    <button data-view="settings"><span class="ico">⚙</span><span>Rendszer</span></button>
-  </nav>
-  <div class="side-bottom"><div class="studio-status"><span class="dot"></span><b>STUDIO ONLINE</b><p>Helyi adatok mentve az iPaden.</p></div></div>
-</aside>
-
-<main class="main">
-<header class="topbar"><div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">D-Tail Studio · Premium detailing workspace</div></div><div class="top-actions"><button class="iconbtn" id="menuToggle" aria-label="Menü">☰</button><button class="iconbtn" id="globalSearch">⌕</button><button class="iconbtn" id="quickNew">＋</button></div></header>
-
+<div id="boot"><div class="boot"><div class="boot-logo"><img class="dtail-logo" src="./assets/dtail-logo.png" alt="D-Tail Studio"></div><div class="boot-line"><i></i></div></div></div>
+<div class="overlay" id="overlay"></div><button class="icon" id="menu" aria-label="Menü">☰</button>
+<aside class="sidebar" id="sidebar"><div class="brand"><img class="dtail-logo" src="./assets/dtail-logo.png" alt="D-Tail Studio"></div><nav class="nav">
+<button data-view="dashboard" class="active"><span class="ico">⌂</span>Dashboard</button><button data-view="jobs"><span class="ico">▣</span>Munkák</button><button data-view="customers"><span class="ico">♙</span>Ügyfelek & autók</button><button data-view="calendar"><span class="ico">◷</span>Naptár</button><button data-view="inventory"><span class="ico">▤</span>Készlet</button><button data-view="analytics"><span class="ico">⌁</span>Pénzügy</button><button data-view="settings"><span class="ico">⚙</span>Beállítások</button>
+</nav><div class="side-bottom"><div class="sync-card"><div class="sync-row"><i class="sync-dot" id="syncDot"></i><span id="syncLabel">LOCAL</span></div><p id="syncHint">A D-Tail helyi módban is működik. Közös adatokhoz opcionális felhőszinkron használható.</p></div></div></aside>
+<main class="main"><header class="topbar"><div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">D-Tail Studio · detailing workspace</div></div><div class="top-actions"><button class="icon" id="globalSearch">⌕</button><button class="icon" id="quickNew">＋</button></div></header>
 <div class="content">
+<section class="view active" id="view-dashboard"><div class="hero"><div><h1 id="greeting">Szia Dominik! 👋</h1><p id="todayText"></p></div><button class="primary" data-action="new-job">+ Új időpont / munkalap</button></div>
+<div class="control-strip"><div class="control-intro"><span class="eyebrow">D-TAIL CONTROL CENTER</span><b>Ma a műhelyben</b><span id="dashControlText">A napod összes fontos mozdulata egy helyen.</span></div><div class="control-actions"><button class="control-action" data-action="new-job"><span>＋</span><div><b>Új időpont</b><small>munkalappal együtt</small></div></button><button class="control-action" data-view="calendar"><span>◷</span><div><b>Naptár</b><small>mai műhelyterv</small></div></button><button class="control-action" data-view="inventory"><span>▤</span><div><b>Készlet</b><small>érték & riasztások</small></div></button></div></div><div class="grid stats"><div class="card stat"><label>Mai bevétel</label><strong id="sToday">0 Ft</strong><small id="sTodayJobs">0 lezárt munka</small></div><div class="card stat"><label>Havi bevétel</label><strong id="sMonth">0 Ft</strong><small id="sMonthJobs">0 lezárt munka</small></div><div class="card stat"><label>Nyitott munkák</label><strong id="sOpen">0</strong><small>aktív / foglalt</small></div><div class="card stat"><label>Átlagos munkadíj</label><strong id="sAvg">0 Ft</strong><small>lezárt munkák alapján</small></div></div>
+<div class="grid two" style="margin-top:14px"><div class="card section"><div class="head"><h3>Mai műhelyterv</h3><span id="todayPlanLabel"></span></div><div id="todayJobs"></div></div><div class="card section"><div class="head"><h3>Havi cél</h3><span id="goalLabel"></span></div><div class="progress"><i id="goalBar" style="width:0%"></i></div><p id="goalText" class="muted" style="font-size:9px;line-height:1.45"></p><div class="head" style="margin-top:16px"><h3>Riasztások</h3><span></span></div><div id="dashAlerts"></div></div></div>
+<div class="card section" style="margin-top:14px"><div class="head"><h3>Készletfigyelő</h3><span id="dashStockMeta"></span></div><div id="dashStock" class="stock-grid"></div></div></section>
 
-<section class="view active" id="view-dashboard">
-  <div class="hero"><div><h1 id="greeting">Jó estét.</h1><p id="todayText"></p></div><button class="primary" onclick="openNewJob()">+ Új munkalap</button></div>
-  <div class="grid stats">
-    <div class="card stat"><div class="label">Mai bevétel</div><div class="value" id="sToday">0 Ft</div><div class="delta" id="sTodayJobs">0 lezárt munka</div></div>
-    <div class="card stat"><div class="label">Havi bevétel</div><div class="value" id="sMonth">0 Ft</div><div class="delta" id="sMonthJobs">0 lezárt munka</div></div>
-    <div class="card stat"><div class="label">Nyitott munkák</div><div class="value" id="sOpen">0</div><div class="delta">folyamatban</div></div>
-    <div class="card stat"><div class="label">Átlagos munkadíj</div><div class="value" id="sAvg">0 Ft</div><div class="delta">lezárt munkák alapján</div></div>
-  </div>
-  <div class="grid two" style="margin-top:14px">
-    <div class="card section"><div class="section-head"><h3>Mai műhely</h3><span id="studioMode">SZABAD</span></div><div id="todayJobs"></div></div>
-    <div class="card section ai"><div class="ai-head"><div class="ai-brand"><div class="ai-orb">AI</div><div><b>D-Tail AI</b><small>Studio intelligence</small></div></div><div class="ai-live" id="aiStatusDash">LOCAL</div></div><div class="ai-body"><div id="aiInsightsDash"></div><div class="ai-actions"><button class="chip" data-q="Mit kell rendelnem?">Rendelés</button><button class="chip" data-q="Mennyi a havi bevételem?">Bevétel</button><button class="chip" data-q="Melyik szolgáltatásból van a legtöbb?">Top szolgáltatás</button></div><div class="aibox"><input class="input" id="aiDashInput" placeholder="Kérdezd a D-Tail AI-t…"><button id="aiDashSend">→</button></div><div id="aiDashAnswer" class="answer"></div></div></div>
-  </div>
-  <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Készletfigyelő</h3><button class="secondary" onclick="showView('inventory')">Teljes készlet →</button></div><div id="dashStock" class="grid stockgrid"></div></div>
-  <div class="grid two" style="margin-top:14px">
-    <div class="card section"><div class="section-head"><h3>Mai teendők</h3><span>automatikus</span></div><div id="dashAlerts" class="alerts"></div></div>
-    <div class="card section"><div class="section-head"><h3>Havi cél</h3><span id="goalLabel">0 / 0 Ft</span></div><div class="progress"><i id="goalBar" style="width:0%"></i></div><p id="goalText" style="font-size:10px;color:var(--muted);line-height:1.5;margin-top:10px"></p></div>
-  </div>
-</section>
+<section class="view" id="view-jobs"><div class="hero"><div><h1>Munkák</h1><p>Időpont, munkalap, státusz, fizetés és PDF egy helyen.</p></div><button class="primary" data-action="new-job">+ Új munkalap</button></div><div class="search"><input id="jobSearch" class="input" placeholder="Keresés ügyfél, rendszám, autó…"><select id="jobFilter" class="select" style="max-width:170px"><option value="all">Összes</option><option value="open">Nyitott</option><option value="closed">Lezárt</option></select></div><div class="card table-wrap"><table class="table"><thead><tr><th>Azonosító</th><th>Ügyfél / autó</th><th>Szolgáltatás</th><th>Időpont</th><th>Összeg</th><th>Státusz</th><th></th></tr></thead><tbody id="jobsTable"></tbody></table></div></section>
 
-<section class="view" id="view-jobs">
-  <div class="hero"><div><h1>Munkák</h1><p>Nyitott, lezárt és visszakereshető munkalapok.</p></div><button class="primary" onclick="openNewJob()">+ Új munkalap</button></div>
-  <div class="card section"><div class="searchbar"><input id="jobSearch" class="input" placeholder="Keresés ügyfél, rendszám, autó vagy munkalap alapján…"><select id="jobFilter" class="select" style="max-width:180px"><option value="all">Minden állapot</option><option value="open">Nyitott</option><option value="closed">Lezárt</option></select></div><div style="overflow:auto"><table class="table"><thead><tr><th>Munkalap</th><th>Ügyfél / autó</th><th>Szolgáltatás</th><th>Összeg</th><th>Állapot</th><th></th></tr></thead><tbody id="jobsTable"></tbody></table></div></div>
-</section>
+<section class="view" id="view-customers"><div class="hero"><div><h1>Ügyfelek & autók</h1><p>Ügyfélprofilok, autók és kezeléselőzmények.</p></div><button class="primary" data-action="new-customer">+ Új ügyfél</button></div><div class="search"><input id="customerSearch" class="input" placeholder="Keresés név, telefon, rendszám…"></div><div class="card section" style="margin-bottom:14px"><div class="head"><h3>★ D-Tail Törzsvásárlói rendszer</h3><span>alkalmak alapján</span></div><div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px"><div class="info"><b>NEW</b><br>0–2 alkalom<br><span class="muted">0% kedvezmény</span></div><div class="info"><b style="color:#e4ae7e">BRONZE</b><br>3–5 alkalom<br><span class="muted">5% kedvezmény</span></div><div class="info"><b style="color:#d5dee6">SILVER</b><br>6–9 alkalom<br><span class="muted">7% kedvezmény</span></div><div class="info"><b style="color:#f2d27f">GOLD</b><br>10–14 alkalom<br><span class="muted">10% kedvezmény</span></div><div class="info"><b style="color:#7cecff">PLATINUM</b><br>15+ alkalom<br><span class="muted">15% kedvezmény</span></div></div></div><div class="card table-wrap"><table class="table"><thead><tr><th>Ügyfél</th><th>Autók</th><th>Munkák</th><th>Összes költés</th><th>Szint</th><th>Kedvezmény</th><th></th></tr></thead><tbody id="customerTable"></tbody></table></div></section>
 
-<section class="view" id="view-customers">
-  <div class="hero"><div><h1>Ügyfelek & autók</h1><p>Ügyfélprofil, több autó, kezelési előzmény és érték.</p></div><button class="primary" onclick="openCustomer()">+ Új ügyfél</button></div>
-  <div class="card section"><div class="searchbar"><input id="customerSearch" class="input" placeholder="Név, telefonszám, rendszám vagy autó…"></div><div style="overflow:auto"><table class="table"><thead><tr><th>Ügyfél</th><th>Autó</th><th>Rendszám</th><th>Kezelések</th><th>Összes költés</th><th>Szint</th></tr></thead><tbody id="customerTable"></tbody></table></div></div>
-</section>
+<section class="view" id="view-calendar"><div class="hero"><div><h1>Naptár</h1><p>Az időpont ugyanahhoz a munkalaphoz tartozik.</p></div><button class="primary" data-action="new-job">+ Új időpont</button></div><div class="card section"><div class="head"><button class="secondary" id="calPrev">←</button><strong id="calTitle"></strong><button class="secondary" id="calNext">→</button></div><div class="calendar-wrap"><div id="calendarGrid" class="calendar"></div></div></div><div class="grid two" style="margin-top:14px"><div class="card section"><div class="head"><h3>Mai nap</h3><span id="calendarDate"></span></div><div id="calendarToday"></div></div><div class="card section"><div class="head"><h3>Következő időpontok</h3><span></span></div><div id="upcoming"></div></div></div></section>
 
-<section class="view" id="view-calendar">
-  <div class="hero"><div><h1>Időpontok</h1><p>Napi műhelyterv és következő kezelések.</p></div><button class="primary" onclick="openNewJob()">+ Időpont / munka</button></div>
-  <div class="grid two"><div class="card section"><div class="section-head"><h3>Mai nap</h3><span id="calendarDate"></span></div><div id="calendarToday"></div></div><div class="card section"><div class="section-head"><h3>Következő kezelések</h3><span>visszahívás</span></div><div id="upcoming"></div></div></div>
-</section>
-
-
-<section class="view" id="view-inventory">
-  <div class="hero"><div><h1>Készlet</h1><p>Valós készlet, beszerzési ár, anyagköltség és automatikus fogyás a munkák lezárásakor.</p></div>
-    <div class="hero-actions"><button class="secondary" id="openRestockTop">＋ Beszerzés</button><button class="primary" id="openNewStockTop">＋ Új termék</button></div>
-  </div>
-  <div class="grid stats">
-    <div class="card stat"><div class="label">Összes tétel</div><div class="value" id="invCount">0</div><div class="delta">nyilvántartva</div></div>
-    <div class="card stat"><div class="label">Rendelés szükséges</div><div class="value" id="invCritical">0</div><div class="delta">kritikus készlet</div></div>
-    <div class="card stat"><div class="label">Hamarosan rendelni</div><div class="value" id="invLow">0</div><div class="delta">minimum közelében</div></div>
-    <div class="card stat"><div class="label">Készletérték</div><div class="value" id="invValue">0 Ft</div><div class="delta">aktuális beszerzési érték</div></div>
-  </div>
-  <div class="card section" style="margin-top:14px">
-    <div class="section-head"><div><h3>Vizuális készletfigyelő</h3><span id="inventoryVisualMeta">—</span></div></div>
-    <div id="inventoryVisual" class="grid stockgrid"></div>
-  </div>
-  <div class="card section" style="margin-top:14px">
-    <div class="section-head"><div><h3>Készlet</h3><span>termékkártyák · nem Excel-szerű</span></div><button class="secondary" id="saveInventory">Összes módosítás mentése</button></div>
-    <div id="inventoryProductList" class="inventory-products"></div>
-  </div>
-  <div class="card section" style="margin-top:14px">
-    <div class="section-head"><div><h3>Anyagköltség-receptek</h3><span>automatikus kalkuláció a munkalaphoz</span></div></div>
-    <div class="info-box" style="margin-bottom:12px">Példa: <b>ADBL APC 1 L = 5 200 Ft</b> → <b>5,20 Ft/ml</b> → <b>80 ml = 416 Ft</b>. A lezárt munkák a recept alapján levonják a készletet.</div>
-    <div id="recipeList" class="recipe-list"></div>
-  </div>
-  <div class="card section" style="margin-top:14px">
-    <div class="section-head"><div><h3>Beszerzések / készletmozgások</h3><span>legutóbbi műveletek</span></div><button class="secondary" id="openRestock">＋ Beszerzés</button></div>
-    <div id="stockMovements" class="movement-list"></div>
-  </div>
-</section>
-<section class="view" id="view-analytics">
-  <div class="hero"><div><h1>Pénzügyek</h1><p>Bevétel, átlagos munkadíj, szolgáltatások és fedezet.</p></div><button class="secondary" onclick="printReport()">PDF / nyomtatás</button></div>
-  <div class="grid stats"><div class="card stat"><div class="label">Havi bevétel</div><div class="value" id="aRevenue">0 Ft</div><div class="delta">lezárt munkák</div></div><div class="card stat"><div class="label">Anyagköltség</div><div class="value" id="aCost">0 Ft</div><div class="delta">megadott munkaköltségből</div></div><div class="card stat"><div class="label">Becsült fedezet</div><div class="value" id="aMargin">0 Ft</div><div class="delta">bevétel − anyagköltség</div></div><div class="card stat"><div class="label">Átlagos munkadíj</div><div class="value" id="aAvg">0 Ft</div><div class="delta">lezárt munkák</div></div></div>
-  <div class="grid two" style="margin-top:14px"><div class="card section"><div class="section-head"><h3>Szolgáltatás mix</h3><span>havi</span></div><div id="serviceMix"></div></div><div class="card section"><div class="section-head"><h3>Fizetési módok</h3><span>havi</span></div><div id="paymentMix"></div></div></div>
-  <div class="card section" style="margin-top:14px"><div class="section-head"><h3>Havi munkák</h3><span>részletes</span></div><div style="overflow:auto"><table class="table"><thead><tr><th>Dátum</th><th>Ügyfél</th><th>Szolgáltatás</th><th>Bevétel</th><th>Anyag</th><th>Fedezet</th></tr></thead><tbody id="financeTable"></tbody></table></div></div>
-</section>
-
-<section class="view" id="view-ai">
-  <div class="hero"><div><h1>D-Tail AI</h1><p>Üzleti asszisztens a saját D-Tail adataidhoz.</p></div><span class="badge neutral" id="aiModeBadge">LOCAL AI</span></div>
-  <div class="grid two"><div class="card ai"><div class="ai-head"><div class="ai-brand"><div class="ai-orb">AI</div><div><b>D-Tail Intelligence</b><small>Bevétel · készlet · ügyfelek · munkák</small></div></div><div class="ai-live" id="aiModeLive">LOCAL</div></div><div class="ai-body"><div id="aiInsightsFull"></div><div class="ai-actions"><button class="chip" data-q="Elemezd a hónapomat.">Havi elemzés</button><button class="chip" data-q="Mit kell rendelnem?">Rendelés</button><button class="chip" data-q="Kiknek esedékes új kezelés?">Visszahívás</button><button class="chip" data-q="Melyik szolgáltatásból kerestem a legtöbbet?">Szolgáltatás</button></div><div class="aibox"><input id="aiFullInput" class="input" placeholder="Írj bármit a D-Tail AI-nak…"><button id="aiFullSend">→</button></div><div id="aiFullAnswer" class="answer"></div><div style="margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)"><div style="display:flex;gap:7px"><input id="aiEndpoint" class="input" placeholder="AI backend URL: https://.../api/chat"><button class="secondary" id="aiEndpointSave">Mentés</button></div><p style="font-size:9px;color:var(--muted);line-height:1.45;margin:7px 0 0">Az API-kulcs nem kerül az iPadre. A backendnek csak a szükséges üzleti adat-pillanatképet küldjük.</p></div></div></div><div class="card section"><div class="section-head"><h3>Automatikus insightok</h3><span>élő</span></div><div id="aiAlerts" class="alerts"></div></div></div>
-</section>
-
-<section class="view" id="view-settings">
-  <div class="hero"><div><h1>Rendszer</h1><p>Adatok, célok, mentés és D-Tail beállítások.</p></div></div>
-  <div class="grid two">
-    <div class="card section"><div class="section-head"><h3>Havi cél</h3></div><div class="field"><label>Bevételi cél</label><input id="goalInput" class="input" type="number" min="0"></div><button class="primary" style="margin-top:10px" onclick="saveGoal()">Cél mentése</button></div>
-    <div class="card section" id="cloudCard"><div class="section-head"><h3>D-Tail Cloud Sync</h3><span id="cloudState">LOCAL</span></div><div id="cloudInfo" class="info-box">Az adatok jelenleg helyben vannak.</div><div id="cloudUser" style="margin-top:10px"></div><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="primary" id="cloudLogin">Belépés / fiók létrehozása</button><button class="secondary" id="cloudLogout" style="display:none">Kijelentkezés</button><button class="secondary" id="cloudSyncNow" style="display:none">Szinkron most</button></div></div>
-    <div class="card section"><div class="section-head"><h3>Adatok</h3></div><div class="grid" style="gap:8px"><button class="secondary" onclick="exportData()">JSON biztonsági mentés</button><label class="secondary" style="text-align:center">JSON visszaállítás<input type="file" id="importFile" accept=".json" hidden></label><button class="secondary" onclick="seedDemo()">Demo adatok hozzáadása</button><button class="secondary" onclick="clearAll()">Összes helyi adat törlése</button></div></div>
-  </div>
-</section>
-
-</div></main>
+<section class="view" id="view-inventory"><div class="hero"><div><h1>Készlet</h1><p>Valós készletérték · automatikus anyagköltség · készletfogyás.</p></div><div class="actions" style="margin:0"><button class="secondary" id="stockRestock">＋ Beszerzés</button><button class="primary" data-action="add-stock">＋ Új termék</button></div></div>
+<div class="grid stats">
+<div class="card stat"><label>Termékek</label><strong id="invCount">0</strong><small>aktív készlettétel</small></div>
+<div class="card stat"><label>Készletérték</label><strong id="invValue">0 Ft</strong><small>aktuális beszerzési érték</small></div>
+<div class="card stat"><label>Rendelés</label><strong id="invCritical">0</strong><small>kritikus tétel</small></div>
+<div class="card stat"><label>Alacsony</label><strong id="invLow">0</strong><small>minimum közelében</small></div>
 </div>
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<nav class="mobile-nav" id="mobileNav"><button data-view="dashboard" class="active"><span class="mi">⌂</span>Főoldal</button><button data-view="jobs"><span class="mi">▣</span>Munkák</button><button data-view="inventory"><span class="mi">▤</span>Készlet</button><button data-view="analytics"><span class="mi">⌁</span>Pénzügy</button><button data-view="ai"><span class="mi">✦</span>AI</button></nav>
+<div class="card section" style="margin-top:14px"><div class="head"><h3>Készletáttekintő</h3><span id="inventoryVisualMeta"></span></div>
+<div class="search"><input id="inventorySearch" class="input" placeholder="Termék vagy kategória…"><select id="inventoryStatus" class="select" style="max-width:190px"><option value="all">Minden státusz</option><option value="critical">Rendelés szükséges</option><option value="low">Hamarosan rendelni</option><option value="ok">Rendben</option></select><select id="inventoryCategory" class="select" style="max-width:190px"><option value="all">Minden kategória</option></select></div>
+<div id="inventoryVisual" class="stock-grid"></div></div>
+<div class="card section" style="margin-top:14px"><div class="head"><h3>Készletkezelés</h3><span>kiszerelésből számolt egységköltség</span></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Termék</th><th>Kategória</th><th>Készlet</th><th>Minimum</th><th>Kiszerelés</th><th>Egységköltség</th><th>Érték</th><th>Státusz</th><th></th></tr></thead><tbody id="inventoryEditor"></tbody></table></div>
+<div class="actions"><button class="primary" id="saveInventory">Készlet módosítások mentése</button></div></div>
+<div class="card section" style="margin-top:14px"><div class="head"><h3>Anyagreceptek</h3><span>ebből számoljuk a munkák anyagköltségét</span></div><div class="grid two" id="recipeCards"></div></div>
+<div class="card section" style="margin-top:14px"><div class="head"><h3>Készletmozgások</h3><span>legutóbbi 20 esemény</span></div><div id="stockMovements"></div></div>
+</section><section class="view" id="view-analytics"><div class="hero"><div><h1>Pénzügyek</h1><p>Bevétel, költség, fedezet és teljesítmény.</p></div><button class="secondary" id="printReport">Havi riport PDF</button></div><div class="grid stats"><div class="card stat"><label>Havi bevétel</label><strong id="aRevenue">0 Ft</strong><small>lezárt munkák</small></div><div class="card stat"><label>Anyagköltség</label><strong id="aCost">0 Ft</strong><small>rögzített költség</small></div><div class="card stat"><label>Becsült fedezet</label><strong id="aMargin">0 Ft</strong><small>bevétel − költség</small></div><div class="card stat"><label>Átlagos munkadíj</label><strong id="aAvg">0 Ft</strong><small>lezárt munkák alapján</small></div></div><div class="grid two" style="margin-top:14px"><div class="card section"><div class="head"><h3>Szolgáltatások</h3><span></span></div><div id="serviceMix"></div></div><div class="card section"><div class="head"><h3>Fizetési módok</h3><span></span></div><div id="paymentMix"></div></div></div><div class="card section" style="margin-top:14px"><div class="head"><h3>Havi munkák</h3><span></span></div><div class="table-wrap"><table class="table"><thead><tr><th>Dátum</th><th>Ügyfél</th><th>Szolgáltatás</th><th>Bevétel</th><th>Anyag</th><th>Fedezet</th></tr></thead><tbody id="financeTable"></tbody></table></div></div></section>
 
-<div class="modal" id="jobModal"><div class="modalbox"><div class="modalhead"><h2 id="jobModalTitle">Új munkalap</h2><button class="close" onclick="closeModal('jobModal')">×</button></div><div class="modalbody">
-<div class="formgrid"><div class="field"><label>Ügyfél</label><input id="fCustomer" class="input" placeholder="Név"></div><div class="field"><label>Telefon</label><input id="fPhone" class="input" placeholder="+36 ..."></div><div class="field"><label>Autó</label><input id="fCar" class="input" placeholder="Audi A6 2.0 TDI"></div><div class="field"><label>Rendszám</label><input id="fPlate" class="input" placeholder="ABC-123"></div><div class="field"><label>Időpont</label><input id="fDate" class="input" type="datetime-local"></div><div class="field"><label>Kilométer</label><input id="fKm" class="input" type="number" placeholder="120000"></div><div class="field full"><label>Szolgáltatás</label><div class="service-grid" id="serviceGrid"></div></div><div class="field full"><label>Extrák</label><div class="service-grid" id="extraGrid"></div></div><div class="field"><label>Anyagköltség (Ft)</label><input id="fCost" class="input" type="number" min="0" value="0"></div><div class="field"><label>Kedvezmény (Ft)</label><input id="fDiscount" class="input" type="number" min="0" value="0"></div><div class="field full"><label>Megjegyzés</label><textarea id="fNote" class="textarea" placeholder="Állapot, sérülés, ügyfélkérés…"></textarea></div><div class="field full"><label>Checklist</label><div class="grid three"><label class="secondary"><input type="checkbox" id="cBefore"> Előtte fotók</label><label class="secondary"><input type="checkbox" id="cDamage"> Sérülés rögzítve</label><label class="secondary"><input type="checkbox" id="cAfter"> Utána fotók</label></div></div></div>
-<div class="cart" style="margin-top:14px"><div id="cartLines"></div><div class="total"><span>Végösszeg</span><span id="cartTotal">0 Ft</span></div></div>
-<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:15px"><button class="secondary" onclick="closeModal('jobModal')">Mégse</button><button class="primary" id="saveJobBtn">Munkalap mentése</button></div>
-</div></div></div>
+<section class="view" id="view-settings"><div class="hero"><div><h1>Beállítások</h1><p>Adatok, felhőszinkron és rendszer.</p></div></div><div class="grid two"><div class="card section"><div class="head"><h3>Havi cél</h3><span></span></div><div class="field"><label>Havi bevételi cél</label><input id="goalInput" class="input" type="number" step="1000"></div><div class="actions"><button class="primary" id="saveGoal">Cél mentése</button></div></div><div class="card section"><div class="head"><h3>Adatok</h3><span></span></div><div class="info">JSON export / import és a régi D-Tail adatok átvétele elérhető. A rendszer háttérben nem futtat gyorsítótárazó munkást.</div><div class="actions"><button class="secondary" id="exportData">JSON export</button><label class="secondary">JSON import<input id="importFile" type="file" accept=".json,application/json" hidden></label><button class="secondary" id="importLegacy">Régi D-Tail import</button><button class="secondary" id="clearLocal">Helyi adatok törlése</button></div></div></div><div class="card section" style="margin-top:14px"><div class="head"><h3>Felhőszinkron</h3><span id="cloudStateLabel">LOCAL</span></div><div id="cloudSettings" class="info"></div><div class="actions"><button class="secondary" id="cloudRefresh">Felhő frissítése</button><button class="secondary" id="cloudLogout" style="display:none">Kijelentkezés</button><button class="primary" id="cloudLogin">Belépés / regisztráció</button></div></div></section>
+</div></main>
+<nav class="mobile-nav" id="mobileNav"><button data-view="dashboard" class="active"><span class="mi">⌂</span>Főoldal</button><button data-view="jobs"><span class="mi">▣</span>Munkák</button><button data-view="calendar"><span class="mi">◷</span>Naptár</button><button data-view="inventory"><span class="mi">▤</span>Készlet</button><button data-view="analytics"><span class="mi">⌁</span>Pénzügy</button></nav>
 
-<div class="modal" id="detailModal"><div class="modalbox"><div class="modalhead"><h2 id="detailTitle">Munkalap</h2><button class="close" onclick="closeModal('detailModal')">×</button></div><div class="modalbody" id="detailBody"></div></div></div>
+<div class="modal" id="authModal"><div class="modal-box" style="max-width:520px"><div class="modal-head"><div><h2>D-Tail Cloud</h2><div class="muted" style="font-size:9px;margin-top:3px">Közös munkatér telefon, iPad és PC között</div></div><button class="close" data-close="authModal">×</button></div><div class="modal-body"><div class="info">A felhő mód opcionális. Helyi módban az app önállóan működik. Cloud módban minden eszköz ugyanazt az adatbázist használja.</div><div class="form" style="margin-top:12px"><div class="field full"><label>E-mail</label><input id="authEmail" class="input" type="email" autocomplete="email"></div><div class="field full"><label>Jelszó</label><input id="authPassword" class="input" type="password" autocomplete="current-password"></div></div><div id="authMessage" class="info" style="display:none;margin-top:10px"></div><div class="actions"><button class="secondary" data-close="authModal">Mégse</button><button class="secondary" id="authSignup">Regisztráció</button><button class="primary" id="authLogin">Belépés</button></div></div></div></div>
+<div class="modal" id="jobModal"><div class="modal-box"><div class="modal-head"><h2 id="jobModalTitle">Új időpont / munkalap</h2><button class="close" data-close="jobModal">×</button></div><div class="modal-body"><div class="form">
+<div class="field"><label>Ügyfél</label><input id="fCustomer" class="input"><div id="customerReward" class="reward-box" style="display:none"></div></div><div class="field"><label>Telefon</label><input id="fPhone" class="input"></div><div class="field"><label>Autó</label><input id="fCar" class="input"></div><div class="field"><label>Rendszám</label><input id="fPlate" class="input"></div><div class="field"><label>Évjárat</label><input id="fYear" class="input" type="number"></div><div class="field"><label>Kilométer</label><input id="fKm" class="input" type="number"></div><div class="field"><label>Időpont</label><input id="fDate" class="input" type="datetime-local"></div><div class="field"><label>Időtartam (perc)</label><input id="fDuration" class="input" type="number" value="180" min="15" step="15"></div><div class="field full"><label>Szolgáltatás</label><div id="serviceGrid" class="service-grid"></div></div><div class="field full"><label>Extrák</label><div id="extraGrid" class="service-grid"></div></div><div class="field"><label>Anyagköltség (automatikus)</label><input id="fCost" class="input" type="number" readonly><div id="materialBreakdown" class="info" style="margin-top:7px">Anyagrecept alapján számolva.</div></div><div class="field"><label>Kedvezmény (Ft)</label><input id="fDiscount" class="input" type="number"></div><div class="field full"><label>Megjegyzés</label><textarea id="fNote" class="textarea"></textarea></div></div><div class="info" id="conflictNotice" style="display:none;margin-top:12px"></div><div class="cart" style="margin-top:12px"><div id="cartLines"></div><div class="cart-total"><span>Fizetendő</span><span id="cartTotal">0 Ft</span></div></div><div class="actions"><button class="secondary" data-close="jobModal">Mégse</button><button class="primary" id="saveJobBtn">Mentés</button></div></div></div></div>
 
-<div class="modal" id="stockModal"><div class="modalbox"><div class="modalhead"><div><h2>Új készlettétel</h2><div style="font-size:9px;color:var(--dim);margin-top:4px">Kiszerelésből automatikusan számoljuk az egységköltséget</div></div><button class="close" onclick="closeModal('stockModal')">×</button></div><div class="modalbody"><div class="formgrid"><div class="field full"><label>Termék</label><input id="stockName" class="input" placeholder="ADBL APC"></div><div class="field"><label>Kategória</label><input id="stockCategory" class="input" placeholder="Vegyszer / textil"></div><div class="field"><label>Készlet egysége</label><select id="stockUnit" class="select"><option>liter</option><option>ml</option><option>db</option><option>kg</option></select></div><div class="field"><label>Jelenlegi készlet</label><input id="stockQty" class="input" type="number" step="0.01" min="0"></div><div class="field"><label>Minimum készlet</label><input id="stockMin" class="input" type="number" step="0.01" min="0"></div><div class="field"><label>Kiszerelés</label><input id="stockPackQty" class="input" type="number" step="0.01" min="0.01" placeholder="1"></div><div class="field"><label>Kiszerelés egysége</label><select id="stockPackUnit" class="select"><option>liter</option><option>ml</option><option>db</option><option>kg</option></select></div><div class="field"><label>Kiszerelés vételára (Ft)</label><input id="stockPackPrice" class="input" type="number" step="1" min="0" placeholder="5200"></div><div class="field"><label>Számított egységköltség</label><input id="stockPrice" class="input" type="number" step="0.01" readonly></div></div><div id="stockCostPreview" class="info-box" style="margin-top:12px">Pl. 1 L ADBL APC 5 200 Ft → 5,20 Ft/ml.</div><div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="secondary" onclick="closeModal('stockModal')">Mégse</button><button class="primary" onclick="saveStock()">Mentés</button></div></div></div></div>
-
-
-<div class="modal" id="restockModal"><div class="modalbox"><div class="modalhead"><div><h2>Beszerzés</h2><div style="font-size:9px;color:var(--dim);margin-top:4px">Súlyozott átlagáron frissíti az egységköltséget</div></div><button class="close" onclick="closeModal('restockModal')">×</button></div><div class="modalbody">
-  <div class="formgrid">
-    <div class="field full"><label>Termék</label><select id="restockProduct" class="select"></select></div>
-    <div class="field"><label>Beérkező mennyiség</label><input id="restockQty" class="input" type="number" step="0.01" min="0"></div>
-    <div class="field"><label>A beszerzés teljes költsége (Ft)</label><input id="restockCost" class="input" type="number" step="1" min="0"></div>
-    <div class="field full"><label>Megjegyzés</label><input id="restockNote" class="input" placeholder="Pl. ADBL rendelés · 1 L"></div>
-  </div>
-  <div id="restockPreview" class="info-box" style="margin-top:12px"></div>
-  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="secondary" onclick="closeModal('restockModal')">Mégse</button><button class="primary" id="restockSave">Beszerzés rögzítése</button></div>
-</div></div></div>
-<div class="modal" id="customerModal"><div class="modalbox"><div class="modalhead"><h2>Ügyfél</h2><button class="close" onclick="closeModal('customerModal')">×</button></div><div class="modalbody"><div class="formgrid"><div class="field"><label>Név</label><input id="cuName" class="input"></div><div class="field"><label>Telefon</label><input id="cuPhone" class="input"></div><div class="field"><label>E-mail</label><input id="cuEmail" class="input"></div><div class="field"><label>Megjegyzés</label><input id="cuNote" class="input"></div></div><div style="display:flex;justify-content:space-between;gap:8px;margin-top:14px"><button class="secondary danger-btn" id="deleteCustomerBtn" style="display:none">Ügyfél törlése</button><div style="display:flex;gap:8px;margin-left:auto"><button class="secondary" onclick="closeModal('customerModal')">Mégse</button><button class="primary" onclick="saveCustomer()">Mentés</button></div></div></div></div></div>
-
-
-<div class="modal" id="cloudAuthModal"><div class="modalbox" style="max-width:460px"><div class="modalhead"><div><h2>D-Tail Studio · CLOUD SYNC</h2><div style="font-size:9px;color:var(--dim);margin-top:4px">PC · iPad · iPhone · Mac</div></div><button class="close" id="cloudAuthClose">×</button></div><div class="modalbody"><div class="field"><label>E-mail</label><input id="cloudEmail" class="input" type="email" autocomplete="email" placeholder="te@email.hu"></div><div class="field" style="margin-top:10px"><label>Jelszó</label><input id="cloudPassword" class="input" type="password" autocomplete="current-password" placeholder="Legalább 6 karakter"></div><div class="actions" style="justify-content:stretch"><button class="primary" id="cloudSignIn" style="flex:1">Belépés</button><button class="secondary" id="cloudSignUp" style="flex:1">Fiók létrehozása</button></div><div id="cloudAuthStatus" style="min-height:20px;margin-top:10px;color:var(--muted);font-size:10px;line-height:1.45"></div></div></div></div>
-<div class="toast" id="toast"></div>
-<div class="printsheet" id="printSheet"></div>
-
-<script src="./config.js"></script>
-<script src="./app.js?v=6"></script>
-
-
-</body>
-</html>
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><h2 id="detailTitle">Munkalap</h2><button class="close" data-close="detailModal">×</button></div><div class="modal-body" id="detailBody"></div></div></div>
+<div class="modal" id="customerModal"><div class="modal-box"><div class="modal-head"><h2 id="customerModalTitle">Új ügyfél</h2><button class="close" data-close="customerModal">×</button></div><div class="modal-body"><div class="form"><div class="field"><label>Név</label><input id="cuName" class="input"></div><div class="field"><label>Telefon</label><input id="cuPhone" class="input"></div><div class="field"><label>E-mail</label><input id="cuEmail" class="input"></div><div class="field full"><label>Megjegyzés</label><textarea id="cuNote" class="textarea"></textarea></div></div><div class="actions" style="justify-content:space-between"><button class="secondary danger-btn" id="deleteCustomerBtn" style="display:none">Ügyfél törlése</button><div style="display:flex;gap:8px;margin-left:auto"><button class="secondary" data-close="customerModal">Mégse</button><button class="primary" id="saveCustomerBtn">Mentés</button></div></div></div></div></div>
+<div class="modal" id="stockModal"><div class="modal-box"><div class="modal-head"><div><h2 id="stockModalTitle">Új készlettétel</h2><div class="muted" style="font-size:9px">Kiszerelés + beszerzési ár alapján automatikus egységköltség.</div></div><button class="close" data-close="stockModal">×</button></div><div class="modal-body"><div class="form">
+<div class="field"><label>Termék</label><input id="stockName" class="input"></div><div class="field"><label>Kategória</label><input id="stockCategory" class="input"></div>
+<div class="field"><label>Aktuális készlet</label><input id="stockQty" class="input" type="number" step="0.01"></div><div class="field"><label>Készlet egysége</label><select id="stockUnit" class="select"><option>db</option><option>liter</option><option>ml</option><option>kg</option><option>g</option></select></div>
+<div class="field"><label>Minimum készlet</label><input id="stockMin" class="input" type="number" step="0.01"></div><div class="field"><label>Kiszerelés mennyisége</label><input id="stockPackQty" class="input" type="number" step="0.01" value="1"></div>
+<div class="field"><label>Kiszerelés egysége</label><select id="stockPackUnit" class="select"><option>db</option><option>liter</option><option>ml</option><option>kg</option><option>g</option></select></div><div class="field"><label>Beszerzési ár / kiszerelés (Ft)</label><input id="stockPackPrice" class="input" type="number" min="0"></div>
+<div class="field full"><div id="stockUnitCostPreview" class="info">Egységköltség: —</div></div></div>
+<div class="actions"><button class="secondary" data-close="stockModal">Mégse</button><button class="primary" id="saveStockBtn">Mentés</button></div></div></div></div>
+<div class="modal" id="restockModal"><div class="modal-box" style="max-width:560px"><div class="modal-head"><div><h2>Készlet beszerzése</h2><div class="muted" style="font-size:9px">Meglévő termék készletének növelése és mozgásnaplózása.</div></div><button class="close" data-close="restockModal">×</button></div><div class="modal-body"><div class="form"><div class="field full"><label>Termék</label><select id="restockProduct" class="select"></select></div><div class="field"><label>Hozzáadott mennyiség</label><input id="restockQty" class="input" type="number" step="0.01"></div><div class="field"><label>Beszerzési ár a hozzáadott mennyiségre (Ft)</label><input id="restockCost" class="input" type="number" min="0"></div><div class="field full"><label>Megjegyzés</label><input id="restockNote" class="input" placeholder="pl. 2 × 1 liter"></div><div class="field full"><div id="restockInfo" class="info">Válassz terméket.</div></div></div><div class="actions"><button class="secondary" data-close="restockModal">Mégse</button><button class="primary" id="restockSave">Beszerzés mentése</button></div></div></div></div>
+<div class="modal" id="recipeModal"><div class="modal-box"><div class="modal-head"><div><h2 id="recipeModalTitle">Anyagrecept</h2><div id="recipeModalSub" class="muted" style="font-size:9px;margin-top:3px"></div></div><button class="close" data-close="recipeModal">×</button></div><div class="modal-body">
+<div class="form"><div class="field"><label>Termék</label><select id="recipeProduct" class="select"></select></div><div class="field"><label>Felhasználás</label><input id="recipeQty" class="input" type="number" step="0.01" min="0"></div><div class="field"><label>Egység</label><select id="recipeUnit" class="select"><option>db</option><option>liter</option><option>ml</option><option>kg</option><option>g</option></select></div></div>
+<div class="head" style="margin-top:18px"><h3>Összetevők</h3><span id="recipeCost"></span></div><div id="recipeLines"></div><div class="actions"><button class="secondary" id="recipeAddLine">＋ Anyag hozzáadása</button><button class="secondary" data-close="recipeModal">Mégse</button><button class="primary" id="recipeSave">Recept mentése</button></div>
+</div></div></div><div class="toast" id="toast"></div><div class="print-sheet" id="printSheet"></div>
+<script src="./config.js?v=42"></script><script src="./app.js?v=42"></script>
+</body></html>
