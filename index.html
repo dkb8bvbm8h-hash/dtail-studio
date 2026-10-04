@@ -40,6 +40,33 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{
 @media print{body{background:#fff;color:#111}.sidebar,.topbar,.mobile-nav,.modal,#boot,.content{display:none!important}.print-sheet{display:block!important}.print-page{font-family:Arial,sans-serif;color:#15171a;padding:12mm}.print-header{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:7mm;margin-bottom:7mm}.print-brand{display:flex;gap:10px;align-items:center}.print-mark{width:34px;height:34px;border:2px solid #111;border-radius:9px;display:grid;place-items:center;font-weight:900}.print-title{font-size:18px;font-weight:900}.print-sub{font-size:8px;color:#555}.print-id{text-align:right;font-size:8px;color:#555}.print-id b{display:block;color:#111;font-size:11px;margin-bottom:4px}.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-bottom:7mm}.print-card{border:1px solid #d3d6db;border-radius:10px;padding:5mm}.print-card h4{margin:0 0 3mm;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#666}.print-card p{margin:0;font-size:10px;line-height:1.5}.print-items{width:100%;border-collapse:collapse;font-size:9px}.print-items th,.print-items td{padding:7px 0;border-bottom:1px solid #e2e4e7;text-align:left}.print-items th:last-child,.print-items td:last-child{text-align:right}.print-total{margin-top:4mm;border-top:1px solid #d3d6db;padding-top:3mm}.print-total-row{display:flex;justify-content:space-between;padding:1.6mm 0;font-size:9px}.print-total-row.final{font-size:14px;font-weight:900;border-top:1.5px solid #111;margin-top:2mm;padding-top:3mm}.print-checks{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm}.check{border:1px solid #d3d6db;border-radius:8px;padding:3mm;font-size:8px}.print-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm}.print-photo{border:1px solid #d3d6db;border-radius:8px;overflow:hidden}.print-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.print-photo small{display:block;padding:2mm;font-size:7px}.print-footer{border-top:1px solid #d3d6db;margin-top:7mm;padding-top:3mm;display:flex;justify-content:space-between;color:#666;font-size:7px}}
 @media(max-width:1050px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.sidebar{left:10px;top:10px;bottom:10px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}.topbar{padding-left:68px;padding-right:14px}.content{padding:18px 14px 88px}.hero{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.stock-grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.service-grid{grid-template-columns:1fr}.photo-grid{grid-template-columns:1fr 1fr}.calendar-wrap{overflow:auto}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;z-index:130;padding:6px;border:1px solid var(--line);border-radius:18px;background:rgba(13,16,22,.93);backdrop-filter:blur(18px);box-shadow:var(--shadow)}.mobile-nav button{border:0;background:transparent;color:#7d8796;padding:7px 2px;font-size:8px}.mobile-nav button.active{color:#fff}.mobile-nav .mi{display:block;font-size:15px;margin-bottom:3px}}
+
+/* D-TAIL 4.0 DESKTOP / RESPONSIVE POLISH */
+.mobile-nav{display:none!important}
+#menu{display:none}
+.sidebar{transform:none;left:16px;top:16px;bottom:16px}
+.main{margin-left:315px;width:calc(100% - 315px)}
+.topbar{padding-left:30px}
+.content{max-width:1480px}
+@media (max-width:1100px){
+  #menu{display:grid}
+  .sidebar{transform:translateX(calc(-100% + 55px));left:14px}
+  body.drawer .sidebar{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
+  .topbar{padding-left:76px}
+}
+@media (max-width:760px){
+  #menu{display:grid}
+  .sidebar{left:10px;top:10px;bottom:10px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% + 54px))}
+  body.drawer .sidebar{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
+  .topbar{padding-left:68px;padding-right:14px}
+  .content{padding:18px 14px 92px}
+  .mobile-nav{display:grid!important;position:fixed;grid-template-columns:repeat(5,1fr);left:10px;right:10px;bottom:10px;z-index:130;padding:6px;border:1px solid var(--line);border-radius:18px;background:rgba(13,16,22,.93);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+  .mobile-nav button{border:0;background:transparent;color:#7d8796;padding:7px 2px;font-size:8px}
+  .mobile-nav button.active{color:#fff}
+  .mobile-nav .mi{display:block;font-size:15px;margin-bottom:3px}
+}
 </style>
 </head>
 <body>
