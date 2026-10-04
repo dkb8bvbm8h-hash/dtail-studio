@@ -113,7 +113,7 @@ function convertQty(qty,from,to){
   return q*map[from]/map[to];
 }
 function unitCostFor(stock,unit){
-  return (Number(stock.price)||0)/Math.max(convertQty(1,unit,stock.unit),0.000001);
+  return (Number(stock.price)||0)*convertQty(1,unit,stock.unit);
 }
 function stockValue(x){return (Number(x.qty)||0)*(Number(x.price)||0);}
 function stockPercent(x){const q=Number(x.qty)||0,min=Number(x.min)||0;if(x.unit==='%')return Math.max(0,Math.min(100,q));const target=Math.max(min*3,1);return Math.max(0,Math.min(100,q/target*100));}
@@ -467,7 +467,7 @@ function renderJobs(){
   $('jobsTable').innerHTML=a.length?a.map(j=>`<tr><td><b>${esc(j.id)}</b><br><span class="muted">${fmtDate(j.startAt)}</span></td><td><b>${esc(j.customerName)}</b><br><span class="muted">${esc(j.car)} ${j.plate?'· '+esc(j.plate):''}</span></td><td>${esc(j.serviceName)}</td><td>${fmtTime(j.startAt)}–${fmtTime(j.endAt)}</td><td>${money(j.total)}</td><td><span class="badge ${isClosed(j)?'ok':'warn'}">${isClosed(j)?'Lezárt':'Nyitott'}</span></td><td><button class="secondary" data-open-job="${j.id}">Megnyitás</button><button class="secondary danger-btn" data-delete-job="${j.id}">Törlés</button></td></tr>`).join(''):'<tr><td colspan="7" class="muted">Nincs találat.</td></tr>';
   document.querySelectorAll('[data-open-job]').forEach(b=>b.onclick=()=>openDetail(b.dataset.openJob));document.querySelectorAll('[data-delete-job]').forEach(b=>b.onclick=()=>deleteJob(b.dataset.deleteJob));
 }
-function customerLevel(n){return n>=20?'GOLD':n>=10?'SILVER':n>=5?'BRONZE':'NEW';}
+function customerLevel(n){return n>=15?'PLATINUM':n>=10?'GOLD':n>=6?'SILVER':n>=3?'BRONZE':'NEW';}
 function buildCustomers(){const map=new Map(state.customers.map(c=>[c.id,{...c,jobs:[],cars:[]}]));for(const car of state.cars){const c=map.get(car.customerId);if(c)c.cars.push(car);}for(const j of state.jobs){const c=map.get(j.customerId)||[...map.values()].find(x=>x.name.toLowerCase()===j.customerName.toLowerCase());if(c)c.jobs.push(j);}return [...map.values()];}
 function renderCustomers(){const q=($('customerSearch').value||'').toLowerCase(),a=buildCustomers().filter(c=>JSON.stringify(c).toLowerCase().includes(q));$('customerTable').innerHTML=a.length?a.map(c=>{const cj=c.jobs.filter(isClosed),sp=cj.reduce((s,j)=>s+j.total,0);return `<tr><td><b>${esc(c.name)}</b><br><span class="muted">${esc(c.phone||'')}</span></td><td>${c.cars.length?c.cars.map(x=>`${esc(x.makeModel)}${x.plate?' · '+esc(x.plate):''}`).join('<br>'):'—'}</td><td>${cj.length}</td><td>${money(sp)}</td><td><span class="badge neutral">${customerLevel(cj.length)}</span></td><td><button class="secondary" data-edit-customer="${c.id}">Megnyitás</button><button class="secondary danger-btn" data-delete-customer="${c.id}">Törlés</button></td></tr>`}).join(''):'<tr><td colspan="6" class="muted">Nincs ügyfél.</td></tr>';document.querySelectorAll('[data-edit-customer]').forEach(b=>b.onclick=()=>openCustomer(b.dataset.editCustomer));document.querySelectorAll('[data-delete-customer]').forEach(b=>b.onclick=()=>deleteCustomer(b.dataset.deleteCustomer));}
 function openCustomer(id=null){state.editingCustomerId=id;const c=id?state.customers.find(x=>x.id===id):null;$('customerModalTitle').textContent=c?'Ügyfél szerkesztése':'Új ügyfél';$('cuName').value=c?.name||'';$('cuPhone').value=c?.phone||'';$('cuEmail').value=c?.email||'';$('cuNote').value=c?.note||'';$('deleteCustomerBtn')&&($('deleteCustomerBtn').style.display=c?'inline-flex':'none');$('customerModal').classList.add('show');}
