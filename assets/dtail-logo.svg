@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 210" role="img" aria-labelledby="title desc">
+<title id="title">D-Tail Studio</title><desc id="desc">D-Tail Studio premium detailing logo</desc>
+<defs>
+ <linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0bdcff"/><stop offset=".55" stop-color="#55e8ff"/><stop offset="1" stop-color="#bff7ff"/></linearGradient>
+ <linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#dfe6eb"/><stop offset="1" stop-color="#93a0aa"/></linearGradient>
+ <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g transform="translate(24 12)" filter="url(#glow)">
+ <path d="M92 157C44 150 24 122 35 87C48 44 98 20 145 29C180 36 198 58 192 84C184 121 128 143 92 137C73 134 58 125 55 111" fill="none" stroke="url(#c)" stroke-width="12" stroke-linecap="round"/>
+ <path d="M57 117C83 91 97 48 142 41C171 36 193 49 198 69C204 92 182 117 151 127" fill="none" stroke="url(#m)" stroke-width="10" stroke-linecap="round"/>
+ <path d="M43 125L72 115L61 138L33 151Z" fill="url(#m)"/>
+ <path d="M39 127L48 130L43 145L31 149Z" fill="#8e9aa5"/>
+ <path d="M53 119L63 122L57 138L46 142Z" fill="#d5dde2"/>
+ <path d="M69 45L83 37L97 30" fill="none" stroke="url(#c)" stroke-width="6" stroke-linecap="round"/>
+ <path d="M78 32L94 23M88 41L106 30M99 50L118 37M110 59L129 44M121 68L140 51M132 77L151 58" stroke="url(#c)" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+</g>
+<text x="248" y="108" font-family="Manrope,Inter,Arial,sans-serif" font-size="78" font-weight="800" letter-spacing="-3" fill="url(#c)">D-Tail</text>
+<path d="M251 132H314" stroke="url(#c)" stroke-width="3" stroke-linecap="round"/>
+<text x="324" y="151" font-family="Manrope,Inter,Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="11" fill="#f1f5f7">STUDIO</text>
+<path d="M616 132H744" stroke="url(#c)" stroke-width="3" stroke-linecap="round"/>
+</svg>
