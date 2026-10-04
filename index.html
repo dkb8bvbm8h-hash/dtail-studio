@@ -151,6 +151,22 @@ body:before{opacity:.22;background-size:42px 42px}
 @media(max-width:760px){
  .content{padding:20px 14px 94px}.hero h1{font-size:26px}.stat{min-height:116px}.stat strong{font-size:23px}.dtail-logo{width:205px}
 }
+</style><style id="dtail-premium-v3">
+.control-strip{display:flex;align-items:stretch;justify-content:space-between;gap:18px;padding:16px;margin:-4px 0 18px;border:1px solid rgba(21,221,255,.12);border-radius:20px;background:linear-gradient(115deg,rgba(21,221,255,.055),rgba(255,255,255,.02) 45%,rgba(0,0,0,.12));box-shadow:0 22px 70px rgba(0,0,0,.22);position:relative;overflow:hidden}
+.control-strip:after{content:'';position:absolute;right:-100px;top:-100px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(21,221,255,.12),transparent 68%);pointer-events:none}
+.control-intro{display:flex;flex-direction:column;justify-content:center;min-width:245px;position:relative;z-index:1}
+.control-intro .eyebrow{font:700 8px 'Space Grotesk',sans-serif;letter-spacing:.18em;color:var(--a);margin-bottom:6px}.control-intro b{font:800 16px 'Space Grotesk',sans-serif;letter-spacing:-.02em}.control-intro span:last-child{font-size:9px;color:var(--muted);margin-top:4px}
+.control-actions{display:grid;grid-template-columns:repeat(3,minmax(145px,1fr));gap:8px;position:relative;z-index:1}
+.control-action{display:flex;align-items:center;text-align:left;gap:10px;padding:11px 12px;border-radius:15px;border:1px solid rgba(220,235,245,.08);background:rgba(7,10,14,.55);color:#fff;transition:.18s}
+.control-action:hover{border-color:rgba(21,221,255,.24);background:rgba(21,221,255,.055);transform:translateY(-1px)}
+.control-action>span{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:rgba(21,221,255,.08);color:var(--a);font-size:16px}.control-action b{display:block;font:700 10px 'Space Grotesk',sans-serif}.control-action small{display:block;color:var(--dim);font-size:8px;margin-top:2px}
+.section>.head h3{font-size:12px}.section>.head:after{content:'';display:block}
+#view-dashboard .stats .stat:nth-child(1){border-color:rgba(103,224,162,.10)}
+#view-dashboard .stats .stat:nth-child(2){border-color:rgba(21,221,255,.10)}
+#view-dashboard .stats .stat:nth-child(3){border-color:rgba(233,189,102,.10)}
+#view-dashboard .stats .stat:nth-child(4){border-color:rgba(255,255,255,.10)}
+@media(max-width:900px){.control-strip{flex-direction:column}.control-actions{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.control-actions{grid-template-columns:1fr}.control-intro{min-width:0}.control-strip{padding:13px}.control-action{padding:10px}}
 </style></head>
 <body>
 <div id="boot"><div class="boot"><div class="boot-logo"><img class="dtail-logo" src="./assets/dtail-logo.svg" alt="D-Tail Studio"></div><div class="boot-line"><i></i></div></div></div>
@@ -161,7 +177,7 @@ body:before{opacity:.22;background-size:42px 42px}
 <main class="main"><header class="topbar"><div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">D-Tail Studio · detailing workspace</div></div><div class="top-actions"><button class="icon" id="globalSearch">⌕</button><button class="icon" id="quickNew">＋</button></div></header>
 <div class="content">
 <section class="view active" id="view-dashboard"><div class="hero"><div><h1 id="greeting">Szia Dominik! 👋</h1><p id="todayText"></p></div><button class="primary" data-action="new-job">+ Új időpont / munkalap</button></div>
-<div class="grid stats"><div class="card stat"><label>Mai bevétel</label><strong id="sToday">0 Ft</strong><small id="sTodayJobs">0 lezárt munka</small></div><div class="card stat"><label>Havi bevétel</label><strong id="sMonth">0 Ft</strong><small id="sMonthJobs">0 lezárt munka</small></div><div class="card stat"><label>Nyitott munkák</label><strong id="sOpen">0</strong><small>aktív / foglalt</small></div><div class="card stat"><label>Átlagos munkadíj</label><strong id="sAvg">0 Ft</strong><small>lezárt munkák alapján</small></div></div>
+<div class="control-strip"><div class="control-intro"><span class="eyebrow">D-TAIL CONTROL CENTER</span><b>Ma a műhelyben</b><span id="dashControlText">A napod összes fontos mozdulata egy helyen.</span></div><div class="control-actions"><button class="control-action" data-action="new-job"><span>＋</span><div><b>Új időpont</b><small>munkalappal együtt</small></div></button><button class="control-action" data-view="calendar"><span>◷</span><div><b>Naptár</b><small>mai műhelyterv</small></div></button><button class="control-action" data-view="inventory"><span>▤</span><div><b>Készlet</b><small>érték & riasztások</small></div></button></div></div><div class="grid stats"><div class="card stat"><label>Mai bevétel</label><strong id="sToday">0 Ft</strong><small id="sTodayJobs">0 lezárt munka</small></div><div class="card stat"><label>Havi bevétel</label><strong id="sMonth">0 Ft</strong><small id="sMonthJobs">0 lezárt munka</small></div><div class="card stat"><label>Nyitott munkák</label><strong id="sOpen">0</strong><small>aktív / foglalt</small></div><div class="card stat"><label>Átlagos munkadíj</label><strong id="sAvg">0 Ft</strong><small>lezárt munkák alapján</small></div></div>
 <div class="grid two" style="margin-top:14px"><div class="card section"><div class="head"><h3>Mai műhelyterv</h3><span id="todayPlanLabel"></span></div><div id="todayJobs"></div></div><div class="card section"><div class="head"><h3>Havi cél</h3><span id="goalLabel"></span></div><div class="progress"><i id="goalBar" style="width:0%"></i></div><p id="goalText" class="muted" style="font-size:9px;line-height:1.45"></p><div class="head" style="margin-top:16px"><h3>Riasztások</h3><span></span></div><div id="dashAlerts"></div></div></div>
 <div class="card section" style="margin-top:14px"><div class="head"><h3>Készletfigyelő</h3><span id="dashStockMeta"></span></div><div id="dashStock" class="stock-grid"></div></div></section>
 
