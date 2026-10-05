@@ -177,6 +177,8 @@ function openEdit(id){const j=state.jobs.find(x=>x.id===id);if(!j)return;if(clos
 function renderServices(){$('serviceGrid').innerHTML=SERVICES.map(s=>'<div class="service '+(state.service.id===s.id?'sel':'')+'" data-service="'+s.id+'"><b>'+esc(s.name)+'</b><strong>'+money(s.price)+'</strong><p>'+esc(s.desc)+'</p></div>').join('');$('extraGrid').innerHTML=EXTRAS.map(x=>'<div class="service '+(state.extras.some(e=>e.id===x.id)?'sel':'')+'" data-extra="'+x.id+'"><b>'+esc(x.name)+'</b><strong>+'+money(x.price)+'</strong></div>').join('');document.querySelectorAll('[data-service]').forEach(e=>e.onclick=()=>{state.service=SERVICES.find(s=>s.id===e.dataset.service)||SERVICES[0];if(state.autoDiscount)applyLoyaltyDiscount();else{renderServices();renderCart()}});document.querySelectorAll('[data-extra]').forEach(e=>e.onclick=()=>{const x=EXTRAS.find(s=>s.id===e.dataset.extra);state.extras=state.extras.some(s=>s.id===x.id)?state.extras.filter(s=>s.id!==x.id):state.extras.concat(x);renderServices();renderCart()})}
 function total(){return Math.max(0,state.service.price+state.extras.reduce((s,x)=>s+x.price,0)-(Number($('fDiscount').value)||0))}
 const UNIT_FACTOR={db:1,ml:1,liter:1000,g:1,kg:1000};
+function stockState(x){const q=Number(x.qty)||0,min=Math.max(0,Number(x.min)||0);if(q<=0||q<=min)return'critical';if(q<=min*2)return'low';return'ok'}
+function stockLabel(x){const s=stockState(x);return s==='critical'?'Rendelés szükséges':s==='low'?'Hamarosan rendelni':'Rendben'}
 function unitFactor(u){return UNIT_FACTOR[u]||1}
 function stockUnitCost(x){const packBase=unitFactor(x.packUnit||x.unit)*(Number(x.packQty)||0);return packBase?Number(x.packPrice||0)/packBase:0}
 function stockDisplayUnitCost(x){return stockUnitCost(x)*unitFactor(x.unit||'db')}
