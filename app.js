@@ -19,7 +19,7 @@ const DEFAULT_STOCK=[
 const state={jobs:[],customers:[],cars:[],stock:[],photos:{},goal:1000000,service:SERVICES[0],extras:[],editJob:null,editCustomer:null,autoDiscount:true,recipes:{},stockMovements:[],recipeTarget:null,cal:new Date(new Date().getFullYear(),new Date().getMonth(),1)};
 function defaultRecipes(){return{fresh:[{stockId:'ST-APC',qty:80,unit:'ml'},{stockId:'ST-INT',qty:100,unit:'ml'},{stockId:'ST-TOWEL',qty:.2,unit:'db'}],deep:[{stockId:'ST-APC',qty:150,unit:'ml'},{stockId:'ST-INT',qty:200,unit:'ml'}]}}
 function read(k,f){try{const v=JSON.parse(localStorage.getItem(k)||'null');return v??f}catch{return f}}
-function normalizeStock(a){return(Array.isArray(a)?a:[]).map(x=>({id:x.id||uid('ST'),name:x.name||'Új termék',qty:Number(x.qty)||0,unit:x.unit||'db',min:Number(x.min??x.min_qty)||0,price:Number(x.price??x.unit_price)||0,category:x.category||'Egyéb'}))}
+function normalizeStock(a){return(Array.isArray(a)?a:[]).map(x=>({id:x.id||uid('ST'),name:x.name||'Új termék',qty:Number(x.qty)||0,unit:x.unit||'db',min:Number(x.min??x.min_qty)||0,price:Number(x.price??x.unit_price)||0,category:x.category||'Egyéb',packQty:Number(x.packQty)>0?Number(x.packQty):1,packUnit:x.packUnit||x.unit||'db',packPrice:Number(x.packPrice)>0?Number(x.packPrice):Number(x.price??x.unit_price)||0}))}
 function migrateJobs(a){return(Array.isArray(a)?a:[]).map(j=>{const st=j.startAt||j.start_at||j.date||new Date().toISOString();return{id:j.id||uid('DT'),customerId:j.customerId||j.customer_id||null,carId:j.carId||j.car_id||null,customerName:j.customerName||j.customer_name||'Ismeretlen ügyfél',phone:j.phone||'',car:j.car||j.car_label||'Ismeretlen autó',plate:(j.plate||'').toUpperCase(),year:Number(j.year)||null,km:Number(j.km)||0,serviceId:j.serviceId||j.service_id||'fresh',serviceName:j.serviceName||j.service_name||'Fresh Interior',servicePrice:Number(j.servicePrice??j.service_price??19990),extras:Array.isArray(j.extras)?j.extras:[],discount:Number(j.discount)||0,cost:Number(j.cost)||0,total:Number(j.total)||0,status:j.status||'open',paymentMethod:j.paymentMethod||j.payment_method||'',note:j.note||'',checklist:j.checklist||{before:false,damage:false,after:false},startAt:st,endAt:j.endAt||j.end_at||new Date(D(st).getTime()+180*60000).toISOString(),closedAt:j.closedAt||j.closed_at||null,createdAt:j.createdAt||j.created_at||new Date().toISOString()}})}
 
 let CLOUD=null, CLOUD_SESSION=null, CLOUD_BUSY=false, CLOUD_SUPPRESS=false;
@@ -93,10 +93,16 @@ async function cloudLoad(){
   state.customers=(cs.data||[]).map(c=>({id:c.id,name:c.name,phone:c.phone||'',email:c.email||'',note:c.note||''}));
   state.cars=(car.data||[]).map(c=>({id:c.id,customerId:c.customer_id,makeModel:c.make_model,plate:c.plate||'',year:c.year||null,color:c.color||'',km:c.km||0}));
   state.jobs=(js.data||[]).map(j=>migrateJobs([{id:j.id,customer_id:j.customer_id,car_id:j.car_id,customer_name:j.customer_name,phone:j.phone,car_label:j.car_label,plate:j.plate,year:j.year,km:j.km,service_id:j.service_id,service_name:j.service_name,service_price:j.service_price,extras:j.extras,discount:j.discount,cost:j.cost,total:j.total,status:j.status,payment_method:j.payment_method,note:j.note,checklist:j.checklist,start_at:j.start_at,end_at:j.end_at,closed_at:j.closed_at,created_at:j.created_at}])[0]);
-  state.stock=normalizeStock((st.data||[]).map(s=>({id:s.id,name:s.name,category:s.category,qty:s.qty,unit:s.unit,min:s.min_qty,price:s.unit_price})));
+  const localStock=Array.isArray(state.stock)?state.stock.slice():[];
+  const cloudStock=normalizeStock((st.data||[]).map(s=>({id:s.id,name:s.name,category:s.category,qty:s.qty,unit:s.unit,min:s.min_qty,price:s.unit_price})));
+  const localById=new Map(localStock.map(x=>[x.id,x]));
+  state.stock=cloudStock.map(x=>{const local=localById.get(x.id);return local?{...x,packQty:local.packQty,packUnit:local.packUnit,packPrice:local.packPrice}:x});
+  const cloudIds=new Set(cloudStock.map(x=>x.id));
+  localStock.forEach(x=>{if(!cloudIds.has(x.id))state.stock.push(x)});
   if(settings.data)state.goal=Number(settings.data.monthly_goal)||1000000;
   save();
   CLOUD_SUPPRESS=false;
+  if(localStock.some(x=>!cloudIds.has(x.id)))await cloudPushAll();
   renderAll();
 }
 async function cloudStart(){
